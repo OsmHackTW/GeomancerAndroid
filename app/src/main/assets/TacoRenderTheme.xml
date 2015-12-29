@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<rendertheme
+    xmlns="http://mapsforge.org/renderTheme"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://mapsforge.org/renderTheme https://raw.githubusercontent.com/unknown"
+    version="1">
+
+    <rule e="way" k="natural" v="issea|sea">
+        <area fill="#90b0c0" />
+    </rule>
+
+    <rule e="way" k="natural" v="nosea">
+        <area fill="#f8f8f8" stroke="#f8f8f8" stroke-width="1.0" />
+    </rule>
+
+    <!-- ways -->
+    <rule e="way" k="*" v="*">
+        <rule e="way" k="highway" v="*">
+            <rule e="way" k="highway" v="motorway">
+                <line stroke="#007000" stroke-width="1.0" />
+            </rule>
+
+            <rule e="way" k="highway" v="trunk">
+                <line stroke="#f07000" stroke-width="1.0" />
+            </rule>
+
+            <rule e="way" k="highway" v="primary">
+                <line stroke="#000070" stroke-width="1.0" />
+            </rule>
+        </rule>
+    </rule>
+
+</rendertheme>
