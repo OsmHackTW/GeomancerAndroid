@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<rendertheme
-    xmlns="http://mapsforge.org/renderTheme"
+<rendertheme xmlns="http://mapsforge.org/renderTheme"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://mapsforge.org/renderTheme https://raw.githubusercontent.com/unknown"
     version="1">
@@ -14,21 +12,302 @@
         <area fill="#f8f8f8" stroke="#f8f8f8" stroke-width="1.0" />
     </rule>
 
+    <!-- 行政區 -->
+    <rule e="way" k="boundary" v="administrative">
+        <!-- 中華民國 -->
+        <rule e="way" k="admin_level" v="2" zoom-min="7" zoom-max="7">
+            <line stroke="#606060" stroke-width="0.4" stroke-dasharray="5,5" />
+        </rule>
+        <!-- 省、直轄市 | 縣、省轄市-->
+        <rule e="way" k="admin_level" v="4|6" zoom-min="7" zoom-max="14">
+            <line stroke="#606060" stroke-width="0.4" stroke-dasharray="5,1" />
+        </rule>
+        <!-- 直轄市所屬區 | 省轄市所屬區 | 鄉、鎮 -->
+        <rule e="way" k="admin_level" v="5|7|8" zoom-min="11" zoom-max="14">
+            <line stroke="#909090" stroke-width="0.4" stroke-dasharray="1,3" />
+        </rule>
+    </rule>
+
     <!-- ways -->
-    <rule e="way" k="*" v="*">
-        <rule e="way" k="highway" v="*">
-            <rule e="way" k="highway" v="motorway">
-                <line stroke="#007000" stroke-width="1.0" />
+    <rule e="way" k="highway" v="*">
+        <rule e="way" k="highway" v="motorway|motorway_link">
+
+            <rule e="way" k="tunnel" v="~|no|false">
+                <rule e="way" k="*" v="*" zoom-min="8" zoom-max="9">
+                    <line stroke="#50a050" stroke-width="1.0" />
+                </rule>
+                <rule e="way" k="*" v="*" zoom-min="10" zoom-max="12">
+                    <line stroke="#50a050" stroke-width="1.0" />
+                </rule>
+                <rule e="way" k="*" v="*" zoom-min="13" zoom-max="15">
+                    <line stroke="#50a050" stroke-width="1.5" />
+                </rule>
+                <rule e="way" k="*" v="*" zoom-min="16" zoom-max="18">
+                    <line stroke="#50a050" stroke-width="2.0" />
+                </rule>
             </rule>
 
-            <rule e="way" k="highway" v="trunk">
-                <line stroke="#f07000" stroke-width="1.0" />
+            <rule e="way" k="tunnel" v="true|yes">
+                <rule e="way" k="*" v="*" zoom-min="8" zoom-max="9">
+                    <line stroke="#50a050" stroke-width="1.0" stroke-dasharray="1,3" />
+                </rule>
+                <rule e="way" k="*" v="*" zoom-min="10" zoom-max="12">
+                    <line stroke="#50a050" stroke-width="1.0" stroke-dasharray="1,3" />
+                </rule>
+                <rule e="way" k="*" v="*" zoom-min="13" zoom-max="15">
+                    <line stroke="#50a050" stroke-width="1.5" stroke-dasharray="1,3" />
+                </rule>
+                <rule e="way" k="*" v="*" zoom-min="16" zoom-max="18">
+                    <line stroke="#50a050" stroke-width="2.0" stroke-dasharray="1,3" />
+                </rule>
             </rule>
 
-            <rule e="way" k="highway" v="primary">
-                <line stroke="#000070" stroke-width="1.0" />
+            <rule e="way" k="*" v="*" zoom-min="8" zoom-max="18">
+                <pathText k="ref" font-size="10" stroke="#303030" />
+            </rule>
+
+            <rule e="way" k="*" v="*" zoom-min="8" zoom-max="18">
+                <rule e="way" k="ref" v="1">
+                    <lineSymbol src="assets:shields/motorway/1.svg" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="2">
+                    <lineSymbol src="assets:shields/motorway/2.svg" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="3">
+                    <lineSymbol src="assets:shields/motorway/3.svg" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="4">
+                    <lineSymbol src="assets:shields/motorway/4.svg" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="5">
+                    <lineSymbol src="assets:shields/motorway/5.svg" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="6">
+                    <lineSymbol src="assets:shields/motorway/6.svg" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="8">
+                    <lineSymbol src="assets:shields/motorway/8.svg" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="10">
+                    <lineSymbol src="assets:shields/motorway/10.svg" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="2甲">
+                    <lineSymbol src="assets:shields/motorway/2A.svg" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="3甲">
+                    <lineSymbol src="assets:shields/motorway/3A.svg" align-center="true" repeat="true" />
+                </rule>
             </rule>
         </rule>
+
+        <!--
+        <rule e="way" k="highway" v="*" zoom-min="8" zoom-max="9">
+            <rule e="way" k="highway" v="motorway">
+                <line stroke="#50a050" stroke-width="0.6" />
+            </rule>
+            <rule e="way" k="highway" v="trunk">
+                <line stroke="#f05050" stroke-width="0.6" />
+            </rule>
+        </rule>
+        <rule e="way" k="highway" v="*" zoom-min="10" zoom-max="12">
+            <rule e="way" k="highway" v="motorway">
+                <line stroke="#50a050" stroke-width="0.8" />
+            </rule>
+            <rule e="way" k="highway" v="trunk">
+                <line stroke="#f05050" stroke-width="0.8" />
+            </rule>
+            <rule e="way" k="highway" v="primary">
+                <line stroke="#a0a0f0" stroke-width="0.8" />
+            </rule>
+        </rule>
+        <rule e="way" k="highway" v="*" zoom-min="13" zoom-max="15">
+            <rule e="way" k="highway" v="motorway|motorway_link">
+                <line stroke="#50a050" stroke-width="1.0" />
+            </rule>
+            <rule e="way" k="highway" v="trunk|trunk_link">
+                <line stroke="#f07070" stroke-width="1.0" />
+            </rule>
+            <rule e="way" k="highway" v="primary">
+                <line stroke="#9090f0" stroke-width="1.0" />
+            </rule>
+        </rule>
+        <rule e="way" k="highway" v="*" zoom-min="16">
+            <rule e="way" k="highway" v="motorway|motorway_link">
+                <line stroke="#50a050" stroke-width="1.2" />
+            </rule>
+            <rule e="way" k="highway" v="trunk|trunk_link">
+                <line stroke="#f07070" stroke-width="1.2" />
+            </rule>
+            <rule e="way" k="highway" v="primary">
+                <line stroke="#9090f0" stroke-width="1.2" />
+            </rule>
+        </rule>
+        -->
+    </rule>
+
+    <rule e="way" k="highway" v="*">
+
+
+        <!--
+        <rule e="way" k="highway" v="trunk" zoom-min="8">
+            <rule e="way" k="ref" v="61">
+                <lineSymbol src="assets:shields/trunk/61.svg" align-center="true" repeat="true" />
+            </rule>
+            <rule e="way" k="ref" v="62">
+                <lineSymbol src="assets:shields/trunk/62.svg" align-center="true" repeat="true" />
+            </rule>
+            <rule e="way" k="ref" v="64">
+                <lineSymbol src="assets:shields/trunk/64.svg" align-center="true" repeat="true" />
+            </rule>
+            <rule e="way" k="ref" v="65">
+                <lineSymbol src="assets:shields/trunk/65.svg" align-center="true" repeat="true" />
+            </rule>
+            <rule e="way" k="ref" v="66">
+                <lineSymbol src="assets:shields/trunk/66.svg" align-center="true" repeat="true" />
+            </rule>
+            <rule e="way" k="ref" v="68">
+                <lineSymbol src="assets:shields/trunk/68.svg" align-center="true" repeat="true" />
+            </rule>
+            <rule e="way" k="ref" v="72">
+                <lineSymbol src="assets:shields/trunk/72.svg" align-center="true" repeat="true" />
+            </rule>
+            <rule e="way" k="ref" v="74">
+                <lineSymbol src="assets:shields/trunk/74.svg" align-center="true" repeat="true" />
+            </rule>
+            <rule e="way" k="ref" v="76">
+                <lineSymbol src="assets:shields/trunk/76.svg" align-center="true" repeat="true" />
+            </rule>
+            <rule e="way" k="ref" v="78">
+                <lineSymbol src="assets:shields/trunk/78.svg" align-center="true" repeat="true" />
+            </rule>
+            <rule e="way" k="ref" v="82">
+                <lineSymbol src="assets:shields/trunk/82.svg" align-center="true" repeat="true" />
+            </rule>
+            <rule e="way" k="ref" v="84">
+                <lineSymbol src="assets:shields/trunk/84.svg" align-center="true" repeat="true" />
+            </rule>
+            <rule e="way" k="ref" v="86">
+                <lineSymbol src="assets:shields/trunk/86.svg" align-center="true" repeat="true" />
+            </rule>
+            <rule e="way" k="ref" v="88">
+                <lineSymbol src="assets:shields/trunk/88.svg" align-center="true" repeat="true" />
+            </rule>
+            <rule e="way" k="ref" v="61甲">
+                <lineSymbol src="assets:shields/trunk/61A.svg" align-center="true" repeat="true" />
+            </rule>
+            <rule e="way" k="ref" v="61乙">
+                <lineSymbol src="assets:shields/trunk/61B.svg" align-center="true" repeat="true" />
+            </rule>
+        </rule>
+
+        <rule e="way" k="highway" v="primary" zoom-min="10">
+            <rule e="way" k="ref" v="1">
+                <lineSymbol src="assets:shields/primary/1.svg" align-center="true" repeat="true" />
+            </rule>
+            <rule e="way" k="ref" v="2">
+                <lineSymbol src="assets:shields/primary/2.svg" align-center="true" repeat="true" />
+            </rule>
+            <rule e="way" k="ref" v="3">
+                <lineSymbol src="assets:shields/primary/3.svg" align-center="true" repeat="true" />
+            </rule>
+            <rule e="way" k="ref" v="4">
+                <lineSymbol src="assets:shields/primary/4.svg" align-center="true" repeat="true" />
+            </rule>
+            <rule e="way" k="ref" v="5">
+                <lineSymbol src="assets:shields/primary/5.svg" align-center="true" repeat="true" />
+            </rule>
+            <rule e="way" k="ref" v="6">
+                <lineSymbol src="assets:shields/primary/6.svg" align-center="true" repeat="true" />
+            </rule>
+            <rule e="way" k="ref" v="7">
+                <lineSymbol src="assets:shields/primary/7.svg" align-center="true" repeat="true" />
+            </rule>
+            <rule e="way" k="ref" v="8">
+                <lineSymbol src="assets:shields/primary/8.svg" align-center="true" repeat="true" />
+            </rule>
+            <rule e="way" k="ref" v="9">
+                <lineSymbol src="assets:shields/primary/9.svg" align-center="true" repeat="true" />
+            </rule>
+            <rule e="way" k="ref" v="10">
+                <lineSymbol src="assets:shields/primary/10.svg" align-center="true" repeat="true" />
+            </rule>
+            <rule e="way" k="ref" v="11">
+                <lineSymbol src="assets:shields/primary/11.svg" align-center="true" repeat="true" />
+            </rule>
+            <rule e="way" k="ref" v="12">
+                <lineSymbol src="assets:shields/primary/12.svg" align-center="true" repeat="true" />
+            </rule>
+            <rule e="way" k="ref" v="13">
+                <lineSymbol src="assets:shields/primary/13.svg" align-center="true" repeat="true" />
+            </rule>
+            <rule e="way" k="ref" v="14">
+                <lineSymbol src="assets:shields/primary/14.svg" align-center="true" repeat="true" />
+            </rule>
+            <rule e="way" k="ref" v="15">
+                <lineSymbol src="assets:shields/primary/15.svg" align-center="true" repeat="true" />
+            </rule>
+            <rule e="way" k="ref" v="16">
+                <lineSymbol src="assets:shields/primary/16.svg" align-center="true" repeat="true" />
+            </rule>
+            <rule e="way" k="ref" v="17">
+                <lineSymbol src="assets:shields/primary/17.svg" align-center="true" repeat="true" />
+            </rule>
+            <rule e="way" k="ref" v="18">
+                <lineSymbol src="assets:shields/primary/18.svg" align-center="true" repeat="true" />
+            </rule>
+            <rule e="way" k="ref" v="19">
+                <lineSymbol src="assets:shields/primary/19.svg" align-center="true" repeat="true" />
+            </rule>
+            <rule e="way" k="ref" v="20">
+                <lineSymbol src="assets:shields/primary/20.svg" align-center="true" repeat="true" />
+            </rule>
+            <rule e="way" k="ref" v="21">
+                <lineSymbol src="assets:shields/primary/21.svg" align-center="true" repeat="true" />
+            </rule>
+            <rule e="way" k="ref" v="22">
+                <lineSymbol src="assets:shields/primary/22.svg" align-center="true" repeat="true" />
+            </rule>
+            <rule e="way" k="ref" v="23">
+                <lineSymbol src="assets:shields/primary/23.svg" align-center="true" repeat="true" />
+            </rule>
+            <rule e="way" k="ref" v="24">
+                <lineSymbol src="assets:shields/primary/24.svg" align-center="true" repeat="true" />
+            </rule>
+            <rule e="way" k="ref" v="25">
+                <lineSymbol src="assets:shields/primary/25.svg" align-center="true" repeat="true" />
+            </rule>
+            <rule e="way" k="ref" v="26">
+                <lineSymbol src="assets:shields/primary/26.svg" align-center="true" repeat="true" />
+            </rule>
+            <rule e="way" k="ref" v="27">
+                <lineSymbol src="assets:shields/primary/27.svg" align-center="true" repeat="true" />
+            </rule>
+            <rule e="way" k="ref" v="28">
+                <lineSymbol src="assets:shields/primary/28.svg" align-center="true" repeat="true" />
+            </rule>
+            <rule e="way" k="ref" v="29">
+                <lineSymbol src="assets:shields/primary/29.svg" align-center="true" repeat="true" />
+            </rule>
+            <rule e="way" k="ref" v="30">
+                <lineSymbol src="assets:shields/primary/30.svg" align-center="true" repeat="true" />
+            </rule>
+            <rule e="way" k="ref" v="31">
+                <lineSymbol src="assets:shields/primary/31.svg" align-center="true" repeat="true" />
+            </rule>
+            <rule e="way" k="ref" v="35">
+                <lineSymbol src="assets:shields/primary/35.svg" align-center="true" repeat="true" />
+            </rule>
+            <rule e="way" k="ref" v="37">
+                <lineSymbol src="assets:shields/primary/37.svg" align-center="true" repeat="true" />
+            </rule>
+            <rule e="way" k="ref" v="39">
+                <lineSymbol src="assets:shields/primary/39.svg" align-center="true" repeat="true" />
+            </rule>
+            <rule e="way" k="ref" v="63">
+                <lineSymbol src="assets:shields/primary/63.svg" align-center="true" repeat="true" />
+            </rule>
+        </rule>
+        -->
     </rule>
 
 </rendertheme>

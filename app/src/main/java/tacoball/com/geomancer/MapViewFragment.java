@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import org.mapsforge.core.model.BoundingBox;
 import org.mapsforge.core.model.LatLong;
@@ -30,7 +31,8 @@ public class MapViewFragment extends Fragment {
 
     private static final String TAG = "MapViewFragment";
 
-    private MapView mMapView;
+    private MapView  mMapView;
+    private TextView mTxvZoom;
 
     public MapViewFragment() {
         // Required empty public constructor
@@ -52,6 +54,7 @@ public class MapViewFragment extends Fragment {
         AndroidGraphicFactory.clearResourceFileCache();
         AndroidGraphicFactory.clearResourceMemoryCache();
         mMapView = (MapView)view.findViewById(R.id.mapView);
+        mTxvZoom = (TextView)view.findViewById(R.id.zoomValue);
 
         try {
             initMapView();
@@ -73,7 +76,7 @@ public class MapViewFragment extends Fragment {
         final String cacheName = "mymapcache";
         final String mapName   = "taiwan-201512.map";
         final byte   minZoom   = 7;
-        final byte   maxZoom   = 19;
+        final byte   maxZoom   = 16;
 
         LatLong initLoc   = new LatLong(23.517, 121.000);
         byte    initZoom  = minZoom;
@@ -105,16 +108,24 @@ public class MapViewFragment extends Fragment {
             AndroidGraphicFactory.INSTANCE
         );
         tileRendererLayer.setXmlRenderTheme(theme);
+        //tileRendererLayer.setXmlRenderTheme(InternalRenderTheme.OSMARENDER);
 
         // set UI of mapView
         mMapView.setClickable(true);
+        mMapView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                updateZoomValue();
+            }
+        });
         mMapView.getMapZoomControls().setZoomLevelMin(minZoom);
         mMapView.getMapZoomControls().setZoomLevelMax(maxZoom);
         mMapView.getMapZoomControls().setAutoHide(true);
         mMapView.getMapZoomControls().show();
         mMapView.getModel().mapViewPosition.setCenter(initLoc);
         mMapView.getModel().mapViewPosition.setZoomLevel(initZoom);
-        mMapView.getModel().mapViewPosition.setMapLimit(new BoundingBox(23.22, 120.20, 24.18, 121.50));
+        mMapView.getModel().mapViewPosition.setMapLimit(new BoundingBox(22.0, 120.20, 26.0, 122.50));
+        updateZoomValue();
 
         // check if this is a new compilation
         Log.e(TAG, "Test 1");
@@ -122,4 +133,10 @@ public class MapViewFragment extends Fragment {
         // add Layer to mapView
         mMapView.getLayerManager().getLayers().add(tileRendererLayer);
     }
+
+    private void updateZoomValue() {
+        String txt = String.format("%d", mMapView.getModel().mapViewPosition.getZoomLevel());
+        mTxvZoom.setText(txt);
+    }
+
 }

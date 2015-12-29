@@ -1,3 +1,4 @@
+# (by Eclipse)
 *.iml
 .gradle
 /local.properties
@@ -6,6 +7,9 @@
 .DS_Store
 /build
 /captures
+
+# (by GitHub)
+
 # Built application files
 *.apk
 *.ap_
