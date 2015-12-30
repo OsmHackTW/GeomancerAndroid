@@ -2,7 +2,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <org.mapsforge.map.android.view.MapView
+    <tacoball.com.geomancer.tacoball.com.geomancer.view.TaiwanMapView
         android:id="@+id/mapView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
@@ -19,9 +19,15 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Zoom"
-            android:id="@+id/zoomLabel"
-            android:layout_marginRight="5dp" />
+            android:text="(25.0000, 121.0000)"
+            android:id="@+id/location"
+            android:layout_marginRight="10dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Z="
+            android:id="@+id/zoomLabel" />
 
         <TextView
             android:layout_width="wrap_content"
