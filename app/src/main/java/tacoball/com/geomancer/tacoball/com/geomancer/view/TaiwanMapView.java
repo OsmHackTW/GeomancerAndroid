@@ -20,14 +20,15 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * Created by raymond on 15/12/30.
+ *
  */
 public class TaiwanMapView extends MapView {
 
     private static final String TAG = "TacoMapView";
 
-    private Context  mContext;
-    private Runnable mDrawMapListener;
+    private Context      mContext;
+    private Runnable     mDrawMapListener;
+    private MapDataStore mMapDataStore;
 
     public TaiwanMapView(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
@@ -65,47 +66,12 @@ public class TaiwanMapView extends MapView {
         LatLong initLoc   = new LatLong(25.076, 121.544);
         byte    initZoom  = 14;
 
-        File mapFile = new File(Environment.getExternalStorageDirectory(), mapName);
-        MapDataStore mapDataStore = new MapFile(mapFile);
-
-        // create RenderTheme
-        AssetsRenderTheme grounds_theme = new AssetsRenderTheme(mContext, "", "TaiwanGroundsTheme.xml");
-        AssetsRenderTheme roads_theme   = new AssetsRenderTheme(mContext, "", "TaiwanRoadsTheme.xml");
-
-        // create TileCache
-        TileCache tileCache = AndroidUtil.createTileCache(
-                mContext,
-                cacheName,
-                getModel().displayModel.getTileSize(),
-                1f,
-                getModel().frameBufferModel.getOverdrawFactor()
-        );
-
-        // create TileRendererLayer, need MapDataStore & TileCache
-        TileRendererLayer groundsLayer = new TileRendererLayer(
-                tileCache,
-                mapDataStore,
-                getModel().mapViewPosition,
-                false,
-                true,
-                AndroidGraphicFactory.INSTANCE
-        );
-        groundsLayer.setXmlRenderTheme(grounds_theme);
-
-        // create TileRendererLayer, need MapDataStore & TileCache
-        TileRendererLayer roadsLayer = new TileRendererLayer(
-                tileCache,
-                mapDataStore,
-                getModel().mapViewPosition,
-                false,
-                true,
-                AndroidGraphicFactory.INSTANCE
-        );
-        roadsLayer.setXmlRenderTheme(roads_theme);
+        File mapFile  = new File(Environment.getExternalStorageDirectory(), mapName);
+        mMapDataStore = new MapFile(mapFile);
 
         // add Layer to mapView
-        getLayerManager().getLayers().add(groundsLayer);
-        getLayerManager().getLayers().add(roadsLayer);
+        getLayerManager().getLayers().add(loadThemeLayer("TaiwanGrounds", false)); // Bottom Layer
+        getLayerManager().getLayers().add(loadThemeLayer("TaiwanRoads"));
 
         // set UI of mapView
         setClickable(true);
@@ -115,7 +81,38 @@ public class TaiwanMapView extends MapView {
         getMapZoomControls().setZoomLevelMax(maxZoom);
         getMapZoomControls().setAutoHide(true);
         getMapZoomControls().show();
-        getModel().mapViewPosition.setMapLimit(mapDataStore.boundingBox());
+        getModel().mapViewPosition.setMapLimit(mMapDataStore.boundingBox());
+    }
+
+    private TileRendererLayer loadThemeLayer(String themeName) throws IOException {
+        return loadThemeLayer(themeName, true);
+    }
+
+    private TileRendererLayer loadThemeLayer(String themeName, boolean isTransparent) throws IOException {
+        String themeFileName  = String.format("%sTheme.xml", themeName);
+        String themeCacheName = String.format("%sCache", themeName);
+
+        TileCache cache = AndroidUtil.createTileCache(
+            mContext,
+            themeCacheName,
+            getModel().displayModel.getTileSize(),
+            1f,
+            getModel().frameBufferModel.getOverdrawFactor()
+        );
+
+        TileRendererLayer layer = new TileRendererLayer(
+            cache,
+            mMapDataStore,
+            getModel().mapViewPosition,
+            isTransparent,
+            true,
+            AndroidGraphicFactory.INSTANCE
+        );
+
+        AssetsRenderTheme theme = new AssetsRenderTheme(mContext, "", themeFileName);
+        layer.setXmlRenderTheme(theme);
+
+        return layer;
     }
 
     @Override
