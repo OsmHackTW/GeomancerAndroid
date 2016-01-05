@@ -2,16 +2,13 @@ package tacoball.com.geomancer;
 
 import android.app.Fragment;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
-import org.mapsforge.map.model.MapViewPosition;
-
 import tacoball.com.geomancer.tacoball.com.geomancer.view.TaiwanMapView;
-
 
 /**
  *
@@ -20,9 +17,12 @@ public class MapViewFragment extends Fragment {
 
     private static final String TAG = "MapViewFragment";
 
-    private TextView    mTxvLocation;
-    private TextView    mTxvZoom;
     private TaiwanMapView mMapView;
+    private TextView      mTxvLocation;
+    private TextView      mTxvZoom;
+    private TextView      mTxvAzimuth;
+    private Button        mBtPosition;
+    private Button        mBtMeasure;
 
     public MapViewFragment() {
         // Required empty public constructor
@@ -35,30 +35,27 @@ public class MapViewFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_map_view, container, false);
+        ViewGroup layout = (ViewGroup)inflater.inflate(R.layout.fragment_map_view, container, false);
 
-        // check if this is a new compilation
-        Log.e(TAG, "onCreateView() ... E");
+        // StatusBar
+        mTxvZoom     = (TextView)layout.findViewById(R.id.txvZoomValue);
+        mTxvLocation = (TextView)layout.findViewById(R.id.txvLocation);
+        mTxvAzimuth  = (TextView)layout.findViewById(R.id.txvAzimuthValue);
 
-        // 配置 mapView
-        mTxvZoom = (TextView)view.findViewById(R.id.zoomValue);
-        mTxvLocation = (TextView)view.findViewById(R.id.location);
-        mMapView = (TaiwanMapView)view.findViewById(R.id.mapView);
-        mMapView.setDrawMapListener(new Runnable() {
-            @Override
-            public void run() {
-                MapViewPosition vp = mMapView.getModel().mapViewPosition;
+        // ButtonsBar
+        mBtPosition = (Button)layout.findViewById(R.id.btPosition);
+        mBtMeasure  = (Button)layout.findViewById(R.id.btMeasure);
 
-                String txtLoc = String.format("(%.4f, %.4f)", vp.getCenter().latitude, vp.getCenter().longitude);
-                mTxvLocation.setText(txtLoc);
+        // Map View
+        mMapView = (TaiwanMapView)layout.findViewById(R.id.mapView);
+        mMapView.setMyLocationImage(R.drawable.arrow_up);
 
-                String txtZoom = String.format("%s", vp.getZoomLevel());
-                mTxvZoom.setText(txtZoom);
-            }
-        });
+        // Events
+        mBtPosition.setOnClickListener(mClickListener);
+        mBtMeasure.setOnClickListener(mClickListener);
+        mMapView.setStateChangeListener(mMapStateListener);
 
-        // Inflate the layout for this fragment
-        return view;
+        return layout;
     }
 
     @Override
@@ -66,5 +63,36 @@ public class MapViewFragment extends Fragment {
         super.onDestroyView();
         mMapView.destroyAll();
     }
+
+    private View.OnClickListener mClickListener = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            if (v== mBtPosition) {
+                mMapView.gotoMyPosition();
+            }
+
+            if (v==mBtMeasure) {
+                // TODO
+            }
+        }
+
+    };
+
+    private TaiwanMapView.StateChangeListener mMapStateListener = new TaiwanMapView.StateChangeListener() {
+
+        @Override
+        public void onStateChanged(TaiwanMapView.State state) {
+            String txtLoc = String.format("(%.4f, %.4f)", state.cLat, state.cLng);
+            mTxvLocation.setText(txtLoc);
+
+            String txtZoom = String.format("%s", state.zoom);
+            mTxvZoom.setText(txtZoom);
+
+            String txtAzimuth = String.format("%.2f", state.myAzimuth);
+            mTxvAzimuth.setText(txtAzimuth);
+        }
+
+    };
 
 }

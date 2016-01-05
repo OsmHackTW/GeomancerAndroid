@@ -22,6 +22,7 @@ android {
 
 dependencies {
     compile 'org.mapsforge:mapsforge-map-android:0.6.0'
+    //compile 'com.caverock:androidsvg:1.2.1'
     compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'com.android.support:support-v4:21.0.3'
     compile fileTree(dir: 'libs', include: ['*.jar'])

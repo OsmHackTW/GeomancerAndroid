@@ -5,7 +5,9 @@
     <tacoball.com.geomancer.tacoball.com.geomancer.view.TaiwanMapView
         android:id="@+id/mapView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="300dp"
+        android:layout_alignParentTop="true"
+        android:layout_above="@+id/buttonsBar" />
 
     <LinearLayout
         android:orientation="horizontal"
@@ -14,26 +16,75 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:layout_marginTop="5dp"
-        android:layout_marginRight="15dp">
+        android:layout_marginRight="15dp"
+        android:id="@+id/statusBar">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="(25.0000, 121.0000)"
-            android:id="@+id/location"
+            android:id="@+id/txvLocation"
             android:layout_marginRight="10dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Z="
-            android:id="@+id/zoomLabel" />
+            android:id="@+id/txvZoomLabel" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="10"
-            android:id="@+id/zoomValue" />
+            android:id="@+id/txvZoomValue" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Azimuth="
+            android:id="@+id/txvAzimuthLabel"
+            android:layout_marginLeft="10dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="30"
+            android:id="@+id/txvAzimuthValue" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/buttonsBar"
+        android:layout_alignParentBottom="true"
+        android:background="#303030">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btPosition"
+            android:text="我的位置"
+            android:layout_weight="1"
+            android:layout_marginLeft="20dp" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="測量風水"
+            android:id="@+id/btMeasure"
+            android:layout_weight="1"
+            android:layout_marginLeft="20dp" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btReport"
+            android:text="八卦通報"
+            android:layout_weight="1"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp" />
 
     </LinearLayout>
 
