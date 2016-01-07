@@ -66,6 +66,7 @@
         <rule e="way" k="highway" v="primary|primary_link">
             <!-- 除錯用 -->
             <rule e="way" k="*" v="*" zoom-min="8" zoom-max="18">
+                <pathText k="name" fill="#000000" font-size="10" stroke="#ffffff" stroke-width="2.0" />
                 <pathText k="ref" fill="#60b0d0" font-size="10" stroke="#ffffff" stroke-width="2.0" />
             </rule>
             <!-- 非隧道段 -->
@@ -353,6 +354,7 @@
         <rule e="way" k="highway" v="trunk|trunk_link">
             <!-- 除錯用 -->
             <rule e="way" k="*" v="*" zoom-min="8" zoom-max="18">
+                <pathText k="name" fill="#000000" font-size="10" stroke="#ffffff" stroke-width="2.0" />
                 <pathText k="ref" fill="#d08080" font-size="10" stroke="#ffffff" stroke-width="2.0" />
             </rule>
             <!-- 非隧道段 -->
@@ -445,6 +447,7 @@
         <rule e="way" k="highway" v="motorway|motorway_link">
             <!-- 除錯用 -->
             <rule e="way" k="*" v="*" zoom-min="8" zoom-max="18">
+                <pathText k="name" fill="#000000" font-size="10" stroke="#ffffff" stroke-width="2.0" />
                 <pathText k="ref" fill="#709070" font-size="10" stroke="#ffffff" stroke-width="2.0" />
             </rule>
             <!-- 非隧道段 -->
