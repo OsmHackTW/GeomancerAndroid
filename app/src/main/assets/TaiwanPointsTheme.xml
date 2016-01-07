@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rendertheme version="4">
+
+    <!--
+    PostgreSQL:
+        SELECT osm_id, name, ref, operator, tags FROM planet_osm_point WHERE railway='station'
+    Mapsforge:
+        railway="station" name="南港站"
+        railway="station" station="subway" name="南港" addr:housenumber="380"
+    -->
+    <rule e="node" k="railway" v="station">
+        <rule e="node" k="station" v="~">
+            <symbol src="assets:symbols/tra.svg" symbol-percent="75" />
+            <caption k="name" font-size="10" />
+        </rule>
+        <rule e="node" k="station" v="subway">
+            <symbol src="assets:symbols/dorts.svg" symbol-percent="75" />
+            <caption k="name" font-size="10" />
+        </rule>
+        <!--
+        <rule e="node" k="operator" v="~">
+            <symbol src="assets:symbols/tra.svg" symbol-percent="75" />
+            <caption k="name" font-size="10" />
+        </rule>
+        <rule e="node" k="operator" v="臺北大眾捷運股份有限公司">
+            <symbol src="assets:symbols/dorts.svg" symbol-percent="75" />
+        </rule>
+        -->
+    </rule>
+
+    <rule e="way" k="amenity" v="parking" zoom-min="15">
+        <symbol src="jar:/osmarender/symbols/parking.svg" symbol-percent="60" />
+        <caption k="name" font-size="10" />
+    </rule>
+
+    <rule e="node" k="amenity" v="parking" zoom-min="15">
+        <symbol src="jar:/osmarender/symbols/parking.svg" symbol-percent="60" />
+        <caption k="name" font-size="10" />
+    </rule>
+
+</rendertheme>

@@ -1,24 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<rendertheme version="1">
-
-    <!-- 行政區 -->
-    <rule e="way" k="boundary" v="administrative">
-        <!-- 中華民國 -->
-        <rule e="way" k="admin_level" v="2" zoom-min="7" zoom-max="7">
-            <line stroke="#606060" stroke-width="0.4" stroke-dasharray="5,5" />
-        </rule>
-
-        <!-- 省、直轄市 | 縣、省轄市-->
-        <rule e="way" k="admin_level" v="4|6" zoom-min="7" zoom-max="14">
-            <line stroke="#606060" stroke-width="0.4" stroke-dasharray="5,1" />
-
-        </rule>
-
-        <!-- 直轄市所屬區 | 省轄市所屬區 | 鄉、鎮 -->
-        <rule e="way" k="admin_level" v="5|7|8" zoom-min="11" zoom-max="14">
-            <line stroke="#909090" stroke-width="0.4" stroke-dasharray="1,3" />
-        </rule>
-    </rule>
+<rendertheme version="4">
 
     <!-- 各類道路 -->
     <rule e="way" k="highway" v="*">
@@ -53,26 +34,26 @@
                 </rule>
                 <!-- works -->
                 <rule e="way" k="*" v="*" zoom-min="13" zoom-max="15">
-                    <line stroke="#707070" stroke-width="1.5" />
-                    <line stroke="#f0f0a0" stroke-width="1.3" />
+                    <line stroke="#707070" stroke-width="1.2" />
+                    <line stroke="#f0f0a0" stroke-width="1.0" />
                 </rule>
                 <rule e="way" k="*" v="*" zoom-min="16" zoom-max="18">
-                    <line stroke="#707070" stroke-width="2.0" />
-                    <line stroke="#f0f0a0" stroke-width="1.8" />
+                    <line stroke="#707070" stroke-width="1.5" />
+                    <line stroke="#f0f0a0" stroke-width="1.3" />
                 </rule>
             </rule>
             <!-- 隧道段 -->
             <rule e="way" k="tunnel" v="true|yes">
                 <rule e="way" k="*" v="*" zoom-min="10" zoom-max="12">
-                    <line stroke="#d0d090" stroke-width="1.0" stroke-dasharray="1,3" />
+                    <line stroke="#d0d090" stroke-width="0.9" stroke-dasharray="1,3" />
                 </rule>
                 <rule e="way" k="*" v="*" zoom-min="13" zoom-max="15">
-                    <line stroke="#707070" stroke-width="1.5" stroke-dasharray="1,3" />
-                    <line stroke="#f0f0a0" stroke-width="1.3" stroke-dasharray="1,3" />
+                    <line stroke="#707070" stroke-width="1.2" stroke-dasharray="1,3" />
+                    <line stroke="#f0f0a0" stroke-width="1.0" stroke-dasharray="1,3" />
                 </rule>
                 <rule e="way" k="*" v="*" zoom-min="16" zoom-max="18">
-                    <line stroke="#707070" stroke-width="2.0" stroke-dasharray="1,3" />
-                    <line stroke="#f0f0a0" stroke-width="1.8" stroke-dasharray="1,3" />
+                    <line stroke="#707070" stroke-width="1.5" stroke-dasharray="1,3" />
+                    <line stroke="#f0f0a0" stroke-width="1.3" stroke-dasharray="1,3" />
                 </rule>
             </rule>
             <!-- 除錯用 -->
@@ -123,247 +104,247 @@
             </rule>
             <rule e="way" k="highway" v="primary" zoom-min="10">
                 <rule e="way" k="ref" v="1">
-                    <lineSymbol src="assets:shields/primary/1.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/1.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="2">
-                    <lineSymbol src="assets:shields/primary/2.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/2.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="3">
-                    <lineSymbol src="assets:shields/primary/3.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/3.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="4">
-                    <lineSymbol src="assets:shields/primary/4.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/4.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="5">
-                    <lineSymbol src="assets:shields/primary/5.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/5.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="6">
-                    <lineSymbol src="assets:shields/primary/6.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/6.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="7">
-                    <lineSymbol src="assets:shields/primary/7.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/7.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="8">
-                    <lineSymbol src="assets:shields/primary/8.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/8.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="9">
-                    <lineSymbol src="assets:shields/primary/9.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/9.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="10">
-                    <lineSymbol src="assets:shields/primary/10.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/10.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="11">
-                    <lineSymbol src="assets:shields/primary/11.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/11.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="12">
-                    <lineSymbol src="assets:shields/primary/12.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/12.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="13">
-                    <lineSymbol src="assets:shields/primary/13.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/13.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="14">
-                    <lineSymbol src="assets:shields/primary/14.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/14.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="15">
-                    <lineSymbol src="assets:shields/primary/15.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/15.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="16">
-                    <lineSymbol src="assets:shields/primary/16.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/16.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="17">
-                    <lineSymbol src="assets:shields/primary/17.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/17.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="18">
-                    <lineSymbol src="assets:shields/primary/18.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/18.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="19">
-                    <lineSymbol src="assets:shields/primary/19.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/19.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="20">
-                    <lineSymbol src="assets:shields/primary/20.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/20.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="21">
-                    <lineSymbol src="assets:shields/primary/21.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/21.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="22">
-                    <lineSymbol src="assets:shields/primary/22.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/22.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="23">
-                    <lineSymbol src="assets:shields/primary/23.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/23.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="24">
-                    <lineSymbol src="assets:shields/primary/24.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/24.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="25">
-                    <lineSymbol src="assets:shields/primary/25.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/25.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="26">
-                    <lineSymbol src="assets:shields/primary/26.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/26.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="27">
-                    <lineSymbol src="assets:shields/primary/27.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/27.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="28">
-                    <lineSymbol src="assets:shields/primary/28.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/28.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="29">
-                    <lineSymbol src="assets:shields/primary/29.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/29.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="30">
-                    <lineSymbol src="assets:shields/primary/30.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/30.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="31">
-                    <lineSymbol src="assets:shields/primary/31.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/31.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="35">
-                    <lineSymbol src="assets:shields/primary/35.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/35.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="37">
-                    <lineSymbol src="assets:shields/primary/37.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/37.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="39">
-                    <lineSymbol src="assets:shields/primary/39.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/39.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="63">
-                    <lineSymbol src="assets:shields/primary/63.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/63.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="1甲">
-                    <lineSymbol src="assets:shields/primary/branches/1A.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/branches/1A.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="1乙">
-                    <lineSymbol src="assets:shields/primary/branches/1B.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/branches/1B.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="1丙">
-                    <lineSymbol src="assets:shields/primary/branches/1C.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/branches/1C.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="1丁">
-                    <lineSymbol src="assets:shields/primary/branches/1D.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/branches/1D.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="1戊">
-                    <lineSymbol src="assets:shields/primary/branches/1E.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/branches/1E.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="1己">
-                    <lineSymbol src="assets:shields/primary/branches/1F.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/branches/1F.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="2甲">
-                    <lineSymbol src="assets:shields/primary/branches/2A.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/branches/2A.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="2乙">
-                    <lineSymbol src="assets:shields/primary/branches/2B.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/branches/2B.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="2丙">
-                    <lineSymbol src="assets:shields/primary/branches/2C.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/branches/2C.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="2丁">
-                    <lineSymbol src="assets:shields/primary/branches/2D.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/branches/2D.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="2戊">
-                    <lineSymbol src="assets:shields/primary/branches/2E.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/branches/2E.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="2己">
-                    <lineSymbol src="assets:shields/primary/branches/2F.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/branches/2F.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="2庚">
-                    <lineSymbol src="assets:shields/primary/branches/2G.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/branches/2G.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="3甲">
-                    <lineSymbol src="assets:shields/primary/branches/3A.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/branches/3A.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="3乙">
-                    <lineSymbol src="assets:shields/primary/branches/3B.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/branches/3B.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="3丙">
-                    <lineSymbol src="assets:shields/primary/branches/3C.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/branches/3C.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="5甲">
-                    <lineSymbol src="assets:shields/primary/branches/5A.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/branches/5A.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="5乙">
-                    <lineSymbol src="assets:shields/primary/branches/5B.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/branches/5B.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="7甲">
-                    <lineSymbol src="assets:shields/primary/branches/7A.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/branches/7A.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="7乙">
-                    <lineSymbol src="assets:shields/primary/branches/7B.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/branches/7B.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="7丙">
-                    <lineSymbol src="assets:shields/primary/branches/7C.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/branches/7C.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="7丁">
-                    <lineSymbol src="assets:shields/primary/branches/7D.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/branches/7D.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="8甲">
-                    <lineSymbol src="assets:shields/primary/branches/8A.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/branches/8A.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="9甲">
-                    <lineSymbol src="assets:shields/primary/branches/9A.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/branches/9A.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="9乙">
-                    <lineSymbol src="assets:shields/primary/branches/9B.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/branches/9B.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="9丙">
-                    <lineSymbol src="assets:shields/primary/branches/9C.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/branches/9C.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="10乙">
-                    <lineSymbol src="assets:shields/primary/branches/10B.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/branches/10B.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="11甲">
-                    <lineSymbol src="assets:shields/primary/branches/11A.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/branches/11A.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="11乙">
-                    <lineSymbol src="assets:shields/primary/branches/11B.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/branches/11B.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="11丙">
-                    <lineSymbol src="assets:shields/primary/branches/11C.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/branches/11C.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="13甲">
-                    <lineSymbol src="assets:shields/primary/branches/11A.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/branches/11A.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="14甲">
-                    <lineSymbol src="assets:shields/primary/branches/14A.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/branches/14A.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="14乙">
-                    <lineSymbol src="assets:shields/primary/branches/14B.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/branches/14B.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="14丙">
-                    <lineSymbol src="assets:shields/primary/branches/14C.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/branches/14C.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="14丁">
-                    <lineSymbol src="assets:shields/primary/branches/14D.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/branches/14D.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="15甲">
-                    <lineSymbol src="assets:shields/primary/branches/15A.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/branches/15A.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="17甲">
-                    <lineSymbol src="assets:shields/primary/branches/17A.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/branches/17A.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="17乙">
-                    <lineSymbol src="assets:shields/primary/branches/17B.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/branches/17B.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="19甲">
-                    <lineSymbol src="assets:shields/primary/branches/19A.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/branches/19A.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="20甲">
-                    <lineSymbol src="assets:shields/primary/branches/20A.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/branches/20A.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="20乙">
-                    <lineSymbol src="assets:shields/primary/branches/20B.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/branches/20B.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="21甲">
-                    <lineSymbol src="assets:shields/primary/branches/21A.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/branches/21A.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="27甲">
-                    <lineSymbol src="assets:shields/primary/branches/27A.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/branches/27A.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="63甲">
-                    <lineSymbol src="assets:shields/primary/branches/63A.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/branches/63A.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="68甲">
-                    <lineSymbol src="assets:shields/primary/branches/68A.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/branches/68A.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="74甲">
-                    <lineSymbol src="assets:shields/primary/branches/74A.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/primary/branches/74A.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
             </rule>
         </rule>
@@ -410,52 +391,52 @@
             </rule>
             <rule e="way" k="*" v="*" zoom-min="8">
                 <rule e="way" k="ref" v="61">
-                    <lineSymbol src="assets:shields/trunk/61.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/trunk/61.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="62">
-                    <lineSymbol src="assets:shields/trunk/62.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/trunk/62.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="64">
-                    <lineSymbol src="assets:shields/trunk/64.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/trunk/64.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="65">
-                    <lineSymbol src="assets:shields/trunk/65.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/trunk/65.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="66">
-                    <lineSymbol src="assets:shields/trunk/66.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/trunk/66.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="68">
-                    <lineSymbol src="assets:shields/trunk/68.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/trunk/68.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="72">
-                    <lineSymbol src="assets:shields/trunk/72.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/trunk/72.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="74">
-                    <lineSymbol src="assets:shields/trunk/74.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/trunk/74.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="76">
-                    <lineSymbol src="assets:shields/trunk/76.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/trunk/76.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="78">
-                    <lineSymbol src="assets:shields/trunk/78.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/trunk/78.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="82">
-                    <lineSymbol src="assets:shields/trunk/82.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/trunk/82.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="84">
-                    <lineSymbol src="assets:shields/trunk/84.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/trunk/84.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="86">
-                    <lineSymbol src="assets:shields/trunk/86.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/trunk/86.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="88">
-                    <lineSymbol src="assets:shields/trunk/88.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/trunk/88.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="61甲">
-                    <lineSymbol src="assets:shields/trunk/branches/61A.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/trunk/branches/61A.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
                 <rule e="way" k="ref" v="61乙">
-                    <lineSymbol src="assets:shields/trunk/branches/61B.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/trunk/branches/61B.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
             </rule>
         </rule>
@@ -501,72 +482,56 @@
                 </rule>
             </rule>
             <!-- 標誌 -->
-            <rule e="way" k="*" v="*" zoom-min="8" zoom-max="18">
+            <rule e="way" k="highway" v="motorway" zoom-min="8" zoom-max="18">
                 <rule e="way" k="ref" v="1">
-                    <lineSymbol src="assets:shields/motorway/1.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/motorway/1.svg"
+                        symbol-percent="85" rotate="false" align-center="true"
+                        repeat="true" repeat-start="5" repeat-gap="250" />
                 </rule>
                 <rule e="way" k="ref" v="2">
-                    <lineSymbol src="assets:shields/motorway/2.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/motorway/2.svg"
+                        symbol-percent="85" rotate="false" align-center="true"
+                        repeat="true" repeat-start="5" repeat-gap="250" />
                 </rule>
                 <rule e="way" k="ref" v="3">
-                    <lineSymbol src="assets:shields/motorway/3.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/motorway/3.svg"
+                        symbol-percent="85" rotate="false" align-center="true"
+                        repeat="true" repeat-start="5" repeat-gap="250" />
                 </rule>
-                <rule e="way" k="ref" v="4"><!-- 快速道路 -->
-                    <rule e="way" k="highway" v="trunk|trunk_link">
-                        <!-- 非隧道段 -->
-                        <rule e="way" k="tunnel" v="~|no|false">
-                            <rule e="way" k="*" v="*" zoom-min="8" zoom-max="9">
-                                <line stroke="#f07070" stroke-width="0.5" />
-                            </rule>
-                            <rule e="way" k="*" v="*" zoom-min="10" zoom-max="12">
-                                <line stroke="#f07070" stroke-width="1.0" />
-                            </rule>
-                            <rule e="way" k="*" v="*" zoom-min="13" zoom-max="15">
-                                <line stroke="#f07070" stroke-width="1.5" />
-                            </rule>
-                            <rule e="way" k="*" v="*" zoom-min="16" zoom-max="18">
-                                <line stroke="#f07070" stroke-width="2.0" />
-                            </rule>
-                        </rule>
-                        <!-- 隧道段 -->
-                        <rule e="way" k="tunnel" v="true|yes">
-                            <rule e="way" k="*" v="*" zoom-min="8" zoom-max="9">
-                                <line stroke="#f07070" stroke-width="0.5" stroke-dasharray="1,3" />
-                            </rule>
-                            <rule e="way" k="*" v="*" zoom-min="10" zoom-max="12">
-                                <line stroke="#f07070" stroke-width="1.0" stroke-dasharray="1,3" />
-                            </rule>
-                            <rule e="way" k="*" v="*" zoom-min="13" zoom-max="15">
-                                <line stroke="#f07070" stroke-width="1.5" stroke-dasharray="1,3" />
-                            </rule>
-                            <rule e="way" k="*" v="*" zoom-min="16" zoom-max="18">
-                                <line stroke="#f07070" stroke-width="2.0" stroke-dasharray="1,3" />
-                            </rule>
-                        </rule>
-                        <!-- 除錯用 -->
-                        <rule e="way" k="*" v="*" zoom-min="8" zoom-max="18">
-                            <pathText k="ref" font-size="10" stroke="#303030" />
-                        </rule>
-                    </rule>
-                    <lineSymbol src="assets:shields/motorway/4.svg" align-center="true" repeat="true" />
+                <rule e="way" k="ref" v="4">
+                    <lineSymbol src="assets:shields/motorway/4.svg"
+                        symbol-percent="85" rotate="false" align-center="true"
+                        repeat="true" repeat-start="5" repeat-gap="250" />
                 </rule>
                 <rule e="way" k="ref" v="5">
-                    <lineSymbol src="assets:shields/motorway/5.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/motorway/5.svg"
+                        symbol-percent="85" rotate="false" align-center="true"
+                        repeat="true" repeat-start="5" repeat-gap="250" />
                 </rule>
                 <rule e="way" k="ref" v="6">
-                    <lineSymbol src="assets:shields/motorway/6.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/motorway/6.svg"
+                        symbol-percent="85" rotate="false" align-center="true"
+                        repeat="true" repeat-start="5" repeat-gap="250" />
                 </rule>
                 <rule e="way" k="ref" v="8">
-                    <lineSymbol src="assets:shields/motorway/8.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/motorway/8.svg"
+                        symbol-percent="85" rotate="false" align-center="true"
+                        repeat="true" repeat-start="5" repeat-gap="250" />
                 </rule>
                 <rule e="way" k="ref" v="10">
-                    <lineSymbol src="assets:shields/motorway/10.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/motorway/10.svg"
+                        symbol-percent="85" rotate="false" align-center="true"
+                        repeat="true" repeat-start="5" repeat-gap="250" />
                 </rule>
                 <rule e="way" k="ref" v="2甲">
-                    <lineSymbol src="assets:shields/motorway/branches/2A.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/motorway/branches/2A.svg"
+                        symbol-percent="85" rotate="false" align-center="true"
+                        repeat="true" repeat-start="5" repeat-gap="250" />
                 </rule>
                 <rule e="way" k="ref" v="3甲">
-                    <lineSymbol src="assets:shields/motorway/branches/3A.svg" align-center="true" repeat="true" />
+                    <lineSymbol src="assets:shields/motorway/branches/3A.svg"
+                        symbol-percent="85" rotate="false" align-center="true"
+                        repeat="true" repeat-start="5" repeat-gap="250" />
                 </rule>
             </rule>
         </rule>

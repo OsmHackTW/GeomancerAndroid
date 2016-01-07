@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<rendertheme version="1">
+<rendertheme version="4" map-background="#f8f8f8" map-background-outside="#707070">
 
     <rule e="way" k="natural" v="issea|sea">
         <area fill="#90b0c0" />
@@ -9,12 +9,13 @@
         <area fill="#f8f8f8" stroke="#f8f8f8" stroke-width="1.0" />
     </rule>
 
-    <!-- nosea replacement (invalid) -->
-    <!--
-    <rule e="way" k="admin_level" v="4|6">
-        <area fill="#f8f8f8" />
+    <rule e="way" k="natural" v="water" zoom-min="10">
+        <area fill="#b0e0d0" />
     </rule>
-    -->
+
+    <rule e="way" k="waterway" v="riverbank" zoom-min="10">
+        <area fill="#b0e0d0" />
+    </rule>
 
     <rule e="way" k="waterway" v="river" zoom-min="10">
         <rule e="way" k="*" v="*" zoom-min="10" zoom-max="12">
@@ -29,12 +30,23 @@
         <pathText k="name" font-size="10" stroke="#ffffff" stroke-width="2.0" />
     </rule>
 
-    <rule e="way" k="natural" v="water" zoom-min="10">
-        <area fill="#b0e0d0" />
-    </rule>
+    <!-- 行政區 -->
+    <rule e="way" k="boundary" v="administrative">
+        <!-- 中華民國 -->
+        <rule e="way" k="admin_level" v="2" zoom-min="7" zoom-max="7">
+            <line stroke="#606060" stroke-width="0.4" stroke-dasharray="5,5" />
+        </rule>
 
-    <rule e="way" k="waterway" v="riverbank" zoom-min="10">
-        <area fill="#b0e0d0" />
+        <!-- 省、直轄市 | 縣、省轄市-->
+        <rule e="way" k="admin_level" v="4|6" zoom-min="7" zoom-max="14">
+            <line stroke="#606060" stroke-width="0.4" stroke-dasharray="5,1" />
+
+        </rule>
+
+        <!-- 直轄市所屬區 | 省轄市所屬區 | 鄉、鎮 -->
+        <rule e="way" k="admin_level" v="5|7|8" zoom-min="11" zoom-max="14">
+            <line stroke="#909090" stroke-width="0.4" stroke-dasharray="1,3" />
+        </rule>
     </rule>
 
 </rendertheme>
