@@ -1,6 +1,7 @@
 package tacoball.com.geomancer.tacoball.com.geomancer.view;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -56,20 +57,16 @@ public class TaiwanMapView extends MapView {
     private long mPrevOnDraw = 0;
 
     public static class State {
-
         public double cLat;
         public double cLng;
         public int    zoom;
         public double myLat = -1;
         public double myLng = -1;
         public double myAzimuth;
-
     }
 
-    public static class StateChangeListener {
-
-        public void onStateChanged(State state) { }
-
+    public interface StateChangeListener {
+        void onStateChanged(State state);
     }
 
     public TaiwanMapView(Context context, AttributeSet attributeSet) {
@@ -77,8 +74,8 @@ public class TaiwanMapView extends MapView {
 
         try {
             mContext     = context;
-            mSensorMgr   = (SensorManager)mContext.getSystemService(Context.SENSOR_SERVICE);
-            mLocationMgr = (LocationManager)mContext.getSystemService(Context.LOCATION_SERVICE);
+            mSensorMgr   = (SensorManager) mContext.getSystemService(Context.SENSOR_SERVICE);
+            mLocationMgr = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
 
             Sensor rv = mSensorMgr.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
             mSensorMgr.registerListener(mAzimuthListener, rv, SensorManager.SENSOR_DELAY_UI);
@@ -130,12 +127,19 @@ public class TaiwanMapView extends MapView {
 
     @Override
     public void destroy() {
-        mSensorMgr.unregisterListener(mAzimuthListener);
-
         // TODO: Remove this after #659 solved
         // Avoid Issue #659, https://github.com/mapsforge/mapsforge/issues/659
         mMyLocationMarker.setBitmap(null);
 
+        // Save state
+        mContext.getSharedPreferences(TAG, Context.MODE_PRIVATE)
+            .edit()
+            .putFloat("cLat", (float)mState.cLat)
+            .putFloat("cLng", (float)mState.cLng)
+            .putInt("zoom", mState.zoom)
+            .commit();
+
+        mSensorMgr.unregisterListener(mAzimuthListener);
         disableGps();
         super.destroy();
     }
@@ -153,19 +157,18 @@ public class TaiwanMapView extends MapView {
     }
 
     private void initView() throws IOException {
-        final String mapName   = "taiwan-201512.map";
+        final String mapName   = "taiwan-taco.map";
         final byte   minZoom   = 7;
         final byte   maxZoom   = 17;
 
         AndroidGraphicFactory.clearResourceFileCache();
         AndroidGraphicFactory.clearResourceMemoryCache();
 
-        // TODO: Load initial location from preferences
-
-        //LatLong initLoc   = new LatLong(23.517, 121.000);
-        //byte    initZoom  = minZoom;
-        LatLong initLoc   = new LatLong(25.076, 121.544);
-        byte    initZoom  = 14;
+        // Load state or initial state
+        SharedPreferences pref = mContext.getSharedPreferences(TAG, Context.MODE_PRIVATE);
+        mState.cLat = pref.getFloat("cLat", 25.076f);
+        mState.cLng = pref.getFloat("cLng", 121.544f);
+        mState.zoom = pref.getInt("zoom", 16);
 
         File mapFile  = new File(Environment.getExternalStorageDirectory(), mapName);
         mMapDataStore = new MapFile(mapFile);
@@ -177,8 +180,8 @@ public class TaiwanMapView extends MapView {
 
         // set UI of mapView
         setClickable(true);
-        setCenter(initLoc);
-        setZoomLevel(initZoom);
+        setCenter(new LatLong(mState.cLat, mState.cLng));
+        setZoomLevel((byte)mState.zoom);
         getMapZoomControls().setZoomLevelMin(minZoom);
         getMapZoomControls().setZoomLevelMax(maxZoom);
         getMapZoomControls().setAutoHide(true);

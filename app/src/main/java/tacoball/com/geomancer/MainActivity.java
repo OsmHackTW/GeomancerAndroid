@@ -1,5 +1,6 @@
 package tacoball.com.geomancer;
 
+import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -10,6 +11,10 @@ import org.mapsforge.map.android.graphics.AndroidGraphicFactory;
 
 public class MainActivity extends ActionBarActivity {
 
+    private static final String TAG = "MainActivity";
+
+    Fragment mMapFrag;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -18,8 +23,10 @@ public class MainActivity extends ActionBarActivity {
         AndroidGraphicFactory.createInstance(getApplication());
         setContentView(R.layout.activity_main);
 
+        // Init Fragments
+        mMapFrag = new MapViewFragment();
         FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.add(R.id.frag_container, new MapViewFragment());
+        ft.add(R.id.frag_container, mMapFrag);
         ft.commit();
     }
 
