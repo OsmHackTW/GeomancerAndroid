@@ -347,6 +347,221 @@
                 <rule e="way" k="ref" v="74甲">
                     <lineSymbol src="assets:shields/primary/branches/74A.svg" rotate="false" align-center="true" repeat="true" />
                 </rule>
+                <!--
+                共線路段:
+                    SELECT DISTINCT ref FROM planet_osm_line
+                    WHERE highway='primary'
+                    AND ref LIKE '%;%'
+                    ORDER BY ref;
+                -->
+                <rule e="way" k="ref" v="1;106甲">
+                    <lineSymbol src="assets:shields/primary/branches/1.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="1;110甲">
+                    <lineSymbol src="assets:shields/primary/branches/1.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="1;112">
+                    <lineSymbol src="assets:shields/primary/branches/1.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="1;117">
+                    <lineSymbol src="assets:shields/primary/branches/1.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="1;158甲">
+                    <lineSymbol src="assets:shields/primary/branches/1.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="1;19甲">
+                    <lineSymbol src="assets:shields/primary/branches/1.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="1;1甲">
+                    <!-- 捷運新莊站附近 -->
+                    <lineSymbol src="assets:shields/primary/branches/1.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="1;3">
+                    <lineSymbol src="assets:shields/primary/branches/1.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="1;4">
+                    <lineSymbol src="assets:shields/primary/branches/1.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="1;4;110">
+                    <lineSymbol src="assets:shields/primary/branches/1.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="1;桃11">
+                    <lineSymbol src="assets:shields/primary/branches/1.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="1;雲42">
+                    <lineSymbol src="assets:shields/primary/branches/1.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="1;雲49">
+                    <lineSymbol src="assets:shields/primary/branches/1.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="1;嘉88">
+                    <lineSymbol src="assets:shields/primary/branches/1.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="1甲;104">
+                    <lineSymbol src="assets:shields/primary/branches/1A.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="1甲;106">
+                    <lineSymbol src="assets:shields/primary/branches/1A.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="2;2乙">
+                    <lineSymbol src="assets:shields/primary/branches/2.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="2;2戊">
+                    <lineSymbol src="assets:shields/primary/branches/2.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="2丙;102">
+                    <lineSymbol src="assets:shields/primary/branches/2C.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="3;106">
+                    <lineSymbol src="assets:shields/primary/branches/3.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="3;110">
+                    <lineSymbol src="assets:shields/primary/branches/3.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="3;114">
+                    <lineSymbol src="assets:shields/primary/branches/3.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="3;120">
+                    <lineSymbol src="assets:shields/primary/branches/3.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="3;124">
+                    <lineSymbol src="assets:shields/primary/branches/3.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="3;152">
+                    <lineSymbol src="assets:shields/primary/branches/3.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="3;20">
+                    <lineSymbol src="assets:shields/primary/branches/3.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="3;22">
+                    <lineSymbol src="assets:shields/primary/branches/3.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="3;28;29">
+                    <lineSymbol src="assets:shields/primary/branches/3.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="3;29">
+                    <lineSymbol src="assets:shields/primary/branches/3.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="3;4">
+                    <lineSymbol src="assets:shields/primary/branches/3.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="3;竹37">
+                    <lineSymbol src="assets:shields/primary/branches/3.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="3;桃64">
+                    <lineSymbol src="assets:shields/primary/branches/3.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="6;苗24">
+                    <lineSymbol src="assets:shields/primary/branches/6.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="7;宜18">
+                    <lineSymbol src="assets:shields/primary/branches/7.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="7;宜7">
+                    <lineSymbol src="assets:shields/primary/branches/7.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="9;30">
+                    <lineSymbol src="assets:shields/primary/branches/9.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="11;193">
+                    <lineSymbol src="assets:shields/primary/branches/11.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="11;花29">
+                    <lineSymbol src="assets:shields/primary/branches/11.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="11甲;193">
+                    <lineSymbol src="assets:shields/primary/branches/11A.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="13;119">
+                    <lineSymbol src="assets:shields/primary/branches/13.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="13甲;124">
+                    <lineSymbol src="assets:shields/primary/branches/13A.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="14;21">
+                    <lineSymbol src="assets:shields/primary/branches/14.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="14;投6">
+                    <lineSymbol src="assets:shields/primary/branches/14.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="15;桃35">
+                    <lineSymbol src="assets:shields/primary/branches/15.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="15;桃37">
+                    <lineSymbol src="assets:shields/primary/branches/15.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="15;桃96">
+                    <lineSymbol src="assets:shields/primary/branches/15.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="15;竹市2">
+                    <lineSymbol src="assets:shields/primary/branches/15.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="16;152">
+                    <lineSymbol src="assets:shields/primary/branches/16.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="16;21">
+                    <lineSymbol src="assets:shields/primary/branches/16.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="17;嘉18">
+                    <lineSymbol src="assets:shields/primary/branches/17.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="17甲;高4">
+                    <lineSymbol src="assets:shields/primary/branches/17A.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="18;嘉64">
+                    <lineSymbol src="assets:shields/primary/branches/18.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="19;139">
+                    <lineSymbol src="assets:shields/primary/branches/19.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="19;152">
+                    <lineSymbol src="assets:shields/primary/branches/19.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="19;154">
+                    <lineSymbol src="assets:shields/primary/branches/19.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="19;彰130">
+                    <lineSymbol src="assets:shields/primary/branches/19.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="19;彰148">
+                    <lineSymbol src="assets:shields/primary/branches/19.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="19;雲162">
+                    <lineSymbol src="assets:shields/primary/branches/19.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="19;雲168">
+                    <lineSymbol src="assets:shields/primary/branches/19.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="19甲;182">
+                    <lineSymbol src="assets:shields/primary/branches/19A.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="19甲;186">
+                    <lineSymbol src="assets:shields/primary/branches/19A.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="20;29">
+                    <lineSymbol src="assets:shields/primary/branches/20.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="22;186">
+                    <lineSymbol src="assets:shields/primary/branches/22.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="24;185">
+                    <lineSymbol src="assets:shields/primary/branches/24.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="27;17">
+                    <lineSymbol src="assets:shields/primary/branches/27.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="28;181">
+                    <lineSymbol src="assets:shields/primary/branches/28.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="28;高140">
+                    <lineSymbol src="assets:shields/primary/branches/28.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="31;桃102">
+                    <lineSymbol src="assets:shields/primary/branches/31.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
+                <rule e="way" k="ref" v="37;157">
+                    <lineSymbol src="assets:shields/primary/branches/37.svg" rotate="false" align-center="true" repeat="true" />
+                </rule>
             </rule>
         </rule>
 
