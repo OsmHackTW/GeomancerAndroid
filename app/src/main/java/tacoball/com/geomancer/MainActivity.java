@@ -9,6 +9,8 @@ import android.view.MenuItem;
 
 import org.mapsforge.map.android.graphics.AndroidGraphicFactory;
 
+import tacoball.com.geomancer.tacoball.com.geomancer.view.TaiwanMapView;
+
 public class MainActivity extends ActionBarActivity {
 
     private static final String TAG = "MainActivity";
@@ -22,6 +24,11 @@ public class MainActivity extends ActionBarActivity {
         // 配置 Android 繪圖資源，必須在 inflate 之前完成
         AndroidGraphicFactory.createInstance(getApplication());
         setContentView(R.layout.activity_main);
+
+        // Extraction Test
+        if (!TaiwanMapView.hasMapFile(this)) {
+            TaiwanMapView.extractMapFile(this);
+        }
 
         // Init Fragments
         mMapFrag = new MapViewFragment();

@@ -16,10 +16,10 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.AttributeSet;
 import android.util.Log;
 
+import org.apache.commons.io.IOUtils;
 import org.mapsforge.core.model.LatLong;
 import org.mapsforge.map.android.graphics.AndroidGraphicFactory;
 import org.mapsforge.map.android.rendertheme.AssetsRenderTheme;
@@ -32,7 +32,11 @@ import org.mapsforge.map.layer.renderer.TileRendererLayer;
 import org.mapsforge.map.reader.MapFile;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.zip.GZIPInputStream;
 
 /**
  *
@@ -40,6 +44,7 @@ import java.io.IOException;
 public class TaiwanMapView extends MapView {
 
     private static final String TAG = "TacoMapView";
+    private static final String MAP_NAME = "taiwan-taco.map";
 
     private Context         mContext;
     private MapDataStore    mMapDataStore;
@@ -144,6 +149,48 @@ public class TaiwanMapView extends MapView {
         super.destroy();
     }
 
+    public static File getMapFile(Context context) {
+        File[] dirs = context.getExternalFilesDirs("map");
+        File f = null;
+
+        if (dirs!=null && dirs.length>0) {
+            f = new File(dirs[dirs.length-1], MAP_NAME);
+        }
+
+        return f;
+    }
+
+    public static boolean hasMapFile(Context context) {
+        File f = getMapFile(context);
+        Log.e(TAG, f.getAbsolutePath());
+
+        if (f!=null) {
+            return f.exists();
+        } else {
+            return false;
+        }
+    }
+
+    public static void extractMapFile(Context context) {
+        File f = getMapFile(context);
+        if (!f.exists()) {
+            try {
+                String asset = String.format("gzipped-%s", MAP_NAME);
+                InputStream  in  = new GZIPInputStream(context.getAssets().open(asset));
+                OutputStream out = new FileOutputStream(f);
+                IOUtils.copy(in, out);
+                //Log.e(TAG, "Copied ^^");
+            } catch(IOException ex) {
+                String msg = String.format(
+                    "extractMapFile Failed: %s %s",
+                    ex.getClass().getSimpleName(),
+                    ex.getMessage()
+                );
+                Log.e(TAG, msg);
+            }
+        }
+    }
+
     private void enableGps() {
         // 接收方位感應器和 GPS 訊號
         mGpsEnabled = true;
@@ -157,9 +204,8 @@ public class TaiwanMapView extends MapView {
     }
 
     private void initView() throws IOException {
-        final String mapName   = "taiwan-taco.map";
-        final byte   minZoom   = 7;
-        final byte   maxZoom   = 17;
+        final byte minZoom   = 7;
+        final byte maxZoom   = 17;
 
         AndroidGraphicFactory.clearResourceFileCache();
         AndroidGraphicFactory.clearResourceMemoryCache();
@@ -170,7 +216,7 @@ public class TaiwanMapView extends MapView {
         mState.cLng = pref.getFloat("cLng", 121.544f);
         mState.zoom = pref.getInt("zoom", 16);
 
-        File mapFile  = new File(Environment.getExternalStorageDirectory(), mapName);
+        File mapFile  = getMapFile(mContext);
         mMapDataStore = new MapFile(mapFile);
 
         // add Layer to mapView
