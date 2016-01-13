@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rendertheme version="4" map-background="#f8f8f8" map-background-outside="#707070">
 
-    <rule e="way" k="natural" v="issea|sea">
+    <rule e="way" k="natural" v="issea|sea" zoom-min="0">
         <area fill="#90b0c0" />
     </rule>
 
-    <rule e="way" k="natural" v="nosea">
+    <rule e="way" k="natural" v="nosea" zoom-min="0">
         <area fill="#f8f8f8" stroke="#f8f8f8" stroke-width="1.0" />
     </rule>
 
@@ -40,7 +40,6 @@
         <!-- 省、直轄市 | 縣、省轄市-->
         <rule e="way" k="admin_level" v="4|6" zoom-min="7" zoom-max="14">
             <line stroke="#606060" stroke-width="0.4" stroke-dasharray="5,1" />
-
         </rule>
 
         <!-- 直轄市所屬區 | 省轄市所屬區 | 鄉、鎮 -->

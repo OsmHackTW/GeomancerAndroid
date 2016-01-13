@@ -27,6 +27,12 @@
         </rule>
     </rule>
 
+    <rule e="node" k="place" v="*">
+        <rule e="node" k="place" v="city|county" zoom-min="7" zoom-max="9">
+            <caption k="name" font-size="14" font-style="bold" stroke="#ffffff" stroke-width="3.0" />
+        </rule>
+    </rule>
+
     <rule e="way" k="amenity" v="parking" zoom-min="15">
         <symbol src="jar:/osmarender/symbols/parking.svg" symbol-percent="50" />
     </rule>
