@@ -26,7 +26,7 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
 
         // Extraction Test
-        if (!TaiwanMapView.hasMapFile(this)) {
+        if (TaiwanMapView.hasNewMapFile(this)) {
             TaiwanMapView.extractMapFile(this);
         }
 

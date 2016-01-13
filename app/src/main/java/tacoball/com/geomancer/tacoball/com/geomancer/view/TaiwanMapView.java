@@ -59,7 +59,7 @@ public class TaiwanMapView extends MapView {
     private boolean mOneTimePositioning = false;
     private boolean mGpsEnabled         = false;
 
-    private long mPrevOnDraw = 0;
+    private long mPrevOnDraw = 10;
 
     public static class State {
         public double cLat;
@@ -149,7 +149,7 @@ public class TaiwanMapView extends MapView {
         super.destroy();
     }
 
-    public static File getMapFile(Context context) {
+    public static File getAppliedMapFile(Context context) {
         File[] dirs = context.getExternalFilesDirs("map");
         File f = null;
 
@@ -160,34 +160,59 @@ public class TaiwanMapView extends MapView {
         return f;
     }
 
-    public static boolean hasMapFile(Context context) {
-        File f = getMapFile(context);
-        Log.e(TAG, f.getAbsolutePath());
-
-        if (f!=null) {
-            return f.exists();
-        } else {
-            return false;
+    public static String getCurrentMapFile(Context context) {
+        try {
+            String[] assets = context.getAssets().list("");
+            for (String s : assets) {
+                if (s.matches("^gzipped-taiwan-taco-\\d+\\.map$")) {
+                    return s;
+                }
+            }
+        } catch(IOException e) {
+            Log.e(TAG, "Cannot list asset");
         }
+
+        Log.e(TAG, "Mapfile not found");
+        return null;
+    }
+
+    public static boolean hasNewMapFile(Context context) {
+        File f = getAppliedMapFile(context);
+        if (!f.exists()) return true;
+
+        SharedPreferences pref = context.getSharedPreferences(TAG, Context.MODE_PRIVATE);
+        int applyVer = pref.getInt("map.version", 0);
+
+        String currMapFile = getCurrentMapFile(context);
+        int currVer  = Integer.valueOf(currMapFile.substring(20,30));
+
+        return (currVer>applyVer);
     }
 
     public static void extractMapFile(Context context) {
-        File f = getMapFile(context);
-        if (!f.exists()) {
-            try {
-                String asset = String.format("gzipped-%s", MAP_NAME);
-                InputStream  in  = new GZIPInputStream(context.getAssets().open(asset));
-                OutputStream out = new FileOutputStream(f);
-                IOUtils.copy(in, out);
-                //Log.e(TAG, "Copied ^^");
-            } catch(IOException ex) {
-                String msg = String.format(
-                    "extractMapFile Failed: %s %s",
-                    ex.getClass().getSimpleName(),
-                    ex.getMessage()
-                );
-                Log.e(TAG, msg);
-            }
+        try {
+            Log.i(TAG, "解壓縮圖資");
+
+            String currMapFile = getCurrentMapFile(context);
+            InputStream  in  = new GZIPInputStream(context.getAssets().open(currMapFile));
+            File f = getAppliedMapFile(context);
+            OutputStream out = new FileOutputStream(f);
+            IOUtils.copy(in, out);
+
+            SharedPreferences pref = context.getSharedPreferences(TAG, Context.MODE_PRIVATE);
+            int currVer = Integer.valueOf(currMapFile.substring(20, 30));
+            pref.edit()
+                .putInt("map.version", currVer)
+                .apply();
+
+            Log.i(TAG, "解壓縮完成");
+        } catch(IOException ex) {
+            String msg = String.format(
+                "extractMapFile Failed: %s %s",
+                ex.getClass().getSimpleName(),
+                ex.getMessage()
+            );
+            Log.e(TAG, msg);
         }
     }
 
@@ -216,11 +241,11 @@ public class TaiwanMapView extends MapView {
         mState.cLng = pref.getFloat("cLng", 121.544f);
         mState.zoom = pref.getInt("zoom", 16);
 
-        File mapFile  = getMapFile(mContext);
+        File mapFile  = getAppliedMapFile(mContext);
         mMapDataStore = new MapFile(mapFile);
 
         // add Layer to mapView
-        getLayerManager().getLayers().add(loadThemeLayer("themes/TaiwanGrounds", false)); // Bottom Layer
+        getLayerManager().getLayers().add(loadThemeLayer("themes/TaiwanGrounds", false));
         getLayerManager().getLayers().add(loadThemeLayer("themes/TaiwanRoads"));
         getLayerManager().getLayers().add(loadThemeLayer("themes/TaiwanPoints"));
 
