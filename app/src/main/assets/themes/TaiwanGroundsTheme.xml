@@ -81,6 +81,9 @@
         <rule e="way" k="landuse" v="grass">
             <area fill="#90c090" stroke="#a0a0a0" />
         </rule>
+        <rule e="way" k="landuse" v="farm|farmland">
+            <area fill="#ddddcc" stroke="#a0a0a0" />
+        </rule>
         <rule e="way" k="landuse" v="construction">
             <area fill="#eeeedd" stroke="#a0a0a0" />
         </rule>

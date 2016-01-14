@@ -797,66 +797,66 @@
     <!-- 高鐵、台鐵、捷運 -->
     <rule e="way" k="railway" v="*">
         <rule e="way" k="railway" v="rail">
-            <!-- 高鐵 (因缺少 highspeed 欄位暫時無效) -->
-            <rule e="way" k="highspeed" v="yes">
+            <!-- 台鐵 -->
+            <rule e="way" k="operator" v="~|*">
                 <rule e="way" k="*" v="*" zoom-min="8" zoom-max="9">
-                    <line stroke="#707070" stroke-width="0.6" />
-                    <line stroke="#ffffff" stroke-width="0.4" stroke-dasharray="6,6" stroke-linecap="butt" />
+                    <line stroke="#909090" stroke-width="0.6" stroke-linecap="square" />
+                    <line stroke="#ffffff" stroke-width="0.4" stroke-dasharray="6,6" stroke-linecap="square" />
                 </rule>
                 <rule e="way" k="*" v="*" zoom-min="10" zoom-max="12">
-                    <line stroke="#707070" stroke-width="0.8" />
-                    <line stroke="#ffffff" stroke-width="0.6" stroke-dasharray="8,8" stroke-linecap="butt" />
+                    <line stroke="#909090" stroke-width="0.8" stroke-linecap="square" />
+                    <line stroke="#ffffff" stroke-width="0.6" stroke-dasharray="8,8" stroke-linecap="square" />
                 </rule>
                 <rule e="way" k="*" v="*" zoom-min="13" zoom-max="15">
-                    <line stroke="#707070" stroke-width="1.0" />
-                    <line stroke="#ffffff" stroke-width="0.7" stroke-dasharray="10,10" stroke-linecap="butt" />
+                    <line stroke="#909090" stroke-width="1.0" stroke-linecap="square" />
+                    <line stroke="#ffffff" stroke-width="0.8" stroke-dasharray="10,10" stroke-linecap="square" />
                 </rule>
                 <rule e="way" k="*" v="*" zoom-min="16" zoom-max="16">
-                    <line stroke="#707070" stroke-width="0.6" />
-                    <line stroke="#ffffff" stroke-width="0.3" stroke-dasharray="15,15" stroke-linecap="butt" />
+                    <line stroke="#909090" stroke-width="0.6" stroke-linecap="square" />
+                    <line stroke="#ffffff" stroke-width="0.5" stroke-dasharray="15,15" stroke-linecap="square" />
                 </rule>
                 <rule e="way" k="*" v="*" zoom-min="17" zoom-max="17">
-                    <line stroke="#707070" stroke-width="0.6" />
-                    <line stroke="#ffffff" stroke-width="0.3" stroke-dasharray="20,20" stroke-linecap="butt" />
+                    <line stroke="#909090" stroke-width="0.6" stroke-linecap="square" />
+                    <line stroke="#ffffff" stroke-width="0.5" stroke-dasharray="20,20" stroke-linecap="square" />
                 </rule>
             </rule>
-            <!-- 台鐵 -->
-            <rule e="way" k="highspeed" v="~|no">
+            <!-- 高鐵 -->
+            <rule e="way" k="operator" v="台灣高速鐵路股份有限公司">
                 <rule e="way" k="*" v="*" zoom-min="8" zoom-max="9">
-                    <line stroke="#909090" stroke-width="0.6" />
-                    <line stroke="#ffffff" stroke-width="0.4" stroke-dasharray="6,6" stroke-linecap="butt" />
+                    <line stroke="#ff9000" stroke-width="0.6" stroke-linecap="square" />
+                    <line stroke="#ffffff" stroke-width="0.4" stroke-dasharray="6,6" stroke-linecap="square" />
                 </rule>
                 <rule e="way" k="*" v="*" zoom-min="10" zoom-max="12">
-                    <line stroke="#909090" stroke-width="0.8" />
-                    <line stroke="#ffffff" stroke-width="0.6" stroke-dasharray="8,8" stroke-linecap="butt" />
+                    <line stroke="#ff9000" stroke-width="0.8" stroke-linecap="square" />
+                    <line stroke="#ffffff" stroke-width="0.6" stroke-dasharray="8,8" stroke-linecap="square" />
                 </rule>
                 <rule e="way" k="*" v="*" zoom-min="13" zoom-max="15">
-                    <line stroke="#909090" stroke-width="1.0" />
-                    <line stroke="#ffffff" stroke-width="0.7" stroke-dasharray="10,10" stroke-linecap="butt" />
+                    <line stroke="#ff9000" stroke-width="1.0" stroke-linecap="square" />
+                    <line stroke="#ffffff" stroke-width="0.8" stroke-dasharray="10,10" stroke-linecap="square" />
                 </rule>
                 <rule e="way" k="*" v="*" zoom-min="16" zoom-max="16">
-                    <line stroke="#909090" stroke-width="0.6" />
-                    <line stroke="#ffffff" stroke-width="0.3" stroke-dasharray="15,15" stroke-linecap="butt" />
+                    <line stroke="#ff9000" stroke-width="0.6" stroke-linecap="square" />
+                    <line stroke="#ffffff" stroke-width="0.5" stroke-dasharray="15,15" stroke-linecap="square" />
                 </rule>
                 <rule e="way" k="*" v="*" zoom-min="17" zoom-max="17">
-                    <line stroke="#909090" stroke-width="0.6" />
-                    <line stroke="#ffffff" stroke-width="0.3" stroke-dasharray="20,20" stroke-linecap="butt" />
+                    <line stroke="#ff9000" stroke-width="0.6" stroke-linecap="square" />
+                    <line stroke="#ffffff" stroke-width="0.5" stroke-dasharray="20,20" stroke-linecap="square" />
                 </rule>
             </rule>
         </rule>
         <!-- 捷運 -->
         <rule e="way" k="railway" v="subway">
             <rule e="way" k="*" v="*" zoom-min="15" zoom-max="15">
-                <line stroke="#50a0f0" stroke-width="1.0" />
-                <line stroke="#ffffff" stroke-width="0.7" stroke-dasharray="10,10" stroke-linecap="butt" />
+                <line stroke="#50a0f0" stroke-width="1.0" stroke-linecap="square" />
+                <line stroke="#ffffff" stroke-width="0.8" stroke-dasharray="10,10" stroke-linecap="square" />
             </rule>
             <rule e="way" k="*" v="*" zoom-min="16" zoom-max="16">
-                <line stroke="#50a0f0" stroke-width="0.6" />
-                <line stroke="#ffffff" stroke-width="0.3" stroke-dasharray="15,15" stroke-linecap="butt" />
+                <line stroke="#50a0f0" stroke-width="0.6" stroke-linecap="square" />
+                <line stroke="#ffffff" stroke-width="0.5" stroke-dasharray="15,15" stroke-linecap="square" />
             </rule>
             <rule e="way" k="*" v="*" zoom-min="17" zoom-max="17">
-                <line stroke="#50a0f0" stroke-width="0.6" />
-                <line stroke="#ffffff" stroke-width="0.3" stroke-dasharray="20,20" stroke-linecap="butt" />
+                <line stroke="#50a0f0" stroke-width="0.6" stroke-linecap="square" />
+                <line stroke="#ffffff" stroke-width="0.5" stroke-dasharray="20,20" stroke-linecap="square" />
             </rule>
         </rule>
     </rule>
