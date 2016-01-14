@@ -28,8 +28,36 @@
     </rule>
 
     <rule e="node" k="place" v="*">
-        <rule e="node" k="place" v="city|county" zoom-min="7" zoom-max="9">
-            <caption k="name" font-size="14" font-style="bold" stroke="#ffffff" stroke-width="3.0" />
+        <rule e="node" k="place" v="city|county" zoom-min="7" zoom-max="10">
+            <rule e="node" k="*" v="*" zoom-min="7" zoom-max="7">
+                <caption k="name" font-size="10" font-style="bold" stroke="#e7e7e7" stroke-width="2.0" />
+            </rule>
+            <rule e="node" k="*" v="*" zoom-min="8" zoom-max="8">
+                <caption k="name" font-size="12" font-style="bold" stroke="#e7e7e7" stroke-width="2.0" />
+            </rule>
+            <rule e="node" k="*" v="*" zoom-min="9" zoom-max="9">
+                <caption k="name" font-size="14" font-style="bold" stroke="#e7e7e7" stroke-width="3.0" />
+            </rule>
+            <rule e="node" k="*" v="*" zoom-min="10" zoom-max="10">
+                <caption k="name" font-size="16" font-style="bold" stroke="#e7e7e7" stroke-width="4.0" />
+            </rule>
+        </rule>
+        <rule e="node" k="place" v="suburb|town" zoom-min="10" zoom-max="14">
+            <rule e="node" k="*" v="*" zoom-min="10" zoom-max="10">
+                <caption k="name" font-size="10" font-style="bold" fill="#999999" stroke="#ffffff" stroke-width="0.5" />
+            </rule>
+            <rule e="node" k="*" v="*" zoom-min="11" zoom-max="11">
+                <caption k="name" font-size="12" font-style="bold" fill="#505050" stroke="#e0e0e0" stroke-width="1.0" />
+            </rule>
+            <rule e="node" k="*" v="*" zoom-min="12" zoom-max="12">
+                <caption k="name" font-size="14" font-style="bold" fill="#505050" stroke="#e0e0e0" stroke-width="1.5" />
+            </rule>
+            <rule e="node" k="*" v="*" zoom-min="13" zoom-max="13">
+                <caption k="name" font-size="16" font-style="bold" fill="#505050" stroke="#e0e0e0" stroke-width="2.0" />
+            </rule>
+            <rule e="node" k="*" v="*" zoom-min="14" zoom-max="14">
+                <caption k="name" font-size="18" font-style="bold" fill="#505050" stroke="#e0e0e0" stroke-width="2.5" />
+            </rule>
         </rule>
     </rule>
 

@@ -1,31 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rendertheme version="4" map-background="#f8f8f8" map-background-outside="#707070">
 
-    <rule e="way" k="natural" v="issea|sea" zoom-min="0">
+    <!-- 分離海水與陸地 -->
+    <rule e="way" k="natural" v="sea" zoom-min="0">
         <area fill="#90b0c0" />
     </rule>
 
     <rule e="way" k="natural" v="nosea" zoom-min="0">
-        <area fill="#f8f8f8" stroke="#f8f8f8" stroke-width="1.0" />
+        <area fill="#fffaf0" />
     </rule>
 
+    <!-- 河流與湖泊 -->
     <rule e="way" k="natural" v="water" zoom-min="10">
-        <area fill="#b0e0d0" />
+        <area fill="#90b0c0" />
     </rule>
 
     <rule e="way" k="waterway" v="riverbank" zoom-min="10">
-        <area fill="#b0e0d0" />
+        <area fill="#90b0c0" />
     </rule>
 
     <rule e="way" k="waterway" v="river" zoom-min="10">
         <rule e="way" k="*" v="*" zoom-min="10" zoom-max="12">
-            <line stroke="#b0e0d0" stroke-width="0.9"/>
+            <line stroke="#90b0c0" stroke-width="0.9"/>
         </rule>
         <rule e="way" k="*" v="*" zoom-min="13" zoom-max="15">
-            <line stroke="#b0e0d0" stroke-width="1.2"/>
+            <line stroke="#90b0c0" stroke-width="1.2"/>
         </rule>
         <rule e="way" k="*" v="*" zoom-min="16" zoom-max="18">
-            <line stroke="#b0e0d0" stroke-width="1.5"/>
+            <line stroke="#90b0c0" stroke-width="1.5"/>
         </rule>
         <pathText k="name" font-size="10" stroke="#ffffff" stroke-width="2.0" />
     </rule>
