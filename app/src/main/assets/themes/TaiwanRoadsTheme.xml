@@ -3,7 +3,45 @@
 
     <!-- 各類道路 -->
     <rule e="way" k="highway" v="*">
-        <!-- 小街道 -->
+        <!-- 步道 15+ -->
+        <rule e="way" k="highway" v="footway">
+            <rule e="way" k="*" v="*" zoom-min="16" zoom-max="17">
+                <pathText k="name" font-size="10" stroke="#ffffff" stroke-width="2.0" />
+            </rule>
+            <rule e="way" k="*" v="*" zoom-min="15" zoom-max="15">
+                <line stroke="#707070" stroke-width="0.5" />
+                <line stroke="#f0f0f0" stroke-width="0.4" />
+            </rule>
+            <rule e="way" k="*" v="*" zoom-min="16" zoom-max="16">
+                <line stroke="#707070" stroke-width="0.6" />
+                <line stroke="#f0f0f0" stroke-width="0.5" />
+            </rule>
+            <rule e="way" k="*" v="*" zoom-min="17" zoom-max="17">
+                <line stroke="#707070" stroke-width="0.7" />
+                <line stroke="#f0f0f0" stroke-width="0.6" />
+            </rule>
+        </rule>
+
+        <!-- 自行車道 15+ -->
+        <rule e="way" k="highway" v="cycleway">
+            <rule e="way" k="*" v="*" zoom-min="16" zoom-max="17">
+                <pathText k="name" font-size="10" stroke="#ffffff" stroke-width="2.0" />
+            </rule>
+            <rule e="way" k="*" v="*" zoom-min="15" zoom-max="15">
+                <line stroke="#707070" stroke-width="0.5" />
+                <line stroke="#aaffff" stroke-width="0.4" />
+            </rule>
+            <rule e="way" k="*" v="*" zoom-min="16" zoom-max="16">
+                <line stroke="#707070" stroke-width="0.6" />
+                <line stroke="#aaffff" stroke-width="0.5" />
+            </rule>
+            <rule e="way" k="*" v="*" zoom-min="17" zoom-max="17">
+                <line stroke="#707070" stroke-width="0.7" />
+                <line stroke="#aaffff" stroke-width="0.6" />
+            </rule>
+        </rule>
+
+        <!-- 小街道 14+ -->
         <rule e="way" k="highway" v="service|unclassified|residential">
             <rule e="way" k="*" v="*" zoom-min="16" zoom-max="17">
                 <pathText k="name" font-size="10" stroke="#ffffff" stroke-width="2.0" />
@@ -740,55 +778,52 @@
             </rule>
             <!-- 標誌 -->
             <rule e="way" k="highway" v="motorway" zoom-min="8" zoom-max="18">
-                <rule e="way" k="ref" v="1">
+                <!--
+                <rule e="way" k="ref" v="2">
                     <lineSymbol src="assets:shields/motorway/1.svg"
                         symbol-percent="85" rotate="false" align-center="true"
                         repeat="true" repeat-start="5" repeat-gap="250" />
                 </rule>
+                -->
+                <rule e="way" k="ref" v="1">
+                    <lineSymbol src="assets:shields/motorway/1.svg"
+                        symbol-percent="85" rotate="false" align-center="true" repeat="false" />
+                </rule>
                 <rule e="way" k="ref" v="2">
                     <lineSymbol src="assets:shields/motorway/2.svg"
-                        symbol-percent="85" rotate="false" align-center="true"
-                        repeat="true" repeat-start="5" repeat-gap="250" />
+                        symbol-percent="85" rotate="false" align-center="true" repeat="false" />
                 </rule>
                 <rule e="way" k="ref" v="3">
                     <lineSymbol src="assets:shields/motorway/3.svg"
-                        symbol-percent="85" rotate="false" align-center="true"
-                        repeat="true" repeat-start="5" repeat-gap="250" />
+                        symbol-percent="85" rotate="false" align-center="true" repeat="false" />
                 </rule>
                 <rule e="way" k="ref" v="4">
                     <lineSymbol src="assets:shields/motorway/4.svg"
-                        symbol-percent="85" rotate="false" align-center="true"
-                        repeat="true" repeat-start="5" repeat-gap="250" />
+                        symbol-percent="85" rotate="false" align-center="true" repeat="false" />
                 </rule>
                 <rule e="way" k="ref" v="5">
                     <lineSymbol src="assets:shields/motorway/5.svg"
-                        symbol-percent="85" rotate="false" align-center="true"
-                        repeat="true" repeat-start="5" repeat-gap="250" />
+                        symbol-percent="85" rotate="false" align-center="true" repeat="false" />
                 </rule>
                 <rule e="way" k="ref" v="6">
                     <lineSymbol src="assets:shields/motorway/6.svg"
-                        symbol-percent="85" rotate="false" align-center="true"
-                        repeat="true" repeat-start="5" repeat-gap="250" />
+                        symbol-percent="85" rotate="false" align-center="true" repeat="false" />
                 </rule>
                 <rule e="way" k="ref" v="8">
                     <lineSymbol src="assets:shields/motorway/8.svg"
-                        symbol-percent="85" rotate="false" align-center="true"
-                        repeat="true" repeat-start="5" repeat-gap="250" />
+                        symbol-percent="85" rotate="false" align-center="true" repeat="false" />
                 </rule>
                 <rule e="way" k="ref" v="10">
                     <lineSymbol src="assets:shields/motorway/10.svg"
-                        symbol-percent="85" rotate="false" align-center="true"
-                        repeat="true" repeat-start="5" repeat-gap="250" />
+                        symbol-percent="85" rotate="false" align-center="true" repeat="false" />
                 </rule>
                 <rule e="way" k="ref" v="2甲">
-                    <lineSymbol src="assets:shields/motorway/branches/2A.svg"
-                        symbol-percent="85" rotate="false" align-center="true"
-                        repeat="true" repeat-start="5" repeat-gap="250" />
+                    <lineSymbol src="assets:shields/motorway/2A.svg"
+                        symbol-percent="85" rotate="false" align-center="true" repeat="false" />
                 </rule>
                 <rule e="way" k="ref" v="3甲">
-                    <lineSymbol src="assets:shields/motorway/branches/3A.svg"
-                        symbol-percent="85" rotate="false" align-center="true"
-                        repeat="true" repeat-start="5" repeat-gap="250" />
+                    <lineSymbol src="assets:shields/motorway/3A.svg"
+                        symbol-percent="85" rotate="false" align-center="true" repeat="false" />
                 </rule>
             </rule>
         </rule>
