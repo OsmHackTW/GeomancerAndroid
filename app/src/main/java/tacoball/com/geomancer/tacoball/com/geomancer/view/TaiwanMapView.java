@@ -94,8 +94,10 @@ public class TaiwanMapView extends MapView {
     }
 
     public void setMyLocationImage(int resId) {
-        Drawable d = mContext.getDrawable(resId);
-        mContext.getDrawable(resId);
+        // API 21
+        //Drawable d = mContext.getDrawable(resId);
+        Drawable d = mContext.getResources().getDrawable(resId);
+
         if (d!=null) {
             mMyLocationImage = resId;
             if (mMyLocationMarker!=null) {
