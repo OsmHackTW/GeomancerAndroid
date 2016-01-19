@@ -34,7 +34,6 @@ import org.mapsforge.map.reader.MapFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.zip.GZIPInputStream;
 
@@ -96,6 +95,7 @@ public class TaiwanMapView extends MapView {
 
     public void setMyLocationImage(int resId) {
         Drawable d = mContext.getDrawable(resId);
+        mContext.getDrawable(resId);
         if (d!=null) {
             mMyLocationImage = resId;
             if (mMyLocationMarker!=null) {
@@ -184,20 +184,38 @@ public class TaiwanMapView extends MapView {
         int applyVer = pref.getInt("map.version", 0);
 
         String currMapFile = getCurrentMapFile(context);
-        int currVer  = Integer.valueOf(currMapFile.substring(20,30));
+        int    currVer     = Integer.valueOf(currMapFile.substring(20,30));
 
         return (currVer>applyVer);
     }
 
-    public static void extractMapFile(Context context) {
+    public static void extractMapFile(Context context, MapUpdateListener listener) {
         try {
             Log.i(TAG, "解壓縮圖資");
+            listener.onDecompress(0);
 
             String currMapFile = getCurrentMapFile(context);
-            InputStream  in  = new GZIPInputStream(context.getAssets().open(currMapFile));
+            GZIPInputStream in = new GZIPInputStream(context.getAssets().open(currMapFile));
+
             File f = getAppliedMapFile(context);
             OutputStream out = new FileOutputStream(f);
-            IOUtils.copy(in, out);
+
+            // gzip len = 25400590
+            // map  len = 38204880
+            /*
+            long size = 38204880; // TODO: get ungzipped size from API
+            long one_percent = (long)Math.ceil(size/100.0);
+            for (int p=0;p<100;p++) {
+                IOUtils.copyLarge(in, out, 0, one_percent);
+                listener.onDecompress(p + 1);
+                //Log.e(TAG, String.format("ungzip: %d%%", p + 1));
+            }
+            */
+            IOUtils.copyLarge(in, out);
+
+            out.flush();
+            out.close();
+            in.close();
 
             SharedPreferences pref = context.getSharedPreferences(TAG, Context.MODE_PRIVATE);
             int currVer = Integer.valueOf(currMapFile.substring(20, 30));
@@ -219,8 +237,9 @@ public class TaiwanMapView extends MapView {
     private void enableGps() {
         // 接收方位感應器和 GPS 訊號
         mGpsEnabled = true;
+        // java.lang.IllegalArgumentException: provider doesn't exist: network
         mLocationMgr.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 10.0f, mLocListener);
-        mLocationMgr.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 10.0f, mLocListener);
+        //mLocationMgr.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 10.0f, mLocListener);
     }
 
     private void disableGps() {
@@ -229,17 +248,25 @@ public class TaiwanMapView extends MapView {
     }
 
     private void initView() throws IOException {
-        final byte minZoom   = 7;
-        final byte maxZoom   = 17;
+        final boolean SEE_DEBUG_POINT = true;
+        final byte MIN_ZOOM = 7;
+        final byte MAX_ZOOM = 17;
 
         AndroidGraphicFactory.clearResourceFileCache();
         AndroidGraphicFactory.clearResourceMemoryCache();
 
-        // Load state or initial state
-        SharedPreferences pref = mContext.getSharedPreferences(TAG, Context.MODE_PRIVATE);
-        mState.cLat = pref.getFloat("cLat", 25.076f);
-        mState.cLng = pref.getFloat("cLng", 121.544f);
-        mState.zoom = pref.getInt("zoom", 16);
+        if (SEE_DEBUG_POINT) {
+            // 檢查點 121.4407269 25.0179735
+            mState.cLat = 25.0565;
+            mState.cLng = 121.5317;
+            mState.zoom = 11;
+        } else {
+            // Load state or initial state
+            SharedPreferences pref = mContext.getSharedPreferences(TAG, Context.MODE_PRIVATE);
+            mState.cLat = pref.getFloat("cLat", 25.0019f);
+            mState.cLng = pref.getFloat("cLng", 121.3524f);
+            mState.zoom = pref.getInt("zoom", 16);
+        }
 
         File mapFile  = getAppliedMapFile(mContext);
         mMapDataStore = new MapFile(mapFile);
@@ -253,8 +280,8 @@ public class TaiwanMapView extends MapView {
         setClickable(true);
         setCenter(new LatLong(mState.cLat, mState.cLng));
         setZoomLevel((byte)mState.zoom);
-        getMapZoomControls().setZoomLevelMin(minZoom);
-        getMapZoomControls().setZoomLevelMax(maxZoom);
+        getMapZoomControls().setZoomLevelMin(MIN_ZOOM);
+        getMapZoomControls().setZoomLevelMax(MAX_ZOOM);
         getMapZoomControls().setAutoHide(true);
         getMapZoomControls().show();
         getModel().mapViewPosition.setMapLimit(mMapDataStore.boundingBox());
@@ -367,7 +394,7 @@ public class TaiwanMapView extends MapView {
             triggerStateChange();
 
             String msg = String.format("我的位置: (%.2f, %.2f)", mState.myLat, mState.myLng);
-            Log.w(TAG, msg);
+            Log.i(TAG, msg);
 
             if (mMyLocationMarker!=null) {
                 mMyLocationMarker.setLatLong(newLoc);

@@ -4,8 +4,6 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.view.Menu;
-import android.view.MenuItem;
 
 import org.mapsforge.map.android.graphics.AndroidGraphicFactory;
 
@@ -15,8 +13,6 @@ public class MainActivity extends ActionBarActivity {
 
     private static final String TAG = "MainActivity";
 
-    Fragment mMapFrag;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,37 +21,19 @@ public class MainActivity extends ActionBarActivity {
         AndroidGraphicFactory.createInstance(getApplication());
         setContentView(R.layout.activity_main);
 
+        // Init Fragments
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+
         // Extraction Test
         if (TaiwanMapView.hasNewMapFile(this)) {
-            TaiwanMapView.extractMapFile(this);
+            Fragment mUpdaterFrag = new MapUpdaterFragment();
+            ft.add(R.id.frag_container, mUpdaterFrag);
+        } else {
+            Fragment mMapFrag = new MapViewFragment();
+            ft.add(R.id.frag_container, mMapFrag);
         }
 
-        // Init Fragments
-        mMapFrag = new MapViewFragment();
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.add(R.id.frag_container, mMapFrag);
         ft.commit();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 }
