@@ -19,7 +19,6 @@ import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.Log;
 
-import org.apache.commons.io.IOUtils;
 import org.mapsforge.core.model.LatLong;
 import org.mapsforge.map.android.graphics.AndroidGraphicFactory;
 import org.mapsforge.map.android.rendertheme.AssetsRenderTheme;
@@ -32,10 +31,7 @@ import org.mapsforge.map.layer.renderer.TileRendererLayer;
 import org.mapsforge.map.reader.MapFile;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.util.zip.GZIPInputStream;
 
 /**
  *
@@ -43,7 +39,6 @@ import java.util.zip.GZIPInputStream;
 public class TaiwanMapView extends MapView {
 
     private static final String TAG = "TacoMapView";
-    private static final String MAP_NAME = "taiwan-taco.map";
 
     private Context         mContext;
     private MapDataStore    mMapDataStore;
@@ -151,91 +146,6 @@ public class TaiwanMapView extends MapView {
         super.destroy();
     }
 
-    public static File getAppliedMapFile(Context context) {
-        File[] dirs = context.getExternalFilesDirs("map");
-        File f = null;
-
-        if (dirs!=null && dirs.length>0) {
-            f = new File(dirs[dirs.length-1], MAP_NAME);
-        }
-
-        return f;
-    }
-
-    public static String getCurrentMapFile(Context context) {
-        try {
-            String[] assets = context.getAssets().list("");
-            for (String s : assets) {
-                if (s.matches("^gzipped-taiwan-taco-\\d+\\.map$")) {
-                    return s;
-                }
-            }
-        } catch(IOException e) {
-            Log.e(TAG, "Cannot list asset");
-        }
-
-        Log.e(TAG, "Mapfile not found");
-        return null;
-    }
-
-    public static boolean hasNewMapFile(Context context) {
-        File f = getAppliedMapFile(context);
-        if (!f.exists()) return true;
-
-        SharedPreferences pref = context.getSharedPreferences(TAG, Context.MODE_PRIVATE);
-        int applyVer = pref.getInt("map.version", 0);
-
-        String currMapFile = getCurrentMapFile(context);
-        int    currVer     = Integer.valueOf(currMapFile.substring(20,30));
-
-        return (currVer>applyVer);
-    }
-
-    public static void extractMapFile(Context context, MapUpdateListener listener) {
-        try {
-            Log.i(TAG, "解壓縮圖資");
-            listener.onDecompress(0);
-
-            String currMapFile = getCurrentMapFile(context);
-            GZIPInputStream in = new GZIPInputStream(context.getAssets().open(currMapFile));
-
-            File f = getAppliedMapFile(context);
-            OutputStream out = new FileOutputStream(f);
-
-            // gzip len = 25400590
-            // map  len = 38204880
-            /*
-            long size = 38204880; // TODO: get ungzipped size from API
-            long one_percent = (long)Math.ceil(size/100.0);
-            for (int p=0;p<100;p++) {
-                IOUtils.copyLarge(in, out, 0, one_percent);
-                listener.onDecompress(p + 1);
-                //Log.e(TAG, String.format("ungzip: %d%%", p + 1));
-            }
-            */
-            IOUtils.copyLarge(in, out);
-
-            out.flush();
-            out.close();
-            in.close();
-
-            SharedPreferences pref = context.getSharedPreferences(TAG, Context.MODE_PRIVATE);
-            int currVer = Integer.valueOf(currMapFile.substring(20, 30));
-            pref.edit()
-                .putInt("map.version", currVer)
-                .apply();
-
-            Log.i(TAG, "解壓縮完成");
-        } catch(IOException ex) {
-            String msg = String.format(
-                "extractMapFile Failed: %s %s",
-                ex.getClass().getSimpleName(),
-                ex.getMessage()
-            );
-            Log.e(TAG, msg);
-        }
-    }
-
     private void enableGps() {
         // 接收方位感應器和 GPS 訊號
         mGpsEnabled = true;
@@ -250,43 +160,46 @@ public class TaiwanMapView extends MapView {
     }
 
     private void initView() throws IOException {
-        final boolean SEE_DEBUG_POINT = true;
+        final boolean SEE_DEBUG_POINT = false;
         final byte MIN_ZOOM = 7;
         final byte MAX_ZOOM = 17;
 
-        AndroidGraphicFactory.clearResourceFileCache();
-        AndroidGraphicFactory.clearResourceMemoryCache();
+        File mapFile = MapUtils.getMapFile(mContext);
 
-        if (SEE_DEBUG_POINT) {
-            // 檢查點 121.4407269 25.0179735
-            mState.cLat = 25.0565;
-            mState.cLng = 121.5317;
-            mState.zoom = 11;
-        } else {
-            // Load state or initial state
-            SharedPreferences pref = mContext.getSharedPreferences(TAG, Context.MODE_PRIVATE);
-            mState.cLat = pref.getFloat("cLat", 25.0019f);
-            mState.cLng = pref.getFloat("cLng", 121.3524f);
-            mState.zoom = pref.getInt("zoom", 16);
+        if (mapFile.exists()) {
+            AndroidGraphicFactory.clearResourceFileCache();
+            AndroidGraphicFactory.clearResourceMemoryCache();
+
+            if (SEE_DEBUG_POINT) {
+                // 檢查點 121.4407269 25.0179735
+                mState.cLat = 25.0565;
+                mState.cLng = 121.5317;
+                mState.zoom = 11;
+            } else {
+                // Load state or initial state
+                SharedPreferences pref = mContext.getSharedPreferences(TAG, Context.MODE_PRIVATE);
+                mState.cLat = pref.getFloat("cLat", 25.0019f);
+                mState.cLng = pref.getFloat("cLng", 121.3524f);
+                mState.zoom = pref.getInt("zoom", 16);
+            }
+
+            mMapDataStore = new MapFile(mapFile);
+
+            // add Layer to mapView
+            getLayerManager().getLayers().add(loadThemeLayer("themes/TaiwanGrounds", false));
+            getLayerManager().getLayers().add(loadThemeLayer("themes/TaiwanRoads"));
+            getLayerManager().getLayers().add(loadThemeLayer("themes/TaiwanPoints"));
+
+            // set UI of mapView
+            setClickable(true);
+            setCenter(new LatLong(mState.cLat, mState.cLng));
+            setZoomLevel((byte)mState.zoom);
+            getMapZoomControls().setZoomLevelMin(MIN_ZOOM);
+            getMapZoomControls().setZoomLevelMax(MAX_ZOOM);
+            getMapZoomControls().setAutoHide(true);
+            getMapZoomControls().show();
+            getModel().mapViewPosition.setMapLimit(mMapDataStore.boundingBox());
         }
-
-        File mapFile  = getAppliedMapFile(mContext);
-        mMapDataStore = new MapFile(mapFile);
-
-        // add Layer to mapView
-        getLayerManager().getLayers().add(loadThemeLayer("themes/TaiwanGrounds", false));
-        getLayerManager().getLayers().add(loadThemeLayer("themes/TaiwanRoads"));
-        getLayerManager().getLayers().add(loadThemeLayer("themes/TaiwanPoints"));
-
-        // set UI of mapView
-        setClickable(true);
-        setCenter(new LatLong(mState.cLat, mState.cLng));
-        setZoomLevel((byte)mState.zoom);
-        getMapZoomControls().setZoomLevelMin(MIN_ZOOM);
-        getMapZoomControls().setZoomLevelMax(MAX_ZOOM);
-        getMapZoomControls().setAutoHide(true);
-        getMapZoomControls().show();
-        getModel().mapViewPosition.setMapLimit(mMapDataStore.boundingBox());
     }
 
     private TileRendererLayer loadThemeLayer(String themeName) throws IOException {

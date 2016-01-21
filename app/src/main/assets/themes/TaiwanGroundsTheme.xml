@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rendertheme version="4" map-background="#f8f8f8" map-background-outside="#707070">
 
+    <!--
+    See https://wiki.openstreetmap.org/wiki/Zh-hant:Map_Features
+    -->
+
     <!-- 分離海水與陸地 -->
     <rule e="way" k="natural" v="sea" zoom-min="0">
         <area fill="#90b0c0" />
