@@ -19,12 +19,17 @@ import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.Log;
 
+import org.mapsforge.core.model.BoundingBox;
 import org.mapsforge.core.model.LatLong;
+import org.mapsforge.core.model.Tile;
+import org.mapsforge.core.util.MercatorProjection;
 import org.mapsforge.map.android.graphics.AndroidGraphicFactory;
 import org.mapsforge.map.android.rendertheme.AssetsRenderTheme;
 import org.mapsforge.map.android.util.AndroidUtil;
 import org.mapsforge.map.android.view.MapView;
 import org.mapsforge.map.datastore.MapDataStore;
+import org.mapsforge.map.datastore.MapReadResult;
+import org.mapsforge.map.datastore.PointOfInterest;
 import org.mapsforge.map.layer.cache.TileCache;
 import org.mapsforge.map.layer.overlay.Marker;
 import org.mapsforge.map.layer.renderer.TileRendererLayer;
@@ -32,6 +37,8 @@ import org.mapsforge.map.reader.MapFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -41,11 +48,13 @@ public class TaiwanMapView extends MapView {
     private static final String TAG = "TacoMapView";
 
     private Context         mContext;
-    private MapDataStore    mMapDataStore;
+    private MapDataStore    mMapFile;
     private SensorManager   mSensorMgr;
     private LocationManager mLocationMgr;
     private int             mMyLocationImage;
     private Marker          mMyLocationMarker;
+    private PointGroup      mPointGroup;
+    //private PointMarker[]  mUnluckyPoints;
 
     private State mState = new State();
     private StateChangeListener mStateChangeListener;
@@ -112,6 +121,14 @@ public class TaiwanMapView extends MapView {
         }
     }
 
+    public void showPoints(PointInfo[] info) {
+        mPointGroup.setPoints(info);
+    }
+
+    public void clearPoints() {
+        mPointGroup.clear();
+    }
+
     /*
     public void startTracing() {
         mOneTimePositioning = false;
@@ -127,11 +144,63 @@ public class TaiwanMapView extends MapView {
     }
     */
 
+    /**
+     * 63ms at Taipei Station Zoom=15
+     */
+    public List<PointOfInterest> searchPOIs() {
+        List<PointOfInterest> poisInScreen = new ArrayList<>();
+
+        byte z = (byte)mState.zoom;
+        if (z<15) return poisInScreen;
+
+        BoundingBox bbox = getBoundingBox();
+
+        int minTy = MercatorProjection.latitudeToTileY(bbox.maxLatitude, z);
+        int minTx = MercatorProjection.longitudeToTileX(bbox.minLongitude, z);
+        int maxTy = MercatorProjection.latitudeToTileY(bbox.minLatitude, z);
+        int maxTx = MercatorProjection.longitudeToTileX(bbox.maxLongitude, z);
+
+        // Step 1
+        for (int tx=minTx;tx<=maxTx;tx++) {
+            for (int ty=minTy;ty<=maxTy;ty++) {
+                Tile tile = new Tile(tx, ty, z, 256);
+                MapReadResult result = mMapFile.readMapData(tile);
+                for (PointOfInterest poi : result.pointOfInterests) {
+                    if (bbox.contains(poi.position)) {
+                        poisInScreen.add(poi);
+                    }
+                }
+            }
+        }
+
+        // Step 2
+        // TODO: ...
+
+        return poisInScreen;
+    }
+
+    /*
+    private static String tagsToString(List<Tag> tags) {
+        StringBuffer sbuf = new StringBuffer();
+
+        for (Tag tag : tags) {
+            String tagstr = String.format("%s=\"%s\"", tag.key, tag.value);
+            sbuf.append(tagstr);
+            sbuf.append(" ");
+        }
+
+        return sbuf.toString().trim();
+    }
+    */
+
     @Override
     public void destroy() {
         // TODO: Remove this after #659 solved
         // Avoid Issue #659, https://github.com/mapsforge/mapsforge/issues/659
         mMyLocationMarker.setBitmap(null);
+
+        // TODO: Release map resources
+        //mMapFile.close();
 
         // Save state
         mContext.getSharedPreferences(TAG, Context.MODE_PRIVATE)
@@ -149,9 +218,10 @@ public class TaiwanMapView extends MapView {
     private void enableGps() {
         // 接收方位感應器和 GPS 訊號
         mGpsEnabled = true;
-        // java.lang.IllegalArgumentException: provider doesn't exist: network
-        mLocationMgr.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 10.0f, mLocListener);
-        //mLocationMgr.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 10.0f, mLocListener);
+        List<String> providers = mLocationMgr.getAllProviders();
+        for (String p : providers) {
+            mLocationMgr.requestLocationUpdates(p, 1000, 10.0f, mLocListener);
+        }
     }
 
     private void disableGps() {
@@ -178,27 +248,30 @@ public class TaiwanMapView extends MapView {
             } else {
                 // Load state or initial state
                 SharedPreferences pref = mContext.getSharedPreferences(TAG, Context.MODE_PRIVATE);
-                mState.cLat = pref.getFloat("cLat", 25.0019f);
-                mState.cLng = pref.getFloat("cLng", 121.3524f);
-                mState.zoom = pref.getInt("zoom", 16);
+                mState.cLat = pref.getFloat("cLat", 25.0744f);
+                mState.cLng = pref.getFloat("cLng", 121.5391f);
+                mState.zoom = pref.getInt("zoom", 15);
             }
 
-            mMapDataStore = new MapFile(mapFile);
+            mMapFile = new MapFile(mapFile);
 
             // add Layer to mapView
-            getLayerManager().getLayers().add(loadThemeLayer("themes/TaiwanGrounds", false));
+            //getLayerManager().getLayers().add(loadThemeLayer("themes/TaiwanGrounds", false));
             getLayerManager().getLayers().add(loadThemeLayer("themes/TaiwanRoads"));
             getLayerManager().getLayers().add(loadThemeLayer("themes/TaiwanPoints"));
 
             // set UI of mapView
             setClickable(true);
             setCenter(new LatLong(mState.cLat, mState.cLng));
-            setZoomLevel((byte)mState.zoom);
+            setZoomLevel((byte) mState.zoom);
             getMapZoomControls().setZoomLevelMin(MIN_ZOOM);
             getMapZoomControls().setZoomLevelMax(MAX_ZOOM);
             getMapZoomControls().setAutoHide(true);
             getMapZoomControls().show();
-            getModel().mapViewPosition.setMapLimit(mMapDataStore.boundingBox());
+            getModel().mapViewPosition.setMapLimit(mMapFile.boundingBox());
+
+            // Build pin_unlucky points
+            mPointGroup = new PointGroup(getContext(), getLayerManager().getLayers(), 25);
         }
     }
 
@@ -218,9 +291,10 @@ public class TaiwanMapView extends MapView {
             getModel().frameBufferModel.getOverdrawFactor()
         );
 
+        // TODO: disable cache
         TileRendererLayer layer = new TileRendererLayer(
-            cache,
-            mMapDataStore,
+            cache, // cannot be null
+            mMapFile,
             getModel().mapViewPosition,
             isTransparent,
             true,

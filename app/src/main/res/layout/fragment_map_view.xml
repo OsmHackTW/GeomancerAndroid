@@ -66,17 +66,21 @@
             android:layout_height="wrap_content"
             android:id="@+id/btPosition"
             android:text="我的位置"
+            android:drawableLeft="@android:drawable/ic_menu_compass"
             android:layout_weight="1"
             android:layout_marginLeft="20dp" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="測量風水"
+            android:text="掐指一算"
+            android:drawableLeft="@android:drawable/ic_menu_search"
             android:id="@+id/btMeasure"
             android:layout_weight="1"
-            android:layout_marginLeft="20dp" />
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp" />
 
+        <!--
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -85,6 +89,7 @@
             android:layout_weight="1"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp" />
+        -->
 
     </LinearLayout>
 

@@ -9,6 +9,9 @@ import org.mapsforge.map.android.graphics.AndroidGraphicFactory;
 
 import tacoball.com.geomancer.tacoball.com.geomancer.view.MapUtils;
 
+/**
+ * Main Activity
+ */
 public class MainActivity extends ActionBarActivity {
 
     //private static final String TAG = "MainActivity";

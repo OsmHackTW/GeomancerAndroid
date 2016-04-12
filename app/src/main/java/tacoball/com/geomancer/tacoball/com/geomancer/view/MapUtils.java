@@ -23,6 +23,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.RandomAccessFile;
 import java.util.zip.GZIPInputStream;
 
 import tacoball.com.geomancer.MainActivity;
@@ -200,7 +201,8 @@ public class MapUtils {
 
                     // gzip len = 25400590
                     // map  len = 38204880
-                    long size = 38204880; // TODO: get ungzipped size from API
+                    //long size = 38204880; // TODO: get ungzipped size from API
+                    int  size = getUncompressedSize(context);
                     long one_percent = (long)Math.ceil(size/100.0);
 
                     int pg;
@@ -331,6 +333,25 @@ public class MapUtils {
             return new File(dir, MAP_NAME+".gz");
         }
         return null;
+    }
+
+    // Only called by extractMapFile()
+    private static int getUncompressedSize(Context context) {
+        int size = 0;
+
+        try {
+            File gzf = getCompressedMapFile(context);
+            RandomAccessFile raf = new RandomAccessFile(gzf, "r");
+            raf.seek(raf.length()-4);
+            for (int i=0;i<4;i++) {
+                size = size | (raf.read()<<(i*8));
+            }
+            raf.close();
+        } catch(IOException ex) {
+            Log.e(TAG, ex.getMessage());
+        }
+
+        return size;
     }
 
 }
