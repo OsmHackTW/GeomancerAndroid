@@ -256,7 +256,7 @@ public class TaiwanMapView extends MapView {
             mMapFile = new MapFile(mapFile);
 
             // add Layer to mapView
-            //getLayerManager().getLayers().add(loadThemeLayer("themes/TaiwanGrounds", false));
+            getLayerManager().getLayers().add(loadThemeLayer("themes/TaiwanGrounds", false));
             getLayerManager().getLayers().add(loadThemeLayer("themes/TaiwanRoads"));
             getLayerManager().getLayers().add(loadThemeLayer("themes/TaiwanPoints"));
 
