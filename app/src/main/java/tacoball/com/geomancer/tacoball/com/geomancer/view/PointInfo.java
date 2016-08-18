@@ -13,8 +13,8 @@ public class PointInfo {
     private double mLat;
     private double mLng;
     private String mSubject;
-    private String mDescription = "";
-    private String mURL = "";
+    private String mDescription = "...";
+    private String mURL = "http://...";
     private int mPinNormal;
     private int mPinFocused;
 
@@ -48,6 +48,14 @@ public class PointInfo {
 
     public String getSubject() {
         return mSubject;
+    }
+
+    public String getDescription() {
+        return mDescription;
+    }
+
+    public String getURL() {
+        return mURL;
     }
 
 }

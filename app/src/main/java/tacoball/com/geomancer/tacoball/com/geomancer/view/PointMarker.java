@@ -103,7 +103,8 @@ public class PointMarker extends Marker {
             double lat = this.getLatLong().latitude;
             double cx = MercatorProjection.longitudeToPixelX(lng, mapSize) - topLeftPoint.x;
             double cy = MercatorProjection.latitudeToPixelY(lat, mapSize) - topLeftPoint.y + 30;
-            canvas.drawText(mSubject, (int) cx, (int) cy, paint);
+            //canvas.drawText(mSubject, (int) cx, (int) cy, paint);
+            canvas.drawText("\u260e", (int) cx, (int) cy, paint);
         }
     }
 

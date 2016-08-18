@@ -1,6 +1,8 @@
 package tacoball.com.geomancer.tacoball.com.geomancer.view;
 
 import android.content.Context;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
 import org.mapsforge.map.layer.Layers;
 
@@ -14,6 +16,9 @@ public class PointGroup {
     private PointMarker   mPrevFocusMarker = null;
     private PointMarker[] mPointMarkers;
     private PointInfo[]   mPointInfo;
+    private TextView      mTxvDescription;
+    private TextView      mTxvURL;
+    private ViewGroup     mInfoContainer;
 
     public PointGroup(Context context, Layers layers, int maxCount) {
         mPointMarkers = new PointMarker[maxCount];
@@ -23,11 +28,24 @@ public class PointGroup {
         }
     }
 
+    public void setInfoContainer(ViewGroup layout) {
+        mInfoContainer = layout;
+    }
+
+    public void setDescriptionView(TextView txv) {
+        mTxvDescription = txv;
+    }
+
+    public void setURLView(TextView txv) {
+        mTxvURL = txv;
+    }
+
     public void clear() {
         for (int i=0;i<mPointMarkers.length;i++) {
             mPointMarkers[i].setVisible(false, true);
         }
         mPrevFocusMarker = null;
+        mInfoContainer.setVisibility(ViewGroup.INVISIBLE);
     }
 
     public void setPoints(PointInfo[] info) {
@@ -43,6 +61,9 @@ public class PointGroup {
         for (int i=0;i<mPointMarkers.length;i++) {
             if (focusMarker==mPointMarkers[i]) {
                 focusMarker.setFocusedPin();
+                mTxvDescription.setText(mPointInfo[i].getDescription());
+                mTxvURL.setText(mPointInfo[i].getURL());
+                mInfoContainer.setVisibility(ViewGroup.VISIBLE);
                 continue;
             }
             if (mPrevFocusMarker==mPointMarkers[i]) {

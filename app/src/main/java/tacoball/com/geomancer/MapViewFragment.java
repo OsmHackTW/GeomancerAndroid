@@ -20,6 +20,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 
 import tacoball.com.geomancer.tacoball.com.geomancer.view.PointInfo;
 import tacoball.com.geomancer.tacoball.com.geomancer.view.TaiwanMapView;
@@ -36,11 +37,14 @@ public class MapViewFragment extends Fragment {
     private TextView       mTxvLocation;
     private TextView       mTxvZoom;
     private TextView       mTxvAzimuth;
+    private TextView       mTxvSummaryContent;
+    private TextView       mTxvURLContent;
+    private ViewGroup      mInfoContainer;
     private Button         mBtPosition;
     private Button         mBtMeasure;
-    private Button         mBtISee;
+    //private Button         mBtISee;
     //private PopupWindow    mPopResult;
-    private View           mPopContent;
+    //private View           mPopContent;
     private SQLiteDatabase mUnluckyDB;
 
     public MapViewFragment() {
@@ -62,6 +66,9 @@ public class MapViewFragment extends Fragment {
         mTxvZoom     = (TextView)mFragLayout.findViewById(R.id.txvZoomValue);
         mTxvLocation = (TextView)mFragLayout.findViewById(R.id.txvLocation);
         mTxvAzimuth  = (TextView)mFragLayout.findViewById(R.id.txvAzimuthValue);
+        mTxvSummaryContent = (TextView)mFragLayout.findViewById(R.id.txvSummaryContent);
+        mTxvURLContent     = (TextView)mFragLayout.findViewById(R.id.txvURLContent);
+        mInfoContainer = (ViewGroup)mFragLayout.findViewById(R.id.glyPointInfo);
 
         // ButtonsBar
         mBtPosition = (Button)mFragLayout.findViewById(R.id.btPosition);
@@ -70,6 +77,7 @@ public class MapViewFragment extends Fragment {
         // Map View
         mMapView = (TaiwanMapView)mFragLayout.findViewById(R.id.mapView);
         mMapView.setMyLocationImage(R.drawable.arrow_up);
+        mMapView.setInfoView(mInfoContainer, mTxvSummaryContent, mTxvURLContent);
 
         // Events
         mBtPosition.setOnClickListener(mClickListener);
@@ -77,9 +85,11 @@ public class MapViewFragment extends Fragment {
         mMapView.setStateChangeListener(mMapStateListener);
 
         // Popup Window
+        /*
         mPopContent = getActivity().getLayoutInflater().inflate(R.layout.measure_result, null);
         mBtISee = (Button)mPopContent.findViewById(R.id.btnConfirm);
         mBtISee.setOnClickListener(mClickListener);
+        */
 
         // open database
         mUnluckyDB = openUnluckyHouseDB();
@@ -150,8 +160,6 @@ public class MapViewFragment extends Fragment {
             }
 
             if (v==mBtMeasure) {
-                // clear all marker
-
                 // find unlucky houses and generate markers
                 BoundingBox bbox =  mMapView.getBoundingBox();
                 String sql = "SELECT id,approach,area,address,lat,lng FROM unluckyhouse " +
@@ -168,11 +176,15 @@ public class MapViewFragment extends Fragment {
                     int i = 0;
                     PointInfo[] info = new PointInfo[cur.getCount()];
                     while (cur.moveToNext()) {
-                        Log.d(TAG, cur.getString(1) + cur.getString(2) + cur.getString(3));
+                        String url     = String.format("http://unluckyhouse.com/showthread.php?t=%d", cur.getInt(0));
+                        String subject = String.format("凶宅 (%s)", cur.getString(1));
+                        String address = cur.getString(3);
                         double lat = cur.getDouble(4);
                         double lng = cur.getDouble(5);
-                        String subject = String.format("凶宅(%s)", cur.getString(1));
-                        info[i++] = new PointInfo(lat, lng, subject, R.drawable.pin_unlucky, R.drawable.pin_unlucky_bright);
+                        info[i] = new PointInfo(lat, lng, subject, R.drawable.pin_unlucky, R.drawable.pin_unlucky_bright);
+                        info[i].setDescription(address);
+                        info[i].setURL(url);
+                        i++;
                     }
 
                     mMapView.showPoints(info);
@@ -180,7 +192,6 @@ public class MapViewFragment extends Fragment {
                     Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(getActivity(), "平安無事", Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, "Unlucky house not found");
                 }
 
                 // Cannot new it while onCreateView()
@@ -229,5 +240,20 @@ public class MapViewFragment extends Fragment {
         }
 
     };
+
+    public static String getUnicodeChar(int code) {
+        int    len   = ((code >> 16) == 0) ? 2 : 4;
+        String enc   = (len == 2) ? "UTF-16" : "UTF-32";
+        byte[] bytes = new byte[len];
+        for (int i = 0; i < len; i++) {
+            bytes[i] = (byte)(code >> 8 * (len-i-1));
+        }
+
+        try {
+            return new String(bytes, enc);
+        } catch(UnsupportedEncodingException ex) {
+            return " ";
+        }
+    }
 
 }

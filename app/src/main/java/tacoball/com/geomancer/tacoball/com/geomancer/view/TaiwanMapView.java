@@ -18,17 +18,18 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
 import org.mapsforge.core.model.BoundingBox;
 import org.mapsforge.core.model.LatLong;
-import org.mapsforge.core.model.Tile;
 import org.mapsforge.core.util.MercatorProjection;
 import org.mapsforge.map.android.graphics.AndroidGraphicFactory;
 import org.mapsforge.map.android.rendertheme.AssetsRenderTheme;
 import org.mapsforge.map.android.util.AndroidUtil;
 import org.mapsforge.map.android.view.MapView;
 import org.mapsforge.map.datastore.MapDataStore;
-import org.mapsforge.map.datastore.MapReadResult;
 import org.mapsforge.map.datastore.PointOfInterest;
 import org.mapsforge.map.layer.cache.TileCache;
 import org.mapsforge.map.layer.overlay.Marker;
@@ -48,12 +49,12 @@ public class TaiwanMapView extends MapView {
     private static final String TAG = "TacoMapView";
 
     private Context         mContext;
-    private MapDataStore    mMapFile;
     private SensorManager   mSensorMgr;
     private LocationManager mLocationMgr;
     private int             mMyLocationImage;
     private Marker          mMyLocationMarker;
     private PointGroup      mPointGroup;
+    private ViewGroup       mInfoView;
     //private PointMarker[]  mUnluckyPoints;
 
     private State mState = new State();
@@ -125,8 +126,11 @@ public class TaiwanMapView extends MapView {
         mPointGroup.setPoints(info);
     }
 
-    public void clearPoints() {
-        mPointGroup.clear();
+    public void setInfoView(ViewGroup layout, TextView descView, TextView urlView) {
+        mInfoView = layout;
+        mPointGroup.setInfoContainer(layout);
+        mPointGroup.setDescriptionView(descView);
+        mPointGroup.setURLView(urlView);
     }
 
     /*
@@ -161,6 +165,7 @@ public class TaiwanMapView extends MapView {
         int maxTx = MercatorProjection.longitudeToTileX(bbox.maxLongitude, z);
 
         // Step 1
+        /*
         for (int tx=minTx;tx<=maxTx;tx++) {
             for (int ty=minTy;ty<=maxTy;ty++) {
                 Tile tile = new Tile(tx, ty, z, 256);
@@ -172,6 +177,7 @@ public class TaiwanMapView extends MapView {
                 }
             }
         }
+        */
 
         // Step 2
         // TODO: ...
@@ -197,7 +203,7 @@ public class TaiwanMapView extends MapView {
     public void destroy() {
         // TODO: Remove this after #659 solved
         // Avoid Issue #659, https://github.com/mapsforge/mapsforge/issues/659
-        mMyLocationMarker.setBitmap(null);
+        //mMyLocationMarker.setBitmap(null);
 
         // TODO: Release map resources
         //mMapFile.close();
@@ -217,11 +223,17 @@ public class TaiwanMapView extends MapView {
 
     private void enableGps() {
         // 接收方位感應器和 GPS 訊號
-        mGpsEnabled = true;
+        if (mLocationMgr.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            mGpsEnabled = true;
+            mLocationMgr.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 10.0f, mLocListener);
+        }
+
+        /*
         List<String> providers = mLocationMgr.getAllProviders();
         for (String p : providers) {
             mLocationMgr.requestLocationUpdates(p, 1000, 10.0f, mLocListener);
         }
+        */
     }
 
     private void disableGps() {
@@ -236,7 +248,7 @@ public class TaiwanMapView extends MapView {
 
         File mapFile = MapUtils.getMapFile(mContext);
 
-        if (mapFile.exists()) {
+        if (mapFile!=null && mapFile.exists()) {
             AndroidGraphicFactory.clearResourceFileCache();
             AndroidGraphicFactory.clearResourceMemoryCache();
 
@@ -253,12 +265,15 @@ public class TaiwanMapView extends MapView {
                 mState.zoom = pref.getInt("zoom", 15);
             }
 
-            mMapFile = new MapFile(mapFile);
+            Log.d(TAG, mapFile.getAbsolutePath());
+            MapDataStore ds = new MapFile(mapFile);
+            BoundingBox bbox = ds.boundingBox();
+            ds.close();
 
             // add Layer to mapView
-            getLayerManager().getLayers().add(loadThemeLayer("themes/TaiwanGrounds", false));
-            getLayerManager().getLayers().add(loadThemeLayer("themes/TaiwanRoads"));
-            getLayerManager().getLayers().add(loadThemeLayer("themes/TaiwanPoints"));
+            getLayerManager().getLayers().add(loadThemeLayer("TaiwanGrounds", false));
+            getLayerManager().getLayers().add(loadThemeLayer("TaiwanRoads"));
+            getLayerManager().getLayers().add(loadThemeLayer("TaiwanPoints"));
 
             // set UI of mapView
             setClickable(true);
@@ -268,7 +283,7 @@ public class TaiwanMapView extends MapView {
             getMapZoomControls().setZoomLevelMax(MAX_ZOOM);
             getMapZoomControls().setAutoHide(true);
             getMapZoomControls().show();
-            getModel().mapViewPosition.setMapLimit(mMapFile.boundingBox());
+            getModel().mapViewPosition.setMapLimit(bbox);
 
             // Build pin_unlucky points
             mPointGroup = new PointGroup(getContext(), getLayerManager().getLayers(), 25);
@@ -291,17 +306,18 @@ public class TaiwanMapView extends MapView {
             getModel().frameBufferModel.getOverdrawFactor()
         );
 
-        // TODO: disable cache
+        // TODO: Replace a better construction
         TileRendererLayer layer = new TileRendererLayer(
-            cache, // cannot be null
-            mMapFile,
+            cache,
+            new MapFile(MapUtils.getMapFile(mContext)),
             getModel().mapViewPosition,
             isTransparent,
             true,
+            false,
             AndroidGraphicFactory.INSTANCE
         );
 
-        AssetsRenderTheme theme = new AssetsRenderTheme(mContext, "", themeFileName);
+        AssetsRenderTheme theme = new AssetsRenderTheme(mContext, "themes/", themeFileName);
         layer.setXmlRenderTheme(theme);
 
         return layer;
@@ -321,11 +337,18 @@ public class TaiwanMapView extends MapView {
         long fps = 50;
         long currOnDraw = System.currentTimeMillis();
         if (currOnDraw-mPrevOnDraw>=1000/fps) {
-            mState.cLat = getModel().mapViewPosition.getCenter().latitude;
-            mState.cLng = getModel().mapViewPosition.getCenter().longitude;
-            mState.zoom = getModel().mapViewPosition.getZoomLevel();
-            mPrevOnDraw = currOnDraw;
-            triggerStateChange();
+            double lat  = getModel().mapViewPosition.getCenter().latitude;
+            double lng  = getModel().mapViewPosition.getCenter().longitude;
+            byte   zoom = getModel().mapViewPosition.getZoomLevel();
+
+            if (lat!=mState.cLat || lng!=mState.cLng || zoom!=mState.zoom) {
+                mState.cLat = lat;
+                mState.cLng = lng;
+                mState.zoom = zoom;
+                mPrevOnDraw = currOnDraw;
+                mInfoView.setVisibility(View.INVISIBLE);
+                triggerStateChange();
+            }
         }
     }
 
