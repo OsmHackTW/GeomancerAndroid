@@ -41,33 +41,41 @@ public class PointGroup {
     }
 
     public void clear() {
-        for (int i=0;i<mPointMarkers.length;i++) {
-            mPointMarkers[i].setVisible(false, true);
-        }
-        mPrevFocusMarker = null;
-        mInfoContainer.setVisibility(ViewGroup.INVISIBLE);
-    }
-
-    public void setPoints(PointInfo[] info) {
-        int count = Math.min(mPointMarkers.length, info.length);
-        for (int i=0;i<count;i++) {
-            mPointMarkers[i].update(info[i]);
-        }
-
-        mPointInfo = info;
-    }
-
-    public void setFocus(PointMarker focusMarker) {
-        for (int i=0;i<mPointMarkers.length;i++) {
-            if (focusMarker==mPointMarkers[i]) {
-                focusMarker.setFocusedPin();
-                mTxvDescription.setText(mPointInfo[i].getDescription());
-                mTxvURL.setText(mPointInfo[i].getURL());
-                mInfoContainer.setVisibility(ViewGroup.VISIBLE);
-                continue;
+        synchronized (mPointMarkers) {
+            for (int i = 0; i < mPointMarkers.length; i++) {
+                mPointMarkers[i].setVisible(false, true);
             }
-            if (mPrevFocusMarker==mPointMarkers[i]) {
-                mPrevFocusMarker.setNormalPin();
+            mPrevFocusMarker = null;
+            mInfoContainer.setVisibility(ViewGroup.INVISIBLE);
+        }
+    }
+
+    public void setPoints(final PointInfo[] info) {
+        // Called by MapViewFragment.mBtMeasure
+        synchronized (mPointMarkers) {
+            int count = Math.min(mPointMarkers.length, info.length);
+            for (int i = 0; i < count; i++) {
+                mPointMarkers[i].update(info[i]);
+            }
+
+            mPointInfo = info;
+        }
+    }
+
+    public void setFocus(final PointMarker focusMarker) {
+        // Called by PointMarker.onTap() @MainThread
+        synchronized (mPointMarkers) {
+            for (int i=0;i<mPointMarkers.length;i++) {
+                if (focusMarker==mPointMarkers[i]) {
+                    focusMarker.setFocusedPin();
+                    mTxvDescription.setText(mPointInfo[i].getDescription());
+                    mTxvURL.setText(mPointInfo[i].getURL());
+                    mInfoContainer.setVisibility(ViewGroup.VISIBLE);
+                    continue;
+                }
+                if (mPrevFocusMarker==mPointMarkers[i]) {
+                    mPrevFocusMarker.setNormalPin();
+                }
             }
         }
 

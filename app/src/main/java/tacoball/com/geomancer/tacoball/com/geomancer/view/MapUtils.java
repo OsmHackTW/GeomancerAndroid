@@ -27,6 +27,7 @@ import java.io.RandomAccessFile;
 import java.util.zip.GZIPInputStream;
 
 import tacoball.com.geomancer.MainActivity;
+import tacoball.com.geomancer.MainUtils;
 import tacoball.com.geomancer.R;
 
 /**
@@ -109,7 +110,7 @@ public class MapUtils {
                         }
                     }
                 } catch(IOException ex) {
-                    Log.e(TAG, ex.getMessage());
+                    Log.e(TAG, MainUtils.getReason(ex));
                 }
 
                 client.close();
@@ -172,7 +173,7 @@ public class MapUtils {
                         in.close();
                     }
                 } catch(IOException ex) {
-                    Log.e(TAG, ex.getMessage());
+                    Log.e(TAG, MainUtils.getReason(ex));
                 }
 
                 client.close();
@@ -229,7 +230,7 @@ public class MapUtils {
                     out.close();
                     in.close();
                 } catch(IOException ex) {
-                    Log.e(TAG, ex.getMessage());
+                    Log.e(TAG, MainUtils.getReason(ex));
                 }
             }
         }.start();
@@ -348,7 +349,7 @@ public class MapUtils {
             }
             raf.close();
         } catch(IOException ex) {
-            Log.e(TAG, ex.getMessage());
+            Log.e(TAG, MainUtils.getReason(ex));
         }
 
         return size;
