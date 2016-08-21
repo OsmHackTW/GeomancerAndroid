@@ -12,7 +12,7 @@ public class CancelUpdateService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        MapUtils.clearUpdateNotification(this);
+        //MapUtils.clearUpdateNotification(this);
         return 0;
     }
 

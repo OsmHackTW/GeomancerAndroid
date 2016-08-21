@@ -41,6 +41,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import tacoball.com.geomancer.MainUtils;
+
 /**
  *
  */
@@ -246,7 +248,8 @@ public class TaiwanMapView extends MapView {
         final byte MIN_ZOOM = 7;
         final byte MAX_ZOOM = 17;
 
-        File mapFile = MapUtils.getMapFile(mContext);
+        //File mapFile = MapUtils.getMapFile(mContext);
+        File mapFile = MainUtils.getLocalFile(mContext, "map", MainUtils.MAP_NAME);
 
         if (mapFile!=null && mapFile.exists()) {
             AndroidGraphicFactory.clearResourceFileCache();
@@ -306,10 +309,13 @@ public class TaiwanMapView extends MapView {
             getModel().frameBufferModel.getOverdrawFactor()
         );
 
+        // TODO: change a better name
+        File mapFile = MainUtils.getLocalFile(mContext, "map", MainUtils.MAP_NAME);
+
         // TODO: Replace a better construction
         TileRendererLayer layer = new TileRendererLayer(
             cache,
-            new MapFile(MapUtils.getMapFile(mContext)),
+            new MapFile(mapFile),
             getModel().mapViewPosition,
             isTransparent,
             true,

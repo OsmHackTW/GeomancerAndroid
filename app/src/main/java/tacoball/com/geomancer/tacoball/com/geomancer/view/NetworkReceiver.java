@@ -33,7 +33,7 @@ public class NetworkReceiver extends BroadcastReceiver {
         if (action.equals("android.net.conn.CONNECTIVITY_CHANGE") && useMobile) {
             NetworkInfo mobile = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
             if (mobile.isConnected() && bingo()) {
-                MapUtils.checkMapVersion(context);
+                //MapUtils.checkMapVersion(context);
                 mPrevConnected = current;
                 return;
             }
@@ -43,7 +43,7 @@ public class NetworkReceiver extends BroadcastReceiver {
         if (action.equals("android.net.wifi.WIFI_STATE_CHANGED")) {
             NetworkInfo wifi = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
             if (wifi.isConnected() && bingo()) {
-                MapUtils.checkMapVersion(context);
+                //MapUtils.checkMapVersion(context);
                 mPrevConnected = current;
                 //return;
             }

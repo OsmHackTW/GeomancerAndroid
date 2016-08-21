@@ -18,6 +18,7 @@ import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 import java.util.zip.GZIPInputStream;
 
 /**
@@ -39,7 +40,7 @@ public class FileUpdateManager {
          * @param hasNew 是否有新版本
          * @param mtime  新版本的更新時間，格式為 UNIX Timestamp
          */
-        public void onCheckVersion(boolean hasNew, long mtime);
+        void onCheckVersion(boolean hasNew, long mtime);
 
         /**
          * 下載進度通知
@@ -47,12 +48,12 @@ public class FileUpdateManager {
          * @param step    第幾步驟
          * @param percent 這個步驟的百分比
          */
-        public void onNewProgress(int step, int percent);
+        void onNewProgress(int step, int percent);
 
         /**
          * 下載完成
          */
-        public void onComplete();
+        void onComplete();
 
         /**
          * 錯誤通知
@@ -60,7 +61,7 @@ public class FileUpdateManager {
          * @param step   發生錯誤的步驟
          * @param reason 錯誤原因
          */
-        public void onError(int step, String reason);
+        void onError(int step, String reason);
     }
 
     // 步驟值
@@ -85,8 +86,8 @@ public class FileUpdateManager {
     private MessageDigest md; // 摘要演算法，目前僅使用 MD5
 
     // 情境模擬參數
-    private boolean forceDownloadFailed = true; // 模擬下載時發生錯誤
-    private boolean forceRepairFailed = true;   // 模擬修復時發生錯誤
+    private boolean forceDownloadFailed = false; // 模擬下載時發生錯誤
+    private boolean forceRepairFailed = false;   // 模擬修復時發生錯誤
 
     /**
      * 產生檔案更新管理機制 (精簡)
@@ -120,9 +121,8 @@ public class FileUpdateManager {
             @Override
             public void onCheckVersion(boolean hasNew, long mtime) {
                 if (hasNew) {
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
                     String datestr = sdf.format(new Date(mtime));
-                    sdf = null;
                     System.out.printf("發現新版本: %s\n", datestr);
                 } else {
                     System.out.println("不用更新");
@@ -253,7 +253,7 @@ public class FileUpdateManager {
 
         long begin = number * partsize;
         long end   = begin + partsize - 1;
-        String range = String.format("bytes=%d-%d", begin, end);
+        String range = String.format(Locale.getDefault(), "bytes=%d-%d", begin, end);
         File gzfile = getGzipFile(fileURL);
 
         URL url = new URL(fileURL);
@@ -435,18 +435,23 @@ public class FileUpdateManager {
      *
      * @param fileURL 檔案網址
      */
-    public void checkVersion(String fileURL) {
-        try {
-            File exfile = getExtractedFile(fileURL);
-            getMetadata(fileURL);
-            long localMtime = 0;
-            if (exfile.exists()) {
-                localMtime = exfile.lastModified();
+    public void checkVersion(final String fileURL) {
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    File exfile = getExtractedFile(fileURL);
+                    getMetadata(fileURL);
+                    long localMtime = 0;
+                    if (exfile.exists()) {
+                        localMtime = exfile.lastModified();
+                    }
+                    listener.onCheckVersion((mtime>localMtime), mtime);
+                } catch(IOException ex) {
+                    listener.onError(step, ex.getMessage());
+                }
             }
-            listener.onCheckVersion((mtime>localMtime), mtime);
-        } catch(IOException ex) {
-            listener.onError(step, ex.getMessage());
-        }
+        }.start();
     }
 
     /**
@@ -454,62 +459,67 @@ public class FileUpdateManager {
      *
      * @param fileURL 檔案網址
      */
-    public void update(String fileURL) {
-        try {
-            listener.onNewProgress(step, 0);
+    public void update(final String fileURL) {
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    listener.onNewProgress(step, 0);
 
-            // 移除殘留壓縮檔與目前檔案
-            File gzfile = getGzipFile(fileURL);
-            if (gzfile.exists()) {
-                gzfile.delete();
-            }
-            listener.onNewProgress(step, 25);
+                    // 移除殘留壓縮檔與目前檔案
+                    File gzfile = getGzipFile(fileURL);
+                    if (gzfile.exists()) {
+                        gzfile.delete();
+                    }
+                    listener.onNewProgress(step, 25);
 
-            File exfile = getExtractedFile(fileURL);
-            if (exfile.exists()) {
-                exfile.delete();
-            }
-            listener.onNewProgress(step, 50);
+                    File exfile = getExtractedFile(fileURL);
+                    if (exfile.exists()) {
+                        exfile.delete();
+                    }
+                    listener.onNewProgress(step, 50);
 
-            // 取得線上版本的更新日期與長度
-            // 如果這動作已經被 checkVersion() 處理了就跳過
-            if (mtime==0) {
-                getMetadata(fileURL);
-            }
-            listener.onNewProgress(step, 100);
+                    // 取得線上版本的更新日期與長度
+                    // 如果這動作已經被 checkVersion() 處理了就跳過
+                    if (mtime==0) {
+                        getMetadata(fileURL);
+                    }
+                    listener.onNewProgress(step, 100);
 
-            // 下載所有分割
-            // (失敗時不會中斷，也不會產生錯誤訊息)
-            step = STEP_DOWNLOAD;
-            listener.onNewProgress(step, 0);
-            int cnt = getPartCount();
-            for (int i=0;i<cnt;i++) {
-                downloadPart(fileURL, i, 0);
-            }
+                    // 下載所有分割
+                    // (失敗時不會中斷，也不會產生錯誤訊息)
+                    step = STEP_DOWNLOAD;
+                    listener.onNewProgress(step, 0);
+                    int cnt = getPartCount();
+                    for (int i=0;i<cnt;i++) {
+                        downloadPart(fileURL, i, 0);
+                    }
 
-            // 錯誤狀況模擬
-            if (forceDownloadFailed) {
-                if (!forceRepairFailed) {
-                    forceDownloadFailed = false;
+                    // 錯誤狀況模擬
+                    if (forceDownloadFailed) {
+                        if (!forceRepairFailed) {
+                            forceDownloadFailed = false;
+                        }
+                    }
+
+                    // 檢查與自動修復
+                    step = STEP_REPAIR;
+                    listener.onNewProgress(step, 0);
+                    repairTE(fileURL, gzfile);
+
+                    // 解壓縮
+                    step = STEP_EXTRACT;
+                    listener.onNewProgress(step, 0);
+                    extract(gzfile, exfile);
+
+                    // 本地檔案 mtime 與遠端檔案同步
+                    exfile.setLastModified(mtime);
+                    listener.onComplete();
+                } catch(IOException ex) {
+                    listener.onError(step, ex.getMessage());
                 }
             }
-
-            // 檢查與自動修復
-            step = STEP_REPAIR;
-            listener.onNewProgress(step, 0);
-            repairTE(fileURL, gzfile);
-
-            // 解壓縮
-            step = STEP_EXTRACT;
-            listener.onNewProgress(step, 0);
-            extract(gzfile, exfile);
-
-            // 本地檔案 mtime 與遠端檔案同步
-            exfile.setLastModified(mtime);
-            listener.onComplete();
-        } catch(IOException ex) {
-            listener.onError(step, ex.getMessage());
-        }
+        }.start();
     }
 
     /**
@@ -517,45 +527,50 @@ public class FileUpdateManager {
      *
      * @param fileURL 檔案網址
      */
-    public void repair(String fileURL) {
-        try {
-            // 前置作業
-            step = STEP_PREPARE;
-            listener.onNewProgress(step, 0);
+    public void repair(final String fileURL) {
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    // 前置作業
+                    step = STEP_PREPARE;
+                    listener.onNewProgress(step, 0);
 
-            File gzfile = getGzipFile(fileURL);
-            File exfile = getExtractedFile(fileURL);
-            if (!gzfile.exists() && exfile.exists()) {
-                throw new IOException("檔案已完成更新，不需要修復");
+                    File gzfile = getGzipFile(fileURL);
+                    File exfile = getExtractedFile(fileURL);
+                    if (!gzfile.exists() && exfile.exists()) {
+                        throw new IOException("檔案已完成更新，不需要修復");
+                    }
+
+                    // 取得線上版本的更新日期與長度
+                    // 如果這動作已經被 checkVersion() 處理了就跳過
+                    if (mtime==0) {
+                        getMetadata(fileURL);
+                    }
+                    listener.onNewProgress(step, 100);
+
+                    if (forceRepairFailed) {
+                        forceDownloadFailed = false;
+                    }
+
+                    // 檢查與自動修復
+                    step = STEP_REPAIR;
+                    listener.onNewProgress(step, 0);
+                    repairTE(fileURL, gzfile);
+
+                    // 解壓縮
+                    step = STEP_EXTRACT;
+                    listener.onNewProgress(step, 0);
+                    extract(gzfile, exfile);
+
+                    // 本地檔案 mtime 與遠端檔案同步
+                    exfile.setLastModified(mtime);
+                    listener.onComplete();
+                } catch(IOException ex) {
+                    listener.onError(step, ex.getMessage());
+                }
             }
-
-            // 取得線上版本的更新日期與長度
-            // 如果這動作已經被 checkVersion() 處理了就跳過
-            if (mtime==0) {
-                getMetadata(fileURL);
-            }
-            listener.onNewProgress(step, 100);
-
-            if (forceRepairFailed) {
-                forceDownloadFailed = false;
-            }
-
-            // 檢查與自動修復
-            step = STEP_REPAIR;
-            listener.onNewProgress(step, 0);
-            repairTE(fileURL, gzfile);
-
-            // 解壓縮
-            step = STEP_EXTRACT;
-            listener.onNewProgress(step, 0);
-            extract(gzfile, exfile);
-
-            // 本地檔案 mtime 與遠端檔案同步
-            exfile.setLastModified(mtime);
-            listener.onComplete();
-        } catch(IOException ex) {
-            listener.onError(step, ex.getMessage());
-        }
+        }.start();
     }
 
     /**
