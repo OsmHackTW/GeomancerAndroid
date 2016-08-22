@@ -249,7 +249,7 @@ public class TaiwanMapView extends MapView {
         final byte MAX_ZOOM = 17;
 
         //File mapFile = MapUtils.getMapFile(mContext);
-        File mapFile = MainUtils.getLocalFile(mContext, "map", MainUtils.MAP_NAME);
+        File mapFile = MainUtils.getFilePath(mContext, 0);
 
         if (mapFile!=null && mapFile.exists()) {
             AndroidGraphicFactory.clearResourceFileCache();
@@ -310,7 +310,7 @@ public class TaiwanMapView extends MapView {
         );
 
         // TODO: change a better name
-        File mapFile = MainUtils.getLocalFile(mContext, "map", MainUtils.MAP_NAME);
+        File mapFile = MainUtils.getFilePath(mContext, 0);
 
         // TODO: Replace a better construction
         TileRendererLayer layer = new TileRendererLayer(

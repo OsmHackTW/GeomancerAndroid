@@ -29,8 +29,16 @@ public class MainActivity extends ActionBarActivity {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
 
         try {
-            File mapfile = MainUtils.getLocalFile(this, "map", MainUtils.MAP_NAME);
-            if (!mapfile.exists()) {
+            int cnt = MainUtils.REQUIRED_FILES.length;
+            int exists = 0;
+            for (int i=0;i<cnt;i++) {
+                File required = MainUtils.getFilePath(this, i);
+                if (required.exists()) {
+                    exists++;
+                }
+            }
+
+            if (exists<cnt) {
                 ft.add(R.id.frag_container, new MapUpdaterFragment());
             } else {
                 ft.add(R.id.frag_container, new MapViewFragment());

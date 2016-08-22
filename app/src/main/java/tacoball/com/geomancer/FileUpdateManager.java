@@ -27,6 +27,8 @@ import java.util.zip.GZIPInputStream;
  * - 新版本檢查
  * - 下載流程管理
  * - 進度通知
+ * - 可取消設計
+ * - 防止重複執行設計
  */
 public class FileUpdateManager {
 
@@ -56,12 +58,18 @@ public class FileUpdateManager {
         void onComplete();
 
         /**
+         * 已取消動作
+         */
+        void onCancel();
+
+        /**
          * 錯誤通知
          *
          * @param step   發生錯誤的步驟
          * @param reason 錯誤原因
          */
         void onError(int step, String reason);
+
     }
 
     // 步驟值
@@ -86,8 +94,12 @@ public class FileUpdateManager {
     private MessageDigest md; // 摘要演算法，目前僅使用 MD5
 
     // 情境模擬參數
-    private boolean forceDownloadFailed = false; // 模擬下載時發生錯誤
+    private boolean forceDownloadFailed = true; // 模擬下載時發生錯誤
     private boolean forceRepairFailed = false;   // 模擬修復時發生錯誤
+
+    // 執行中的子 Thread，僅限單工
+    private Thread EMPTY_TASK = new Thread();
+    private Thread workingTask = EMPTY_TASK;
 
     /**
      * 產生檔案更新管理機制 (精簡)
@@ -137,6 +149,11 @@ public class FileUpdateManager {
             @Override
             public void onComplete() {
                 System.out.println("更新完成");
+            }
+
+            @Override
+            public void onCancel() {
+                System.out.println("已取消更新");
             }
 
             @Override
@@ -261,44 +278,46 @@ public class FileUpdateManager {
         conn.setRequestProperty("Range", range);
         conn.connect();
 
-        try {
-            InputStream      in  = conn.getInputStream();
-            RandomAccessFile out = new RandomAccessFile(gzfile, "rw");
-            out.seek(begin);
+        InputStream      in  = conn.getInputStream();
+        RandomAccessFile out = new RandomAccessFile(gzfile, "rw");
+        out.seek(begin);
 
-            byte[] buffer = new byte[BUFFER_SIZE];
-            int iocnt = in.read(buffer);
-            int percent = 0;
-            long copied = (step==STEP_DOWNLOAD) ? number*partsize : fixnum*partsize;
-            while (iocnt > 0) {
-                out.write(buffer, 0, iocnt);
+        byte[] buffer = new byte[BUFFER_SIZE];
+        int iocnt = in.read(buffer);
+        int percent = 0;
+        long copied = (step==STEP_DOWNLOAD) ? number*partsize : fixnum*partsize;
+        while (iocnt > 0) {
+            out.write(buffer, 0, iocnt);
 
-                if (step == STEP_DOWNLOAD) {
-                    copied += iocnt;
-                    int np = (int)(copied*100/gzlen);
-                    if (np > percent) {
-                        percent = np;
-                        listener.onNewProgress(step, percent);
-                    }
+            if (step == STEP_DOWNLOAD) {
+                copied += iocnt;
+                int np = (int)(copied*100/gzlen);
+                if (np > percent) {
+                    percent = np;
+                    listener.onNewProgress(step, percent);
                 }
-
-                if (step == STEP_REPAIR) {
-                    copied += iocnt;
-                    int np = (int)(copied*100/fixlen);
-                    if (np > percent) {
-                        percent = np;
-                        listener.onNewProgress(step, percent);
-                    }
-                }
-
-                iocnt = in.read(buffer);
             }
 
-            out.close();
-            in.close();
-        } finally {
-            conn.disconnect();
+            if (step == STEP_REPAIR) {
+                copied += iocnt;
+                int np = (int)(copied*100/fixlen);
+                if (np > percent) {
+                    percent = np;
+                    listener.onNewProgress(step, percent);
+                }
+            }
+
+            iocnt = in.read(buffer);
+
+            // 可取消設計
+            if (Thread.currentThread().isInterrupted()) {
+                break;
+            }
         }
+
+        out.close();
+        in.close();
+        conn.disconnect();
     }
 
     /**
@@ -352,6 +371,11 @@ public class FileUpdateManager {
             if (!actual.equals(expected[i])) {
                 crashed.add(i);
             }
+
+            // 可取消設計
+            if (Thread.currentThread().isInterrupted()) {
+                return;
+            }
         }
 
         // 計算需要修復的長度，用來計算修復進度
@@ -372,6 +396,11 @@ public class FileUpdateManager {
                 actual = getLocalPartChecksum(gzfile, i);
                 if (!actual.equals(expected[i])) {
                     steelCrashed++;
+                }
+
+                // 可取消設計
+                if (Thread.currentThread().isInterrupted()) {
+                    return;
                 }
             }
 
@@ -423,6 +452,11 @@ public class FileUpdateManager {
                 listener.onNewProgress(step, percent);
             }
             out.flush();
+
+            // 可取消設計
+            if (Thread.currentThread().isInterrupted()) {
+                break;
+            }
         }
 
         in.close();
@@ -436,22 +470,32 @@ public class FileUpdateManager {
      * @param fileURL 檔案網址
      */
     public void checkVersion(final String fileURL) {
-        new Thread() {
-            @Override
-            public void run() {
-                try {
-                    File exfile = getExtractedFile(fileURL);
-                    getMetadata(fileURL);
-                    long localMtime = 0;
-                    if (exfile.exists()) {
-                        localMtime = exfile.lastModified();
+        synchronized(workingTask) {
+            if (workingTask==EMPTY_TASK) {
+                workingTask = new Thread() {
+                    @Override
+                    public void run() {
+                        try {
+                            File exfile = getExtractedFile(fileURL);
+                            getMetadata(fileURL);
+                            long localMtime = 0;
+                            if (exfile.exists()) {
+                                localMtime = exfile.lastModified();
+                            }
+
+                            workingTask = EMPTY_TASK;
+                            listener.onCheckVersion((mtime>localMtime), mtime);
+                        } catch(IOException ex) {
+                            workingTask = EMPTY_TASK;
+                            listener.onError(step, ex.getMessage());
+                        }
                     }
-                    listener.onCheckVersion((mtime>localMtime), mtime);
-                } catch(IOException ex) {
-                    listener.onError(step, ex.getMessage());
-                }
+                };
+                workingTask.start();
+            } else {
+                listener.onError(step, "正在執行其他動作，無法檢查版本");
             }
-        }.start();
+        }
     }
 
     /**
@@ -460,66 +504,94 @@ public class FileUpdateManager {
      * @param fileURL 檔案網址
      */
     public void update(final String fileURL) {
-        new Thread() {
-            @Override
-            public void run() {
-                try {
-                    listener.onNewProgress(step, 0);
+        synchronized(workingTask) {
+            if (workingTask==EMPTY_TASK) {
+                workingTask = new Thread() {
+                    @Override
+                    public void run() {
+                        try {
+                            listener.onNewProgress(step, 0);
 
-                    // 移除殘留壓縮檔與目前檔案
-                    File gzfile = getGzipFile(fileURL);
-                    if (gzfile.exists()) {
-                        gzfile.delete();
-                    }
-                    listener.onNewProgress(step, 25);
+                            // 移除殘留壓縮檔與目前檔案
+                            File gzfile = getGzipFile(fileURL);
+                            if (gzfile.exists()) {
+                                gzfile.delete();
+                            }
+                            listener.onNewProgress(step, 25);
 
-                    File exfile = getExtractedFile(fileURL);
-                    if (exfile.exists()) {
-                        exfile.delete();
-                    }
-                    listener.onNewProgress(step, 50);
+                            File exfile = getExtractedFile(fileURL);
+                            if (exfile.exists()) {
+                                exfile.delete();
+                            }
+                            listener.onNewProgress(step, 50);
 
-                    // 取得線上版本的更新日期與長度
-                    // 如果這動作已經被 checkVersion() 處理了就跳過
-                    if (mtime==0) {
-                        getMetadata(fileURL);
-                    }
-                    listener.onNewProgress(step, 100);
+                            // 取得線上版本的更新日期與長度
+                            // 如果這動作已經被 checkVersion() 處理了就跳過
+                            if (mtime==0) {
+                                getMetadata(fileURL);
+                            }
+                            listener.onNewProgress(step, 100);
 
-                    // 下載所有分割
-                    // (失敗時不會中斷，也不會產生錯誤訊息)
-                    step = STEP_DOWNLOAD;
-                    listener.onNewProgress(step, 0);
-                    int cnt = getPartCount();
-                    for (int i=0;i<cnt;i++) {
-                        downloadPart(fileURL, i, 0);
-                    }
+                            // 下載所有分割
+                            // (失敗時不會中斷，也不會產生錯誤訊息)
+                            step = STEP_DOWNLOAD;
+                            listener.onNewProgress(step, 0);
+                            int cnt = getPartCount();
+                            for (int i=0;i<cnt;i++) {
+                                downloadPart(fileURL, i, 0);
 
-                    // 錯誤狀況模擬
-                    if (forceDownloadFailed) {
-                        if (!forceRepairFailed) {
-                            forceDownloadFailed = false;
+                                // 取消點 1
+                                if (Thread.currentThread().isInterrupted()) {
+                                    throw new InterruptedException("");
+                                }
+                            }
+
+                            // 錯誤狀況模擬
+                            if (forceDownloadFailed) {
+                                if (!forceRepairFailed) {
+                                    forceDownloadFailed = false;
+                                }
+                            }
+
+                            // 檢查與自動修復
+                            step = STEP_REPAIR;
+                            listener.onNewProgress(step, 0);
+                            repairTE(fileURL, gzfile);
+
+                            // 取消點 2
+                            if (Thread.currentThread().isInterrupted()) {
+                                throw new InterruptedException("");
+                            }
+
+                            // 解壓縮
+                            step = STEP_EXTRACT;
+                            listener.onNewProgress(step, 0);
+                            extract(gzfile, exfile);
+
+                            // 取消點 3
+                            if (Thread.currentThread().isInterrupted()) {
+                                throw new InterruptedException("");
+                            }
+
+                            // 本地檔案 mtime 與遠端檔案同步
+                            exfile.setLastModified(mtime);
+
+                            workingTask = EMPTY_TASK;
+                            listener.onComplete();
+                        } catch(IOException ex) {
+                            workingTask = EMPTY_TASK;
+                            listener.onError(step, ex.getMessage());
+                        } catch(InterruptedException ex) {
+                            workingTask = EMPTY_TASK;
+                            listener.onCancel();
                         }
                     }
-
-                    // 檢查與自動修復
-                    step = STEP_REPAIR;
-                    listener.onNewProgress(step, 0);
-                    repairTE(fileURL, gzfile);
-
-                    // 解壓縮
-                    step = STEP_EXTRACT;
-                    listener.onNewProgress(step, 0);
-                    extract(gzfile, exfile);
-
-                    // 本地檔案 mtime 與遠端檔案同步
-                    exfile.setLastModified(mtime);
-                    listener.onComplete();
-                } catch(IOException ex) {
-                    listener.onError(step, ex.getMessage());
-                }
+                };
+                workingTask.start();
+            } else {
+                listener.onError(step, "正在執行其他動作，無法更新檔案");
             }
-        }.start();
+        }
     }
 
     /**
@@ -528,49 +600,68 @@ public class FileUpdateManager {
      * @param fileURL 檔案網址
      */
     public void repair(final String fileURL) {
-        new Thread() {
-            @Override
-            public void run() {
-                try {
-                    // 前置作業
-                    step = STEP_PREPARE;
-                    listener.onNewProgress(step, 0);
+        synchronized(workingTask) {
+            if (workingTask==EMPTY_TASK) {
+                workingTask = new Thread() {
+                    @Override
+                    public void run() {
+                        try {
+                            // 前置作業
+                            step = STEP_PREPARE;
+                            listener.onNewProgress(step, 0);
 
-                    File gzfile = getGzipFile(fileURL);
-                    File exfile = getExtractedFile(fileURL);
-                    if (!gzfile.exists() && exfile.exists()) {
-                        throw new IOException("檔案已完成更新，不需要修復");
+                            File gzfile = getGzipFile(fileURL);
+                            File exfile = getExtractedFile(fileURL);
+                            if (!gzfile.exists() && exfile.exists()) {
+                                throw new IOException("檔案已完成更新，不需要修復");
+                            }
+
+                            // 取得線上版本的更新日期與長度
+                            // 如果這動作已經被 checkVersion() 處理了就跳過
+                            if (mtime==0) {
+                                getMetadata(fileURL);
+                            }
+                            listener.onNewProgress(step, 100);
+
+                            if (forceRepairFailed) {
+                                forceDownloadFailed = false;
+                            }
+
+                            // 檢查與自動修復
+                            step = STEP_REPAIR;
+                            listener.onNewProgress(step, 0);
+                            repairTE(fileURL, gzfile);
+
+                            // 解壓縮
+                            step = STEP_EXTRACT;
+                            listener.onNewProgress(step, 0);
+                            extract(gzfile, exfile);
+
+                            // 本地檔案 mtime 與遠端檔案同步
+                            exfile.setLastModified(mtime);
+
+                            workingTask = EMPTY_TASK;
+                            listener.onComplete();
+                        } catch(IOException ex) {
+                            workingTask = EMPTY_TASK;
+                            listener.onError(step, ex.getMessage());
+                        }
                     }
-
-                    // 取得線上版本的更新日期與長度
-                    // 如果這動作已經被 checkVersion() 處理了就跳過
-                    if (mtime==0) {
-                        getMetadata(fileURL);
-                    }
-                    listener.onNewProgress(step, 100);
-
-                    if (forceRepairFailed) {
-                        forceDownloadFailed = false;
-                    }
-
-                    // 檢查與自動修復
-                    step = STEP_REPAIR;
-                    listener.onNewProgress(step, 0);
-                    repairTE(fileURL, gzfile);
-
-                    // 解壓縮
-                    step = STEP_EXTRACT;
-                    listener.onNewProgress(step, 0);
-                    extract(gzfile, exfile);
-
-                    // 本地檔案 mtime 與遠端檔案同步
-                    exfile.setLastModified(mtime);
-                    listener.onComplete();
-                } catch(IOException ex) {
-                    listener.onError(step, ex.getMessage());
-                }
+                };
+                workingTask.start();
             }
-        }.start();
+        }
+    }
+
+    /**
+     * 取消檔案更新或修復
+     */
+    public void cancel() {
+        synchronized(workingTask) {
+            if (workingTask!=EMPTY_TASK) {
+                workingTask.interrupt();
+            }
+        }
     }
 
     /**
@@ -580,6 +671,15 @@ public class FileUpdateManager {
      */
     public void setListener(ProgressListener listener) {
         this.listener = listener;
+    }
+
+    /**
+     * 變更儲存位置
+     *
+     * @param saveTo 儲存位置
+     */
+    public void setSaveTo(File saveTo) {
+        this.saveTo = saveTo;
     }
 
 }

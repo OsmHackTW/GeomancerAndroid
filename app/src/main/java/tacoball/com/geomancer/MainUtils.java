@@ -24,42 +24,38 @@ public class MainUtils {
     private static final int    UPDATE_NFID = 233;
     private static final String PK_WANNA_UPDATE = "map.wanna_update";
 
-    public static final String UPDATE_SITE = "http://192.168.1.104/geomancer";
+    //public static final String UPDATE_SITE = "http://gdtile.tacosync.com/geomancer";
+    //public static final String UPDATE_SITE = "http://192.168.1.104/geomancer"; // Wifi LAN
+    public static final String UPDATE_SITE = "http://192.168.42.180/geomancer"; // USB LAN
+
     public static final String MAP_NAME = "taiwan-taco.map";
 
-    /**
-     *
-     * @param resource
-     * @return
-     */
-    public static String getRemoteURL(String resource) {
-        return String.format(Locale.getDefault(), "%s/%s.gz", UPDATE_SITE, resource);
+    public static final String[] REQUIRED_FILES = {
+        MAP_NAME,
+        "unluckyhouse.sqlite",
+        "unluckylabor.sqlite"
+    };
+
+    public static String getRemoteURL(int fileIndex) {
+        return String.format(Locale.getDefault(), "%s/%s.gz", UPDATE_SITE, REQUIRED_FILES[fileIndex]);
     }
 
-    /**
-     *
-     * @param context
-     * @param category
-     * @param filename
-     * @return
-     */
-    public static File getLocalFile(Context context, String category, String filename) throws IOException {
-        return new File(getSavePath(context, category), filename);
-    }
-
-    /**
-     *
-     * @param context
-     * @param catrgory
-     * @return
-     * @throws IOException
-     */
-    public static File getSavePath(Context context, String catrgory) throws IOException {
+    public static File getSavePath(Context context, int fileIndex) throws IOException {
         if (context==null) {
             throw new IOException("Context is null");
         }
 
-        File[] dirs = context.getExternalFilesDirs(catrgory);
+        if (fileIndex>=REQUIRED_FILES.length) {
+            throw new IOException("fileIndex out of range");
+        }
+
+        String filename = REQUIRED_FILES[fileIndex];
+        int begin = filename.lastIndexOf('.') + 1;
+        String ext = filename.substring(begin);
+        String category = ext;
+        if (ext.equals("sqlite")) category = "db";
+
+        File[] dirs = context.getExternalFilesDirs(category);
         for (int i=dirs.length-1;i>=0;i--) {
             if (dirs[i]!=null) return dirs[i];
         }
@@ -67,11 +63,10 @@ public class MainUtils {
         throw new IOException("Cannot get save path");
     }
 
-    /**
-     *
-     * @param ex
-     * @return
-     */
+    public static File getFilePath(Context context, int fileIndex) throws IOException {
+        return new File(getSavePath(context, fileIndex), REQUIRED_FILES[fileIndex]);
+    }
+
     public static String getReason(final Exception ex) {
         String msg = ex.getMessage();
 

@@ -8,6 +8,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +22,7 @@ import java.util.Locale;
 
 public class MapUpdaterFragment extends Fragment {
 
-    //private static String TAG = "MapUpdaterFragment";
+    private static String TAG = "MapUpdaterFragment";
 
     TextView    mTxvAction;
     ProgressBar mPgbAction;
@@ -29,6 +30,7 @@ public class MapUpdaterFragment extends Fragment {
 
     Handler mHandler;
     FileUpdateManager fum;
+    int fileIndex = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -54,12 +56,12 @@ public class MapUpdaterFragment extends Fragment {
 
         if (hasNetwork) {
             try {
-                // 更新地圖
-                File saveTo = MainUtils.getSavePath(getActivity(), "map");
-                String fileURL = MainUtils.getRemoteURL(MainUtils.MAP_NAME);
+                // 啟動檔案更新循環
+                String fileURL = MainUtils.getRemoteURL(fileIndex);
+                File   saveTo  = MainUtils.getSavePath(getActivity(), fileIndex);
                 fum = new FileUpdateManager(saveTo);
                 fum.setListener(listener);
-                fum.update(fileURL);
+                fum.checkVersion(fileURL);
             } catch(IOException ex) {
                 mTxvAction.setText("無法存取檔案，是否儲存空間已用盡？");
             }
@@ -72,6 +74,7 @@ public class MapUpdaterFragment extends Fragment {
 
     @Override
     public void onDestroy() {
+        fum.cancel();
         super.onDestroy();
     }
 
@@ -110,9 +113,30 @@ public class MapUpdaterFragment extends Fragment {
 
     FileUpdateManager.ProgressListener listener = new FileUpdateManager.ProgressListener() {
 
+        private void checkNext() {
+            fileIndex++;
+            if (fileIndex<MainUtils.REQUIRED_FILES.length) {
+                try {
+                    String fileURL = MainUtils.getRemoteURL(fileIndex);
+                    File saveTo = MainUtils.getSavePath(getActivity(), fileIndex);
+                    fum.setSaveTo(saveTo);
+                    fum.checkVersion(fileURL);
+                } catch(IOException ex) {
+                    // TODO
+                }
+            } else {
+                gotoMap();
+            }
+        }
+
         @Override
         public void onCheckVersion(boolean hasNew, long mtime) {
-            // Ignore
+            if (hasNew) {
+                String fileURL = MainUtils.getRemoteURL(fileIndex);
+                fum.update(fileURL);
+            } else {
+                checkNext();
+            }
         }
 
         @Override
@@ -122,7 +146,12 @@ public class MapUpdaterFragment extends Fragment {
 
         @Override
         public void onComplete() {
-            gotoMap();
+            checkNext();
+        }
+
+        @Override
+        public void onCancel() {
+            Log.i(TAG, "已取消更新");
         }
 
         @Override
@@ -131,21 +160,23 @@ public class MapUpdaterFragment extends Fragment {
             setErrorMessage(msg);
         }
 
-        private String getStepName(int step, boolean withPrefix) {
-            String stepname = "前置作業";
+        private String getStepName(int step, boolean withTarget) {
+            String[] targets = {"地圖檔", "凶宅資料庫", "血汗勞工資料庫"};
+
+            String stepname = "準備下載";
             switch (step) {
                 case FileUpdateManager.STEP_DOWNLOAD:
-                    stepname = "下載";
+                    stepname = "正在下載";
                     break;
                 case FileUpdateManager.STEP_EXTRACT:
-                    stepname = "解壓縮";
+                    stepname = "正在解壓縮";
                     break;
                 case FileUpdateManager.STEP_REPAIR:
-                    stepname = "修復";
+                    stepname = "正在修復";
             }
 
-            if (withPrefix) {
-                return "正在更新圖資 - " + stepname;
+            if (withTarget) {
+                return String.format(Locale.getDefault(), "%s%s", stepname, targets[fileIndex]);
             }
 
             return stepname;
@@ -158,7 +189,7 @@ public class MapUpdaterFragment extends Fragment {
         @Override
         public void onClick(View v) {
             mBtnRepair.setVisibility(View.INVISIBLE);
-            String fileURL = MainUtils.getRemoteURL(MainUtils.MAP_NAME);
+            String fileURL = MainUtils.getRemoteURL(fileIndex);
             fum.repair(fileURL);
         }
 
