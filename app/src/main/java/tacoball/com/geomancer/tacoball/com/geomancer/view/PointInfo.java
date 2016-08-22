@@ -14,7 +14,7 @@ public class PointInfo {
     private double mLng;
     private String mSubject;
     private String mDescription = "...";
-    private String mURL = "http://...";
+    private String mURL = "";
     private int mPinNormal;
     private int mPinFocused;
 

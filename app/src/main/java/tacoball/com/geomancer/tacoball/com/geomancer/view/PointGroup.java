@@ -69,7 +69,13 @@ public class PointGroup {
                 if (focusMarker==mPointMarkers[i]) {
                     focusMarker.setFocusedPin();
                     mTxvDescription.setText(mPointInfo[i].getDescription());
-                    mTxvURL.setText(mPointInfo[i].getURL());
+                    if (mPointInfo[i].getURL().equals("")) {
+                        //mTxvURL.setVisibility(View.INVISIBLE);
+                        mTxvURL.setText("(無)");
+                    } else {
+                        //mTxvURL.setVisibility(View.VISIBLE);
+                        mTxvURL.setText(mPointInfo[i].getURL());
+                    }
                     mInfoContainer.setVisibility(ViewGroup.VISIBLE);
                     continue;
                 }

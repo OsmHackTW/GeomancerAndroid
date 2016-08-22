@@ -288,7 +288,7 @@ public class TaiwanMapView extends MapView {
             getMapZoomControls().show();
             getModel().mapViewPosition.setMapLimit(bbox);
 
-            // Build pin_unlucky points
+            // Build pin_unluckyhouse points
             mPointGroup = new PointGroup(getContext(), getLayerManager().getLayers(), 25);
         }
     }
