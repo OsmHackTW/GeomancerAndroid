@@ -24,9 +24,9 @@ public class MainUtils {
     private static final int    UPDATE_NFID = 233;
     private static final String PK_WANNA_UPDATE = "map.wanna_update";
 
-    //public static final String UPDATE_SITE = "http://gdtile.tacosync.com/geomancer";
+    public static final String UPDATE_SITE = "http://tacosync.com/geomancer"; // Web
     //public static final String UPDATE_SITE = "http://192.168.1.104/geomancer"; // Wifi LAN
-    public static final String UPDATE_SITE = "http://192.168.42.180/geomancer"; // USB LAN
+    //public static final String UPDATE_SITE = "http://192.168.42.180/geomancer"; // USB LAN
 
     public static final String MAP_NAME = "taiwan-taco.map";
 

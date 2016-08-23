@@ -94,7 +94,7 @@ public class FileUpdateManager {
     private MessageDigest md; // 摘要演算法，目前僅使用 MD5
 
     // 情境模擬參數
-    private boolean forceDownloadFailed = true; // 模擬下載時發生錯誤
+    private boolean forceDownloadFailed = false; // 模擬下載時發生錯誤
     private boolean forceRepairFailed = false;   // 模擬修復時發生錯誤
 
     // 執行中的子 Thread，僅限單工
