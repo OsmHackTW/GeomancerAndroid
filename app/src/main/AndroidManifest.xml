@@ -33,7 +33,7 @@
             </intent-filter>
         </receiver>
 
-        <service android:name=".tacoball.com.geomancer.view.CancelUpdateService" />
+        <service android:name=".tacoball.com.geomancer.view.ConfirmUpdateService" />
     </application>
 
 </manifest>

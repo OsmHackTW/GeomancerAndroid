@@ -146,8 +146,8 @@ public class MapUpdaterFragment extends Fragment {
     private FileUpdateManager.ProgressListener listener = new FileUpdateManager.ProgressListener() {
 
         @Override
-        public void onCheckVersion(boolean hasNew, long mtime) {
-            if (hasNew) {
+        public void onCheckVersion(long length, long mtime) {
+            if (length > 0) {
                 String fileURL = MainUtils.getRemoteURL(fileIndex);
                 fum.update(fileURL);
             } else {

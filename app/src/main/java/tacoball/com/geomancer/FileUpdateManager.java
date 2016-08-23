@@ -39,10 +39,10 @@ public class FileUpdateManager {
         /**
          * 新版本通知
          *
-         * @param hasNew 是否有新版本
+         * @param length 新版本的檔案大小, 0 表示不用更新
          * @param mtime  新版本的更新時間，格式為 UNIX Timestamp
          */
-        void onCheckVersion(boolean hasNew, long mtime);
+        void onCheckVersion(long length, long mtime);
 
         /**
          * 下載進度通知
@@ -94,7 +94,7 @@ public class FileUpdateManager {
     private MessageDigest md; // 摘要演算法，目前僅使用 MD5
 
     // 情境模擬參數
-    private boolean forceDownloadFailed = false; // 模擬下載時發生錯誤
+    private boolean forceDownloadFailed = true; // 模擬下載時發生錯誤
     private boolean forceRepairFailed = false;   // 模擬修復時發生錯誤
 
     // 執行中的子 Thread，僅限單工
@@ -131,8 +131,8 @@ public class FileUpdateManager {
         listener = new ProgressListener() {
 
             @Override
-            public void onCheckVersion(boolean hasNew, long mtime) {
-                if (hasNew) {
+            public void onCheckVersion(long length, long mtime) {
+                if (length>0) {
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
                     String datestr = sdf.format(new Date(mtime));
                     System.out.printf("發現新版本: %s\n", datestr);
@@ -479,12 +479,16 @@ public class FileUpdateManager {
                             File exfile = getExtractedFile(fileURL);
                             getMetadata(fileURL);
                             long localMtime = 0;
+                            long length = 0;
                             if (exfile.exists()) {
                                 localMtime = exfile.lastModified();
+                                if (mtime > localMtime) {
+                                    length = gzlen;
+                                }
                             }
 
                             workingTask = EMPTY_TASK;
-                            listener.onCheckVersion((mtime>localMtime), mtime);
+                            listener.onCheckVersion(length, mtime);
                         } catch(IOException ex) {
                             workingTask = EMPTY_TASK;
                             listener.onError(step, ex.getMessage());

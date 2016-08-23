@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.support.v4.app.NotificationCompat;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,8 +25,8 @@ public class MainUtils {
     private static final int    UPDATE_NFID = 233;
     private static final String PK_WANNA_UPDATE = "map.wanna_update";
 
-    public static final String UPDATE_SITE = "http://tacosync.com/geomancer"; // Web
-    //public static final String UPDATE_SITE = "http://192.168.1.104/geomancer"; // Wifi LAN
+    //public static final String UPDATE_SITE = "http://tacosync.com/geomancer"; // Web
+    public static final String UPDATE_SITE = "http://192.168.1.81/geomancer"; // Wifi LAN
     //public static final String UPDATE_SITE = "http://192.168.42.180/geomancer"; // USB LAN
 
     public static final String MAP_NAME = "taiwan-taco.map";
@@ -111,11 +112,11 @@ public class MainUtils {
     /**
      * 產生資料更新的系統通知
      */
-    private static void buildUpdateNotification(Context context) {
-        Intent itYes = new Intent(context, ConfirmUpdateService.class);
-        Intent itNo  = new Intent(context, ConfirmUpdateService.class);
-        PendingIntent piYes = PendingIntent.getService(context, 0, itYes, 0);
-        PendingIntent piNo  = PendingIntent.getService(context, 0, itNo, 0);
+    public static void buildUpdateNotification(Context context, double mblen) {
+        Intent itYes = new Intent(context, ConfirmUpdateService.class).setAction("Yes");
+        Intent itNo  = new Intent(context, ConfirmUpdateService.class).setAction("No");
+        PendingIntent piYes = PendingIntent.getService(context, 0, itYes, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent piNo  = PendingIntent.getService(context, 0, itNo, PendingIntent.FLAG_UPDATE_CURRENT);
         long[] vpat = {0, 100, 100, 100};
 
         SharedPreferences.Editor pref = context.getSharedPreferences(TAG, Context.MODE_PRIVATE).edit();
@@ -124,18 +125,23 @@ public class MainUtils {
         BitmapDrawable sic = (BitmapDrawable)context.getResources().getDrawable(R.mipmap.geomancer);
         Bitmap lic = sic.getBitmap();
 
-        Notification.Builder builder = new Notification.Builder(context);
+        String pat = context.getString(R.string.term_confirm_update);
+        String msg = String.format(Locale.getDefault(), pat, mblen);
+
+        // TODO: Optimize parameters
+        NotificationCompat.Style style = new NotificationCompat.BigTextStyle().bigText(msg);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         Notification nf = builder
-                .setContentTitle(context.getString(R.string.term_update))
-                .setContentText(context.getString(R.string.term_confirm_update))
-                .setSmallIcon(android.R.drawable.ic_dialog_info)
-                .setLargeIcon(lic)
-                .setVibrate(vpat)
-                .addAction(android.R.drawable.arrow_down_float, context.getString(R.string.term_yes), piYes)
-                .addAction(android.R.drawable.ic_delete, context.getString(R.string.term_no), piNo)
-                .setDeleteIntent(piNo)
-                .setAutoCancel(false)
-                .build();
+            .setContentTitle(context.getString(R.string.term_update))
+            .setStyle(style)
+            .setSmallIcon(android.R.drawable.ic_dialog_info)
+            .setLargeIcon(lic)
+            .setVibrate(vpat)
+            .addAction(android.R.drawable.arrow_down_float, context.getString(R.string.term_yes), piYes)
+            .addAction(android.R.drawable.ic_delete, context.getString(R.string.term_no), piNo)
+            .setAutoCancel(false)
+            .build();
 
         NotificationManager notiMgr = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
         notiMgr.notify(TAG, UPDATE_NFID, nf);
