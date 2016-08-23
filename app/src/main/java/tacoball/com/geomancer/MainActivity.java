@@ -11,7 +11,7 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * Main Activity
+ * 前端程式進入點
  */
 public class MainActivity extends ActionBarActivity {
 
@@ -25,10 +25,11 @@ public class MainActivity extends ActionBarActivity {
         AndroidGraphicFactory.createInstance(getApplication());
         setContentView(R.layout.activity_main);
 
-        // Init Fragments
+        // 配置 Fragment
         FragmentTransaction ft = getFragmentManager().beginTransaction();
 
         try {
+            // 更新需求檢查
             int cnt = MainUtils.REQUIRED_FILES.length;
             int exists = 0;
             for (int i=0;i<cnt;i++) {
@@ -39,11 +40,14 @@ public class MainActivity extends ActionBarActivity {
             }
 
             if (exists<cnt) {
+                // 更新程式
                 ft.add(R.id.frag_container, new MapUpdaterFragment());
             } else {
+                // 主畫面程式
                 ft.add(R.id.frag_container, new MapViewFragment());
             }
         } catch(IOException ex) {
+            // MainUtils.getFilePath() 發生錯誤
             Log.e(TAG, ex.getMessage());
         }
 

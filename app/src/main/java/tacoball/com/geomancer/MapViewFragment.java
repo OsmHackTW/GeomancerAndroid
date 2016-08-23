@@ -23,56 +23,56 @@ import tacoball.com.geomancer.tacoball.com.geomancer.view.PointInfo;
 import tacoball.com.geomancer.tacoball.com.geomancer.view.TaiwanMapView;
 
 /**
- * Main UI
+ * 測量風水程式
  */
 public class MapViewFragment extends Fragment {
 
     private static final String TAG = "MapViewFragment";
 
-    private ViewGroup      mFragLayout;
-    private TaiwanMapView  mMapView;
-    private TextView       mTxvLocation;
-    private TextView       mTxvZoom;
-    private TextView       mTxvAzimuth;
-    private TextView       mTxvSummaryContent;
-    private TextView       mTxvURLContent;
-    private ViewGroup      mInfoContainer;
-    private Button         mBtPosition;
-    private Button         mBtMeasure;
+    // 介面元件
+    private TaiwanMapView mMapView;     // 地圖
+    private TextView      mTxvLocation; // 經緯度文字
+    private TextView      mTxvZoom;     // 縮放比文字
+    private TextView      mTxvAzimuth;  // 方位角文字
+    private Button        mBtPosition;  // 定位按鈕
+    private Button        mBtMeasure;   // 測量風水按鈕
+
+    // 資源元件
     private SQLiteDatabase mUnluckyHouseDB;
     private SQLiteDatabase mUnluckyLaborDB;
 
-    public MapViewFragment() {
-        // Required empty public constructor
-    }
-
+    /**
+     * 準備動作
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mFragLayout = (ViewGroup)inflater.inflate(R.layout.fragment_map_view, container, false);
+        ViewGroup mFragLayout = (ViewGroup)inflater.inflate(R.layout.fragment_map_view, container, false);
 
-        // StatusBar
+        // 狀態列
         mTxvZoom     = (TextView)mFragLayout.findViewById(R.id.txvZoomValue);
         mTxvLocation = (TextView)mFragLayout.findViewById(R.id.txvLocation);
         mTxvAzimuth  = (TextView)mFragLayout.findViewById(R.id.txvAzimuthValue);
-        mTxvSummaryContent = (TextView)mFragLayout.findViewById(R.id.txvSummaryContent);
-        mTxvURLContent     = (TextView)mFragLayout.findViewById(R.id.txvURLContent);
-        mInfoContainer = (ViewGroup)mFragLayout.findViewById(R.id.glyPointInfo);
 
-        // ButtonsBar
+        // 按鈕列
         mBtPosition = (Button)mFragLayout.findViewById(R.id.btPosition);
         mBtMeasure  = (Button)mFragLayout.findViewById(R.id.btMeasure);
 
-        // Map View
+        // POI 詳細資訊
+        TextView  txvSummaryContent = (TextView)mFragLayout.findViewById(R.id.txvSummaryContent);
+        TextView  txvURLContent     = (TextView)mFragLayout.findViewById(R.id.txvURLContent);
+        ViewGroup vgInfoContainer   = (ViewGroup)mFragLayout.findViewById(R.id.glyPointInfo);
+
+        // 地圖
         mMapView = (TaiwanMapView)mFragLayout.findViewById(R.id.mapView);
         mMapView.setMyLocationImage(R.drawable.arrow_up);
-        mMapView.setInfoView(mInfoContainer, mTxvSummaryContent, mTxvURLContent);
+        mMapView.setInfoView(vgInfoContainer, txvSummaryContent, txvURLContent);
 
-        // Events
+        // 事件配置
         mBtPosition.setOnClickListener(mClickListener);
         mBtMeasure.setOnClickListener(mClickListener);
         mMapView.setStateChangeListener(mMapStateListener);
 
-        // open database
+        // 資料庫配置
         try {
             String path;
             path = MainUtils.getFilePath(getActivity(), 1).getAbsolutePath();
@@ -86,6 +86,9 @@ public class MapViewFragment extends Fragment {
         return mFragLayout;
     }
 
+    /**
+     * 善後動作
+     */
     @Override
     public void onDestroyView() {
         mMapView.destroyAll();
@@ -101,18 +104,20 @@ public class MapViewFragment extends Fragment {
     }
 
     /**
-     * handle event of buttons
+     * 定位與測量風水按鈕事件處理
      */
     private View.OnClickListener mClickListener = new View.OnClickListener() {
 
         @Override
         public void onClick(View v) {
+            // 定位
             if (v==mBtPosition) {
                 mMapView.gotoMyPosition();
             }
 
+            // 測量風水
             if (v==mBtMeasure) {
-                // find unlucky houses and generate markers
+                // 查詢前準備
                 int uhcnt = 0;
                 int ulcnt = 0;
 
@@ -130,13 +135,15 @@ public class MapViewFragment extends Fragment {
 
                 List<PointInfo> infolist = new ArrayList<>();
 
+                // 查詢凶宅
                 sql = "SELECT id,approach,area,address,lat,lng FROM unluckyhouse " +
                       "WHERE state>1 AND lat>=? AND lat<=? AND lng>=? AND lng<=?";
                 cur = mUnluckyHouseDB.rawQuery(sql, params);
                 if (cur.getCount()>0) {
                     while (cur.moveToNext()) {
+                        String pat     = getString(R.string.pattern_unluckyhouse_subject);
                         String url     = String.format(Locale.getDefault(), "http://unluckyhouse.com/showthread.php?t=%d", cur.getInt(0));
-                        String subject = String.format(Locale.getDefault(), "凶宅 (%s)", cur.getString(1));
+                        String subject = String.format(Locale.getDefault(), pat, cur.getString(1));
                         String address = cur.getString(3);
                         double lat = cur.getDouble(4);
                         double lng = cur.getDouble(5);
@@ -150,12 +157,14 @@ public class MapViewFragment extends Fragment {
                 }
                 cur.close();
 
+                // 查詢血汗工廠
                 sql = "SELECT id,exe_id,corperation,detail,ref_law,boss,exe_date,lat,lng FROM taipei " +
                       "WHERE lat>=? AND lat<=? AND lng>=? AND lng<=?";
                 cur = mUnluckyLaborDB.rawQuery(sql, params);
                 if (cur.getCount()>0) {
                     while (cur.moveToNext()) {
-                        String subject = String.format(Locale.getDefault(), "血汗工廠 (%s)", cur.getString(2));
+                        String pat     = getString(R.string.pattern_unluckylabor_subject);
+                        String subject = String.format(Locale.getDefault(), pat, cur.getString(2));
                         String detail  = String.format(Locale.getDefault(), "%s\n%s\n%s", cur.getString(1), cur.getString(4), cur.getString(3));
                         double lat = cur.getDouble(7);
                         double lng = cur.getDouble(8);
@@ -167,16 +176,18 @@ public class MapViewFragment extends Fragment {
                 }
                 cur.close();
 
-                if ((uhcnt+ulcnt) > 0) {
+                // 配置 POI Marker
+                if (infolist.size() > 0) {
                     PointInfo[] infoary = new PointInfo[infolist.size()];
                     infolist.toArray(infoary);
                     infolist.clear();
 
                     mMapView.showPoints(infoary);
-                    String msg = String.format(Locale.getDefault(), "凶宅 %d 間、血汗工廠 %d 間", uhcnt, ulcnt);
+                    String pat = getString(R.string.pattern_measure_result);
+                    String msg = String.format(Locale.getDefault(), pat, uhcnt, ulcnt);
                     Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(getActivity(), "平安無事", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), R.string.term_peace, Toast.LENGTH_SHORT).show();
                 }
             }
         }
@@ -184,7 +195,7 @@ public class MapViewFragment extends Fragment {
     };
 
     /**
-     * Sync map state
+     * 同步地圖狀態值 (經緯度、縮放比、方位角)，限制 Z>=15 才允許測量風水
      */
     private TaiwanMapView.StateChangeListener mMapStateListener = new TaiwanMapView.StateChangeListener() {
 
@@ -199,10 +210,10 @@ public class MapViewFragment extends Fragment {
             String txtAzimuth = String.format(Locale.getDefault(), "%.2f", state.myAzimuth);
             mTxvAzimuth.setText(txtAzimuth);
 
-            if (state.zoom<15) {
-                mBtMeasure.setEnabled(false);
-            } else {
+            if (state.zoom>=15) {
                 mBtMeasure.setEnabled(true);
+            } else {
+                mBtMeasure.setEnabled(false);
             }
         }
 

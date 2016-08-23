@@ -20,28 +20,42 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
 
+/**
+ * 地圖與資料庫更新程式
+ */
 public class MapUpdaterFragment extends Fragment {
 
     private static String TAG = "MapUpdaterFragment";
 
-    TextView    mTxvAction;
-    ProgressBar mPgbAction;
-    Button      mBtnRepair;
+    // 介面元件
+    TextView    mTxvAction; // 步驟說明文字
+    ProgressBar mPgbAction; // 進度條
+    Button      mBtnRepair; // 修復按鈕
 
+    // 資源元件
     Handler mHandler;
     FileUpdateManager fum;
+
+    // 狀態值
     int fileIndex = 0;
 
+    /**
+     * 準備動作
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewGroup layout = (ViewGroup)inflater.inflate(R.layout.fragment_updater, container, false);
+
         mTxvAction = (TextView)layout.findViewById(R.id.txvAction);
-        mTxvAction.setText("檢查網路連線 ...");
+        //mTxvAction.setText("檢查網路連線 ...");
+
         mPgbAction = (ProgressBar)layout.findViewById(R.id.pgbAction);
         mPgbAction.setProgress(0);
+
         mBtnRepair = (Button)layout.findViewById(R.id.btnRepair);
         mBtnRepair.setVisibility(View.INVISIBLE);
         mBtnRepair.setOnClickListener(repairListener);
+
         mHandler = new Handler();
 
         // 檢查網路連線
@@ -63,32 +77,46 @@ public class MapUpdaterFragment extends Fragment {
                 fum.setListener(listener);
                 fum.checkVersion(fileURL);
             } catch(IOException ex) {
-                mTxvAction.setText("無法存取檔案，是否儲存空間已用盡？");
+                mTxvAction.setText(R.string.prompt_cannot_access_storage);
             }
         } else {
-            mTxvAction.setText("需要網路連線更新地圖，請打開網路後重試");
+            mTxvAction.setText(R.string.prompt_cannot_access_network);
         }
 
         return layout;
     }
 
+    /**
+     * 善後動作
+     */
     @Override
     public void onDestroy() {
         fum.cancel();
         super.onDestroy();
     }
 
-    private void setProgress(final String action, final int progress) {
+    /**
+     * 顯示新進度
+     *
+     * @param step     步驟
+     * @param progress 進度
+     */
+    private void setProgress(final String step, final int progress) {
         mHandler.post(new Runnable() {
             @Override
             public void run() {
-                String msg = String.format(Locale.getDefault(), "%s %d%%", action, progress);
+                String msg = String.format(Locale.getDefault(), "%s %d%%", step, progress);
                 mTxvAction.setText(msg);
                 mPgbAction.setProgress(progress);
             }
         });
     }
 
+    /**
+     * 顯示錯誤訊息與修復按鈕
+     *
+     * @param msg 錯誤訊息
+     */
     private void setErrorMessage(final String msg) {
         mHandler.post(new Runnable() {
             @Override
@@ -99,6 +127,9 @@ public class MapUpdaterFragment extends Fragment {
         });
     }
 
+    /**
+     * 重新啟動 App
+     */
     private void gotoMap() {
         mHandler.post(new Runnable() {
             @Override
@@ -111,23 +142,8 @@ public class MapUpdaterFragment extends Fragment {
         });
     }
 
-    FileUpdateManager.ProgressListener listener = new FileUpdateManager.ProgressListener() {
-
-        private void checkNext() {
-            fileIndex++;
-            if (fileIndex<MainUtils.REQUIRED_FILES.length) {
-                try {
-                    String fileURL = MainUtils.getRemoteURL(fileIndex);
-                    File saveTo = MainUtils.getSavePath(getActivity(), fileIndex);
-                    fum.setSaveTo(saveTo);
-                    fum.checkVersion(fileURL);
-                } catch(IOException ex) {
-                    // TODO
-                }
-            } else {
-                gotoMap();
-            }
-        }
+    // 自動更新非同步流程管理
+    private FileUpdateManager.ProgressListener listener = new FileUpdateManager.ProgressListener() {
 
         @Override
         public void onCheckVersion(boolean hasNew, long mtime) {
@@ -151,31 +167,53 @@ public class MapUpdaterFragment extends Fragment {
 
         @Override
         public void onCancel() {
-            Log.i(TAG, "已取消更新");
+            Log.i(TAG, getString(R.string.log_cancel_update));
         }
 
         @Override
         public void onError(int step, String reason) {
-            String msg = String.format(Locale.getDefault(), "%s階段發生錯誤", getStepName(step, false));
+            String pat = getString(R.string.pattern_update_error);
+            String msg = String.format(Locale.getDefault(), pat, getStepName(step, false));
             setErrorMessage(msg);
         }
 
-        private String getStepName(int step, boolean withTarget) {
-            String[] targets = {"地圖檔", "凶宅資料庫", "血汗勞工資料庫"};
+        // 繼續處理下一個檔案
+        private void checkNext() {
+            fileIndex++;
+            if (fileIndex<MainUtils.REQUIRED_FILES.length) {
+                try {
+                    String fileURL = MainUtils.getRemoteURL(fileIndex);
+                    File saveTo = MainUtils.getSavePath(getActivity(), fileIndex);
+                    fum.setSaveTo(saveTo);
+                    fum.checkVersion(fileURL);
+                } catch(IOException ex) {
+                    // TODO
+                }
+            } else {
+                gotoMap();
+            }
+        }
 
-            String stepname = "準備下載";
+        // 步驟值轉換步驟名稱
+        private String getStepName(int step, boolean withTarget) {
+            String stepname = getString(R.string.term_preparing);
             switch (step) {
                 case FileUpdateManager.STEP_DOWNLOAD:
-                    stepname = "正在下載";
+                    stepname = getString(R.string.term_downloading);
                     break;
                 case FileUpdateManager.STEP_EXTRACT:
-                    stepname = "正在解壓縮";
+                    stepname = getString(R.string.term_extracting);
                     break;
                 case FileUpdateManager.STEP_REPAIR:
-                    stepname = "正在修復";
+                    stepname = getString(R.string.term_repairing);
             }
 
             if (withTarget) {
+                String[] targets = {
+                    getString(R.string.term_map),
+                    getString(R.string.term_unluckyhouse_db),
+                    getString(R.string.term_unluckylabor_db)
+                };
                 return String.format(Locale.getDefault(), "%s%s", stepname, targets[fileIndex]);
             }
 
@@ -184,15 +222,14 @@ public class MapUpdaterFragment extends Fragment {
 
     };
 
-    View.OnClickListener repairListener = new View.OnClickListener() {
-
+    // 修復按鈕點擊事件，開始修復檔案與隱藏修復按鈕
+    private View.OnClickListener repairListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             mBtnRepair.setVisibility(View.INVISIBLE);
             String fileURL = MainUtils.getRemoteURL(fileIndex);
             fum.repair(fileURL);
         }
-
     };
 
 }
