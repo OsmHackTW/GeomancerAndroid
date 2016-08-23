@@ -62,7 +62,8 @@
         <area fill="#e7f0e7" />
     </rule>
     <rule e="way" k="landuse" v="forest" zoom-min="8">
-        <area fill="#e7f0e7" />
+        <!-- area fill="#e7f0e7" / -->
+        <area src="jar:patterns/wood-coniferous.png" />
     </rule>
 
     <!-- 自然地貌 -->

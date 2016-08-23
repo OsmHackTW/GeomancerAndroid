@@ -24,13 +24,11 @@ import android.widget.TextView;
 
 import org.mapsforge.core.model.BoundingBox;
 import org.mapsforge.core.model.LatLong;
-import org.mapsforge.core.util.MercatorProjection;
 import org.mapsforge.map.android.graphics.AndroidGraphicFactory;
 import org.mapsforge.map.android.rendertheme.AssetsRenderTheme;
 import org.mapsforge.map.android.util.AndroidUtil;
 import org.mapsforge.map.android.view.MapView;
 import org.mapsforge.map.datastore.MapDataStore;
-import org.mapsforge.map.datastore.PointOfInterest;
 import org.mapsforge.map.layer.cache.TileCache;
 import org.mapsforge.map.layer.overlay.Marker;
 import org.mapsforge.map.layer.renderer.TileRendererLayer;
@@ -38,13 +36,12 @@ import org.mapsforge.map.reader.MapFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Locale;
 
 import tacoball.com.geomancer.MainUtils;
 
 /**
- *
+ * 台灣地圖前端
  */
 public class TaiwanMapView extends MapView {
 
@@ -57,7 +54,6 @@ public class TaiwanMapView extends MapView {
     private Marker          mMyLocationMarker;
     private PointGroup      mPointGroup;
     private ViewGroup       mInfoView;
-    //private PointMarker[]  mUnluckyPoints;
 
     private State mState = new State();
     private StateChangeListener mStateChangeListener;
@@ -112,7 +108,7 @@ public class TaiwanMapView extends MapView {
             }
 
             org.mapsforge.core.graphics.Bitmap markerBitmap = AndroidGraphicFactory.convertToBitmap(d);
-            mMyLocationMarker = new Marker(new LatLong(25.0f, 121.0f), markerBitmap, 0, 0);
+            mMyLocationMarker = new Marker(new LatLong(0.0f, 0.0f), markerBitmap, 0, 0);
             getLayerManager().getLayers().add(mMyLocationMarker);
         }
     }
@@ -153,6 +149,7 @@ public class TaiwanMapView extends MapView {
     /**
      * 63ms at Taipei Station Zoom=15
      */
+    /*
     public List<PointOfInterest> searchPOIs() {
         List<PointOfInterest> poisInScreen = new ArrayList<>();
 
@@ -167,7 +164,6 @@ public class TaiwanMapView extends MapView {
         int maxTx = MercatorProjection.longitudeToTileX(bbox.maxLongitude, z);
 
         // Step 1
-        /*
         for (int tx=minTx;tx<=maxTx;tx++) {
             for (int ty=minTy;ty<=maxTy;ty++) {
                 Tile tile = new Tile(tx, ty, z, 256);
@@ -179,13 +175,13 @@ public class TaiwanMapView extends MapView {
                 }
             }
         }
-        */
 
         // Step 2
         // TODO: ...
 
         return poisInScreen;
     }
+    */
 
     /*
     private static String tagsToString(List<Tag> tags) {
@@ -248,10 +244,9 @@ public class TaiwanMapView extends MapView {
         final byte MIN_ZOOM = 7;
         final byte MAX_ZOOM = 17;
 
-        //File mapFile = MapUtils.getMapFile(mContext);
         File mapFile = MainUtils.getFilePath(mContext, 0);
 
-        if (mapFile!=null && mapFile.exists()) {
+        if (mapFile.exists()) {
             AndroidGraphicFactory.clearResourceFileCache();
             AndroidGraphicFactory.clearResourceMemoryCache();
 
@@ -299,32 +294,37 @@ public class TaiwanMapView extends MapView {
 
     private TileRendererLayer loadThemeLayer(String themeName, boolean isTransparent) throws IOException {
         String themeFileName  = String.format("%sTheme.xml", themeName);
-        String themeCacheName = String.format("%sCache", themeName);
+        String cacheName = String.format("%sCache", themeName);
 
         TileCache cache = AndroidUtil.createTileCache(
             mContext,
-            themeCacheName,
+            cacheName,
             getModel().displayModel.getTileSize(),
             1f,
             getModel().frameBufferModel.getOverdrawFactor()
         );
 
-        // TODO: change a better name
-        File mapFile = MainUtils.getFilePath(mContext, 0);
+        // TODO: Alternative way, maybe it is better.
+        /*
+        TileCache cache = AndroidUtil.createExternalStorageTileCache(
+            mContext,
+            themeCacheName,
+            7,
+            getModel().displayModel.getTileSize()
+        );
+        */
 
-        // TODO: Replace a better construction
-        TileRendererLayer layer = new TileRendererLayer(
+        File mapFilePath = MainUtils.getFilePath(mContext, 0);
+
+        TileRendererLayer layer = AndroidUtil.createTileRendererLayer(
             cache,
-            new MapFile(mapFile),
             getModel().mapViewPosition,
+            new MapFile(mapFilePath),
+            new AssetsRenderTheme(mContext, "themes/", themeFileName),
             isTransparent,
             true,
-            false,
-            AndroidGraphicFactory.INSTANCE
+            true
         );
-
-        AssetsRenderTheme theme = new AssetsRenderTheme(mContext, "themes/", themeFileName);
-        layer.setXmlRenderTheme(theme);
 
         return layer;
     }
@@ -411,7 +411,7 @@ public class TaiwanMapView extends MapView {
             mState.myLng = newLoc.longitude;
             triggerStateChange();
 
-            String msg = String.format("我的位置: (%.2f, %.2f)", mState.myLat, mState.myLng);
+            String msg = String.format(Locale.getDefault(), "我的位置: (%.2f, %.2f)", mState.myLat, mState.myLng);
             Log.i(TAG, msg);
 
             if (mMyLocationMarker!=null) {
@@ -428,7 +428,7 @@ public class TaiwanMapView extends MapView {
 
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {
-            String msg = String.format("%s: status=%d", provider, status);
+            String msg = String.format(Locale.getDefault(), "%s: status=%d", provider, status);
             Log.e(TAG, msg);
         }
 
