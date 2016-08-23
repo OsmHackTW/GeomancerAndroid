@@ -13,10 +13,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
 
-import tacoball.com.geomancer.tacoball.com.geomancer.view.CancelUpdateService;
+import tacoball.com.geomancer.tacoball.com.geomancer.view.ConfirmUpdateService;
 
 /**
- *
+ * 共用程式
  */
 public class MainUtils {
 
@@ -36,10 +36,16 @@ public class MainUtils {
         "unluckylabor.sqlite"
     };
 
+    /**
+     * 取得檔案的遠端位置
+     */
     public static String getRemoteURL(int fileIndex) {
         return String.format(Locale.getDefault(), "%s/%s.gz", UPDATE_SITE, REQUIRED_FILES[fileIndex]);
     }
 
+    /**
+     * 取得檔案的本地存檔路徑
+     */
     public static File getSavePath(Context context, int fileIndex) throws IOException {
         if (context==null) {
             throw new IOException("Context is null");
@@ -63,10 +69,16 @@ public class MainUtils {
         throw new IOException("Cannot get save path");
     }
 
+    /**
+     * 取得檔案的本地完整路徑
+     */
     public static File getFilePath(Context context, int fileIndex) throws IOException {
         return new File(getSavePath(context, fileIndex), REQUIRED_FILES[fileIndex]);
     }
 
+    /**
+     * 例外訊息改進程式，避免捕捉例外時還發生例外
+     */
     public static String getReason(final Exception ex) {
         String msg = ex.getMessage();
 
@@ -86,9 +98,7 @@ public class MainUtils {
     }
 
     /**
-     * Clear cotification, called by MapUpdaterFragment & CancelUpdateService
-     *
-     * @param context source context
+     * 移除資料更新的系統通知
      */
     public static void clearUpdateNotification(Context context) {
         NotificationManager notiMgr = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -98,11 +108,13 @@ public class MainUtils {
         pref.putBoolean(PK_WANNA_UPDATE, false).apply();
     }
 
-    // Only called by checkMapVersion()
+    /**
+     * 產生資料更新的系統通知
+     */
     private static void buildUpdateNotification(Context context) {
-        Intent itYes = new Intent(context, MainActivity.class);
-        Intent itNo  = new Intent(context, CancelUpdateService.class);
-        PendingIntent piYes = PendingIntent.getActivity(context, 0, itYes, 0);
+        Intent itYes = new Intent(context, ConfirmUpdateService.class);
+        Intent itNo  = new Intent(context, ConfirmUpdateService.class);
+        PendingIntent piYes = PendingIntent.getService(context, 0, itYes, 0);
         PendingIntent piNo  = PendingIntent.getService(context, 0, itNo, 0);
         long[] vpat = {0, 100, 100, 100};
 
@@ -114,13 +126,13 @@ public class MainUtils {
 
         Notification.Builder builder = new Notification.Builder(context);
         Notification nf = builder
-                .setContentTitle("地圖更新")
-                .setContentText("想下載新版地圖嗎？")
+                .setContentTitle(context.getString(R.string.term_update))
+                .setContentText(context.getString(R.string.term_confirm_update))
                 .setSmallIcon(android.R.drawable.ic_dialog_info)
                 .setLargeIcon(lic)
                 .setVibrate(vpat)
-                .addAction(android.R.drawable.arrow_down_float, "好喔", piYes)
-                .addAction(android.R.drawable.ic_delete, "鼻要", piNo)
+                .addAction(android.R.drawable.arrow_down_float, context.getString(R.string.term_yes), piYes)
+                .addAction(android.R.drawable.ic_delete, context.getString(R.string.term_no), piNo)
                 .setDeleteIntent(piNo)
                 .setAutoCancel(false)
                 .build();
