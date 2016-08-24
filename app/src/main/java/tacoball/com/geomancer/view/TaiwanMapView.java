@@ -316,7 +316,7 @@ public class TaiwanMapView extends MapView {
 
         File mapFilePath = MainUtils.getFilePath(mContext, 0);
 
-        TileRendererLayer layer = AndroidUtil.createTileRendererLayer(
+        return AndroidUtil.createTileRendererLayer(
             cache,
             getModel().mapViewPosition,
             new MapFile(mapFilePath),
@@ -325,8 +325,6 @@ public class TaiwanMapView extends MapView {
             true,
             true
         );
-
-        return layer;
     }
 
     private void triggerStateChange() {

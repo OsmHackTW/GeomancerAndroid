@@ -11,7 +11,7 @@ import org.mapsforge.map.layer.Layers;
  */
 public class PointGroup {
 
-    private static final String TAG = "PointGroup";
+    //private static final String TAG = "PointGroup";
 
     private PointMarker   mPrevFocusMarker = null;
     private PointMarker[] mPointMarkers;
@@ -19,6 +19,8 @@ public class PointGroup {
     private TextView      mTxvDescription;
     private TextView      mTxvURL;
     private ViewGroup     mInfoContainer;
+
+    private final Object WRITE_LOCK = new Object();
 
     public PointGroup(Context context, Layers layers, int maxCount) {
         mPointMarkers = new PointMarker[maxCount];
@@ -40,6 +42,7 @@ public class PointGroup {
         mTxvURL = txv;
     }
 
+    /*
     public void clear() {
         synchronized (mPointMarkers) {
             for (int i = 0; i < mPointMarkers.length; i++) {
@@ -49,10 +52,11 @@ public class PointGroup {
             mInfoContainer.setVisibility(ViewGroup.INVISIBLE);
         }
     }
+    */
 
     public void setPoints(final PointInfo[] info) {
         // Called by MapViewFragment.mBtMeasure
-        synchronized (mPointMarkers) {
+        synchronized (WRITE_LOCK) {
             int count = Math.min(mPointMarkers.length, info.length);
             for (int i = 0; i < count; i++) {
                 mPointMarkers[i].update(info[i]);
@@ -64,7 +68,7 @@ public class PointGroup {
 
     public void setFocus(final PointMarker focusMarker) {
         // Called by PointMarker.onTap() @MainThread
-        synchronized (mPointMarkers) {
+        synchronized (WRITE_LOCK) {
             for (int i=0;i<mPointMarkers.length;i++) {
                 if (focusMarker==mPointMarkers[i]) {
                     focusMarker.setFocusedPin();

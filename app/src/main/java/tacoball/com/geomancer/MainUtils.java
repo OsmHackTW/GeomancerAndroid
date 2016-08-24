@@ -124,6 +124,7 @@ public class MainUtils {
         pref.putBoolean(PK_WANNA_UPDATE, true).apply();
 
         BitmapDrawable sic = (BitmapDrawable)context.getResources().getDrawable(R.mipmap.geomancer);
+        // TODO: Don't know how to kill LINT message.
         Bitmap lic = sic.getBitmap();
 
         String pat = context.getString(R.string.term_confirm_update);
@@ -150,12 +151,12 @@ public class MainUtils {
 
     public static void setUpdateRequest(Context context) {
         SharedPreferences.Editor pedit = PreferenceManager.getDefaultSharedPreferences(context).edit();
-        pedit.putBoolean("UPDATE_REQUEST", true).commit();
+        pedit.putBoolean("UPDATE_REQUEST", true).apply();
     }
 
     public static void clearUpdateRequest(Context context) {
         SharedPreferences.Editor pedit = PreferenceManager.getDefaultSharedPreferences(context).edit();
-        pedit.putBoolean("UPDATE_REQUEST", false).commit();
+        pedit.putBoolean("UPDATE_REQUEST", false).apply();
     }
 
     public static boolean hasUpdateRequest(Context context) {

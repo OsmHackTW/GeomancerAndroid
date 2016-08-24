@@ -6,7 +6,7 @@ import android.graphics.drawable.Drawable;
 import org.mapsforge.core.model.LatLong;
 
 /**
- * Created by raymond on 16/4/11.
+ *
  */
 public class PointInfo {
 

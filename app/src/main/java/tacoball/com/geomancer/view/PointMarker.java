@@ -20,7 +20,7 @@ import org.mapsforge.map.layer.overlay.Marker;
  */
 public class PointMarker extends Marker {
 
-    private static final String TAG = "PointMarker";
+    //private static final String TAG = "PointMarker";
 
     private Context    mContext;
     private PointGroup mPointGroup;

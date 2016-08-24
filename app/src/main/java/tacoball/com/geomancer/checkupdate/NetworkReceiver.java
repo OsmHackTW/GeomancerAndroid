@@ -60,7 +60,7 @@ public class NetworkReceiver extends BroadcastReceiver {
                 //Log.d(TAG, "Check this time.");
                 mContext = context;
                 checkVersion();
-                return;
+                //return;
             }
 
             //Log.d(TAG, "Skip this time.");
