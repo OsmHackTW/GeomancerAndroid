@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
 
+import tacoball.com.geomancer.checkupdate.FileUpdateManager;
+
 /**
  * 地圖與資料庫更新程式
  */
@@ -131,7 +133,7 @@ public class MapUpdaterFragment extends Fragment {
      * 重新啟動 App
      */
     private void gotoMap() {
-        mHandler.post(new Runnable() {
+        mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 Activity activity = getActivity();
@@ -139,7 +141,7 @@ public class MapUpdaterFragment extends Fragment {
                 activity.finish();
                 activity.startActivity(restartIntent);
             }
-        });
+        }, 5000);
     }
 
     // 自動更新非同步流程管理
@@ -184,12 +186,14 @@ public class MapUpdaterFragment extends Fragment {
                 try {
                     String fileURL = MainUtils.getRemoteURL(fileIndex);
                     File saveTo = MainUtils.getSavePath(getActivity(), fileIndex);
+                    // TODO: merge saveto & checkVersion
                     fum.setSaveTo(saveTo);
                     fum.checkVersion(fileURL);
                 } catch(IOException ex) {
                     // TODO
                 }
             } else {
+                // If total length is zero, activity would restart infinitely.
                 gotoMap();
             }
         }

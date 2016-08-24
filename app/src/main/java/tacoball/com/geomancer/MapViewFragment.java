@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import tacoball.com.geomancer.tacoball.com.geomancer.view.PointInfo;
-import tacoball.com.geomancer.tacoball.com.geomancer.view.TaiwanMapView;
+import tacoball.com.geomancer.view.PointInfo;
+import tacoball.com.geomancer.view.TaiwanMapView;
 
 /**
  * 測量風水程式
