@@ -34,6 +34,7 @@ public class MapViewFragment extends Fragment {
     private TextView      mTxvLocation; // 經緯度文字
     private TextView      mTxvZoom;     // 縮放比文字
     private TextView      mTxvAzimuth;  // 方位角文字
+    private TextView      mTxvHint;     // 地圖放大提示訊息
     private Button        mBtPosition;  // 定位按鈕
     private Button        mBtMeasure;   // 測量風水按鈕
 
@@ -52,6 +53,9 @@ public class MapViewFragment extends Fragment {
         mTxvZoom     = (TextView)mFragLayout.findViewById(R.id.txvZoomValue);
         mTxvLocation = (TextView)mFragLayout.findViewById(R.id.txvLocation);
         mTxvAzimuth  = (TextView)mFragLayout.findViewById(R.id.txvAzimuthValue);
+
+        // 地圖放大提示訊息
+        mTxvHint = (TextView)mFragLayout.findViewById(R.id.txvHint);
 
         // 按鈕列
         mBtPosition = (Button)mFragLayout.findViewById(R.id.btPosition);
@@ -211,8 +215,10 @@ public class MapViewFragment extends Fragment {
             mTxvAzimuth.setText(txtAzimuth);
 
             if (state.zoom>=15) {
+                mTxvHint.setVisibility(View.INVISIBLE);
                 mBtMeasure.setEnabled(true);
             } else {
+                mTxvHint.setVisibility(View.VISIBLE);
                 mBtMeasure.setEnabled(false);
             }
         }

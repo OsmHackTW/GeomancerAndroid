@@ -129,7 +129,7 @@ public class MainUtils {
         // TODO: Don't know how to kill LINT message.
         Bitmap lic = sic.getBitmap();
 
-        String pat = context.getString(R.string.term_confirm_update);
+        String pat = context.getString(R.string.pattern_confirm_update);
         String msg = String.format(Locale.getDefault(), pat, mblen);
 
         // TODO: Optimize parameters

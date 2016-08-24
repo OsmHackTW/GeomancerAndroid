@@ -55,9 +55,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_alignBottom="@id/mapView"
-        android:layout_marginRight="15dp"
+        android:layout_marginRight="5dp"
         android:id="@+id/statusBar"
-        android:layout_marginBottom="3dp">
+        android:layout_marginBottom="50dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -92,6 +92,17 @@
             android:id="@+id/txvAzimuthValue" />
 
     </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="@string/term_zoom_in_z15"
+        android:id="@+id/txvHint"
+        android:layout_above="@+id/statusBar"
+        android:layout_alignEnd="@+id/statusBar"
+        android:layout_marginBottom="5dp"
+        android:textColor="#003090" />
 
     <GridLayout
         android:layout_width="match_parent"
