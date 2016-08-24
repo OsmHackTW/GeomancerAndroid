@@ -26,14 +26,14 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".tacoball.com.geomancer.view.NetworkReceiver">
+        <receiver android:name=".checkupdate.NetworkReceiver">
             <intent-filter>
                 <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
 
-        <service android:name=".tacoball.com.geomancer.view.ConfirmUpdateService" />
+        <service android:name=".checkupdate.ConfirmUpdateService" />
     </application>
 
 </manifest>

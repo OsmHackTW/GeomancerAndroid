@@ -1,4 +1,4 @@
-package tacoball.com.geomancer;
+package tacoball.com.geomancer.checkupdate;
 
 import org.apache.commons.io.IOUtils;
 
@@ -174,9 +174,17 @@ public class FileUpdateManager {
         HttpURLConnection conn = (HttpURLConnection)url.openConnection();
         conn.setRequestMethod("HEAD");
         conn.connect();
-        gzlen = conn.getContentLength();
-        mtime = conn.getLastModified();
+
+        int resp = conn.getResponseCode();
+        if (resp == 200) {
+            gzlen = conn.getContentLength();
+            mtime = conn.getLastModified();
+        }
         conn.disconnect();
+
+        if (resp != 200) {
+            throw new IOException(String.format(Locale.getDefault(), "HTTP %d", resp));
+        }
     }
 
     /**
@@ -478,17 +486,14 @@ public class FileUpdateManager {
                         try {
                             File exfile = getExtractedFile(fileURL);
                             getMetadata(fileURL);
-                            long localMtime = 0;
-                            long length = 0;
-                            if (exfile.exists()) {
-                                localMtime = exfile.lastModified();
-                                if (mtime > localMtime) {
-                                    length = gzlen;
-                                }
+                            long txlen = gzlen;
+
+                            if (exfile.exists() && mtime <= exfile.lastModified()) {
+                                txlen = 0;
                             }
 
                             workingTask = EMPTY_TASK;
-                            listener.onCheckVersion(length, mtime);
+                            listener.onCheckVersion(txlen, mtime);
                         } catch(IOException ex) {
                             workingTask = EMPTY_TASK;
                             listener.onError(step, ex.getMessage());

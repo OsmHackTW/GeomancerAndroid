@@ -8,13 +8,14 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
 
-import tacoball.com.geomancer.tacoball.com.geomancer.view.ConfirmUpdateService;
+import tacoball.com.geomancer.checkupdate.ConfirmUpdateService;
 
 /**
  * 共用程式
@@ -25,8 +26,8 @@ public class MainUtils {
     private static final int    UPDATE_NFID = 233;
     private static final String PK_WANNA_UPDATE = "map.wanna_update";
 
-    //public static final String UPDATE_SITE = "http://tacosync.com/geomancer"; // Web
-    public static final String UPDATE_SITE = "http://192.168.1.81/geomancer"; // Wifi LAN
+    public static final String UPDATE_SITE = "http://tacosync.com/geomancer"; // Web
+    //public static final String UPDATE_SITE = "http://192.168.1.81/geomancer"; // Wifi LAN
     //public static final String UPDATE_SITE = "http://192.168.42.180/geomancer"; // USB LAN
 
     public static final String MAP_NAME = "taiwan-taco.map";
@@ -145,6 +146,21 @@ public class MainUtils {
 
         NotificationManager notiMgr = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
         notiMgr.notify(TAG, UPDATE_NFID, nf);
+    }
+
+    public static void setUpdateRequest(Context context) {
+        SharedPreferences.Editor pedit = PreferenceManager.getDefaultSharedPreferences(context).edit();
+        pedit.putBoolean("UPDATE_REQUEST", true).commit();
+    }
+
+    public static void clearUpdateRequest(Context context) {
+        SharedPreferences.Editor pedit = PreferenceManager.getDefaultSharedPreferences(context).edit();
+        pedit.putBoolean("UPDATE_REQUEST", false).commit();
+    }
+
+    public static boolean hasUpdateRequest(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getBoolean("UPDATE_REQUEST", false);
     }
 
 }

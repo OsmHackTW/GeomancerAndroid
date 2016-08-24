@@ -1,4 +1,4 @@
-package tacoball.com.geomancer.tacoball.com.geomancer.view;
+package tacoball.com.geomancer.checkupdate;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.util.Locale;
 import java.util.Random;
 
-import tacoball.com.geomancer.FileUpdateManager;
 import tacoball.com.geomancer.MainUtils;
 
 /**
@@ -23,6 +22,7 @@ public class NetworkReceiver extends BroadcastReceiver {
     private static final String TAG = "NetworkReceiver";
 
     // 流量管制參數
+    private static final long REPEATED    = 10;    // 10 秒內再觸發視為重複事件
     private static final long INTERVAL    = 86400; // 兩次開啟網路的間隔時間(單位:秒)，超過此時間才允許下一次版本檢查
     private static final int  PROBABILITY = 10;    // 分流機率
 
@@ -33,11 +33,11 @@ public class NetworkReceiver extends BroadcastReceiver {
     // 上次啟用網路的時間
     private static long mPrevConnected = 0;
 
-    //
+    // 資源元件
     Context mContext;
     FileUpdateManager mFum;
 
-    //
+    // 狀態值
     private int  mFileIndex;
     private long mTotalLength;
 
@@ -50,20 +50,20 @@ public class NetworkReceiver extends BroadcastReceiver {
             NetworkInfo mobile = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
 
             // TODO: Load from shared preference
-            boolean allowMobile = false;
+            boolean allowMobile = true;
             boolean hasInternet = wifi.isConnected() || (allowMobile && mobile.isConnected());
 
-            String msg = String.format(Locale.getDefault(), "wifi=%s, mobile=%s", wifi.isConnected(), mobile.isConnected());
-            Log.d(TAG, msg);
+            //String msg = String.format(Locale.getDefault(), "wifi=%s, mobile=%s", wifi.isConnected(), mobile.isConnected());
+            //Log.d(TAG, msg);
 
             if (hasInternet && canCheck()) {
-                Log.d(TAG, "Check this time.");
+                //Log.d(TAG, "Check this time.");
                 mContext = context;
                 checkVersion();
                 return;
             }
 
-            Log.d(TAG, "Skip this time.");
+            //Log.d(TAG, "Skip this time.");
         }
     }
 
@@ -80,7 +80,7 @@ public class NetworkReceiver extends BroadcastReceiver {
         }
     }
 
-    //
+    // 傳輸量計算完成後處理
     private void checkComplete() {
         String msg = "不需要更新";
         if (mTotalLength > 0) {
@@ -97,18 +97,28 @@ public class NetworkReceiver extends BroadcastReceiver {
     private boolean canCheck() {
         long curr = System.currentTimeMillis();
 
+        // 防止重複事件
+        // 行動網路開啟後，網路連線事件會連續觸發 4~5 個，不確定是系統問題還是手機問題
+        long secdiff = (curr-mPrevConnected)/1000;
+        if (secdiff<REPEATED) {
+            //Log.d(TAG, "Repeated event.");
+            return false;
+        }
+
         // 間隔時間限制
         if (ENABLE_INTERVAL) {
-            if ((curr-mPrevConnected)/1000<INTERVAL) {
+            if (secdiff<INTERVAL) {
+                Log.d(TAG, "Limit by interval.");
                 return false;
             }
-            mPrevConnected = curr;
         }
+        mPrevConnected = curr;
 
         // 更新機率限制
         if (ENABLE_PROBABILITY) {
             int i = new Random(curr).nextInt(100); // 0-99
             if (i > PROBABILITY) {
+                Log.d(TAG, "Limit by probability.");
                 return false;
             }
         }
@@ -116,6 +126,7 @@ public class NetworkReceiver extends BroadcastReceiver {
         return true;
     }
 
+    // 待更新項目傳輸量計算
     private FileUpdateManager.ProgressListener listener = new FileUpdateManager.ProgressListener() {
 
         @Override
@@ -126,7 +137,13 @@ public class NetworkReceiver extends BroadcastReceiver {
 
             mFileIndex++;
             if (mFileIndex < MainUtils.REQUIRED_FILES.length) {
-                mFum.checkVersion(MainUtils.getRemoteURL(mFileIndex));
+                try {
+                    // TODO: merge saveto & checkVersion
+                    mFum.setSaveTo(MainUtils.getSavePath(mContext, mFileIndex));
+                    mFum.checkVersion(MainUtils.getRemoteURL(mFileIndex));
+                } catch(IOException ex) {
+                    Log.e(TAG, MainUtils.getReason(ex));
+                }
             } else {
                 checkComplete();
             }
