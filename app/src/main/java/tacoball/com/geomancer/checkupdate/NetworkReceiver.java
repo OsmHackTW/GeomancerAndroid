@@ -27,8 +27,8 @@ public class NetworkReceiver extends BroadcastReceiver {
     private static final int  PROBABILITY = 10;    // 分流機率
 
     // 除錯參數
-    private static final boolean ENABLE_INTERVAL    = false; // 啟用間隔限制
-    private static final boolean ENABLE_PROBABILITY = false; // 啟用機率分流
+    private static final boolean ENABLE_INTERVAL    = true; // 啟用間隔限制
+    private static final boolean ENABLE_PROBABILITY = true; // 啟用機率分流
 
     // 上次啟用網路的時間
     private static long mPrevConnected = 0;
@@ -48,10 +48,7 @@ public class NetworkReceiver extends BroadcastReceiver {
             ConnectivityManager connMgr = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo wifi   = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
             NetworkInfo mobile = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-
-            // TODO: Load from shared preference
-            boolean allowMobile = true;
-            boolean hasInternet = wifi.isConnected() || (allowMobile && mobile.isConnected());
+            boolean hasInternet = wifi.isConnected() || (MainUtils.canUpdateByMobile(context) && mobile.isConnected());
 
             //String msg = String.format(Locale.getDefault(), "wifi=%s, mobile=%s", wifi.isConnected(), mobile.isConnected());
             //Log.d(TAG, msg);

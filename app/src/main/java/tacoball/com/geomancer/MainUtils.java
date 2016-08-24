@@ -27,8 +27,9 @@ public class MainUtils {
     // 更新通知的 ID
     private static final int NFID_UPDATE = 233;
 
-    // 使用者更新要求的 Key
-    private static final String PREFKEY_UPDATE_REQUEST = "UPDATE_REQUEST";
+    // 各偏好設定 KEY 值
+    private static final String PREFKEY_UPDATE_REQUEST   = "UPDATE_REQUEST";     // 使用者要求更新
+    private static final String PREFKEY_UPDATE_BY_MOFILE = "UPDATE_FROM_MOFILE"; // 允許行動網路更新
 
     // 地圖檔名
     public static final String MAP_NAME = "taiwan-taco.map";
@@ -172,6 +173,14 @@ public class MainUtils {
     public static boolean hasUpdateRequest(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getBoolean(PREFKEY_UPDATE_REQUEST, false);
+    }
+
+    /**
+     * 是否允許透過行動網路更新
+     */
+    public static boolean canUpdateByMobile(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getBoolean(PREFKEY_UPDATE_BY_MOFILE, true);
     }
 
 }
