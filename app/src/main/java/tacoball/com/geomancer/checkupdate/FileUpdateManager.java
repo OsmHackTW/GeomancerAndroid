@@ -99,7 +99,6 @@ public class FileUpdateManager {
 
     // 執行中的子 Thread，僅限單工
     private final Object TASK_LOCK = new Object();
-    //private Thread EMPTY_TASK = new Thread();
     private Thread workingTask;
 
     /**
