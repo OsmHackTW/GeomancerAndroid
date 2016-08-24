@@ -98,8 +98,9 @@ public class FileUpdateManager {
     private boolean forceRepairFailed = false;   // 模擬修復時發生錯誤
 
     // 執行中的子 Thread，僅限單工
-    private Thread EMPTY_TASK = new Thread();
-    private Thread workingTask = EMPTY_TASK;
+    private final Object TASK_LOCK = new Object();
+    //private Thread EMPTY_TASK = new Thread();
+    private Thread workingTask;
 
     /**
      * 產生檔案更新管理機制 (精簡)
@@ -248,9 +249,7 @@ public class FileUpdateManager {
                     checksums[i] = lines[i].substring(0, 32);
                 }
             }
-        } catch(StringIndexOutOfBoundsException ex) {
-            aborted = true;
-        } catch(IOException ex) {
+        } catch(StringIndexOutOfBoundsException | IOException ex) {
             aborted = true;
         }
 
@@ -338,7 +337,13 @@ public class FileUpdateManager {
     private String getLocalPartChecksum(File gzfile, int number) throws IOException {
         FileInputStream   fis = new FileInputStream(gzfile);
         DigestInputStream dis = new DigestInputStream(fis, md);
-        dis.skip(partsize * number);
+
+        long off = partsize * number;
+        if (dis.skip(off) < off) {
+            dis.close();
+            fis.close();
+            throw new IOException("Cannot move to offset position.");
+        }
 
         int readlen = 1;
         int total   = 0;
@@ -348,11 +353,11 @@ public class FileUpdateManager {
             total += readlen;
         }
         dis.close();
+        fis.close();
 
         StringBuilder sb = new StringBuilder();
-        byte[] hash = md.digest();
-        for (int i=0;i<hash.length;i++) {
-            String bytestr = String.format("%02x", (hash[i]&0xff));
+        for (byte hash : md.digest()) {
+            String bytestr = String.format("%02x", (hash&0xff));
             sb.append(bytestr);
         }
 
@@ -469,7 +474,10 @@ public class FileUpdateManager {
 
         in.close();
         out.close();
-        gzfile.delete();
+
+        if (!gzfile.delete()) {
+            throw new IOException("Cannot delete file after extracted.");
+        }
     }
 
     /**
@@ -478,8 +486,8 @@ public class FileUpdateManager {
      * @param fileURL 檔案網址
      */
     public void checkVersion(final String fileURL) {
-        synchronized(workingTask) {
-            if (workingTask==EMPTY_TASK) {
+        synchronized(TASK_LOCK) {
+            if (workingTask==null) {
                 workingTask = new Thread() {
                     @Override
                     public void run() {
@@ -492,10 +500,10 @@ public class FileUpdateManager {
                                 txlen = 0;
                             }
 
-                            workingTask = EMPTY_TASK;
+                            workingTask = null;
                             listener.onCheckVersion(txlen, mtime);
                         } catch(IOException ex) {
-                            workingTask = EMPTY_TASK;
+                            workingTask = null;
                             listener.onError(step, ex.getMessage());
                         }
                     }
@@ -513,8 +521,8 @@ public class FileUpdateManager {
      * @param fileURL 檔案網址
      */
     public void update(final String fileURL) {
-        synchronized(workingTask) {
-            if (workingTask==EMPTY_TASK) {
+        synchronized(TASK_LOCK) {
+            if (workingTask==null) {
                 workingTask = new Thread() {
                     @Override
                     public void run() {
@@ -524,13 +532,17 @@ public class FileUpdateManager {
                             // 移除殘留壓縮檔與目前檔案
                             File gzfile = getGzipFile(fileURL);
                             if (gzfile.exists()) {
-                                gzfile.delete();
+                                if (!gzfile.delete()) {
+                                    throw new IOException("Cannot delete old gz file.");
+                                }
                             }
                             listener.onNewProgress(step, 25);
 
                             File exfile = getExtractedFile(fileURL);
                             if (exfile.exists()) {
-                                exfile.delete();
+                                if (!exfile.delete()) {
+                                    throw new IOException("Cannot delete old file.");
+                                }
                             }
                             listener.onNewProgress(step, 50);
 
@@ -583,15 +595,17 @@ public class FileUpdateManager {
                             }
 
                             // 本地檔案 mtime 與遠端檔案同步
-                            exfile.setLastModified(mtime);
+                            if (!exfile.setLastModified(mtime)) {
+                                throw new IOException("Cannot set mtime.");
+                            }
 
-                            workingTask = EMPTY_TASK;
+                            workingTask = null;
                             listener.onComplete();
                         } catch(IOException ex) {
-                            workingTask = EMPTY_TASK;
+                            workingTask = null;
                             listener.onError(step, ex.getMessage());
                         } catch(InterruptedException ex) {
-                            workingTask = EMPTY_TASK;
+                            workingTask = null;
                             listener.onCancel();
                         }
                     }
@@ -609,8 +623,8 @@ public class FileUpdateManager {
      * @param fileURL 檔案網址
      */
     public void repair(final String fileURL) {
-        synchronized(workingTask) {
-            if (workingTask==EMPTY_TASK) {
+        synchronized(TASK_LOCK) {
+            if (workingTask==null) {
                 workingTask = new Thread() {
                     @Override
                     public void run() {
@@ -647,12 +661,14 @@ public class FileUpdateManager {
                             extract(gzfile, exfile);
 
                             // 本地檔案 mtime 與遠端檔案同步
-                            exfile.setLastModified(mtime);
+                            if (!exfile.setLastModified(mtime)) {
+                                throw new IOException("Cannot set mtime.");
+                            }
 
-                            workingTask = EMPTY_TASK;
+                            workingTask = null;
                             listener.onComplete();
                         } catch(IOException ex) {
-                            workingTask = EMPTY_TASK;
+                            workingTask = null;
                             listener.onError(step, ex.getMessage());
                         }
                     }
@@ -666,8 +682,8 @@ public class FileUpdateManager {
      * 取消檔案更新或修復
      */
     public void cancel() {
-        synchronized(workingTask) {
-            if (workingTask!=EMPTY_TASK) {
+        synchronized(TASK_LOCK) {
+            if (workingTask!=null) {
                 workingTask.interrupt();
             }
         }
