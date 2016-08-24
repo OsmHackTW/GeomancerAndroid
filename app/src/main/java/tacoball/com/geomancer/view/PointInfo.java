@@ -6,17 +6,17 @@ import android.graphics.drawable.Drawable;
 import org.mapsforge.core.model.LatLong;
 
 /**
- *
+ * POI 資訊
  */
 public class PointInfo {
 
-    private double mLat;
-    private double mLng;
-    private String mSubject;
-    private String mDescription = "...";
-    private String mURL = "";
-    private int mPinNormal;
-    private int mPinFocused;
+    private double mLat;                 // 緯度
+    private double mLng;                 // 經度
+    private String mSubject;             // 標題
+    private String mDescription = "..."; // 說明
+    private String mURL = "";            // 連結
+    private int mPinNormal;              // 一般狀態圖示 ID
+    private int mPinFocused;             // 選取狀態圖示 ID
 
     public PointInfo(double lat, double lng, String subject, int pinNormal, int pinFocused) {
         mLat = lat;

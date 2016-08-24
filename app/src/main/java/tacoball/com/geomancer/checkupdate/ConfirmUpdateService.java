@@ -10,7 +10,7 @@ import tacoball.com.geomancer.MainActivity;
 import tacoball.com.geomancer.MainUtils;
 
 /**
- * 取消更新動作
+ * 更新通知的後續處理服務
  */
 public class ConfirmUpdateService extends Service {
 
@@ -20,6 +20,7 @@ public class ConfirmUpdateService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         MainUtils.clearUpdateNotification(this);
         if (intent.getAction().equals("Yes")) {
+            // 使用者要更新
             Log.d(TAG, "User accept updating.");
 
             // 用於 App 開啟狀態
@@ -34,6 +35,7 @@ public class ConfirmUpdateService extends Service {
             itStart.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(itStart);
         } else {
+            // 使用者鼻要更新
             Log.d(TAG, "User deny updating.");
         }
         return 0;

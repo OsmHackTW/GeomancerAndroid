@@ -16,7 +16,7 @@ import org.mapsforge.map.android.graphics.AndroidGraphicFactory;
 import org.mapsforge.map.layer.overlay.Marker;
 
 /**
- *
+ * POI 圖標物件
  */
 public class PointMarker extends Marker {
 
@@ -31,6 +31,7 @@ public class PointMarker extends Marker {
 
     private boolean  mFocused = false;
 
+    // 配置空白圖標
     public PointMarker(Context context, PointGroup pointGroup) {
         super(new LatLong(25.0, 119.5), null, 0, 0);
         setVisible(false, true);
@@ -39,6 +40,7 @@ public class PointMarker extends Marker {
         mPointGroup = pointGroup;
     }
 
+    // 更新圖標資訊，讓圖標能重複利用
     public void update(PointInfo info) {
         mPinNormal  = info.getNormalDrawable(mContext);
         mPinFocused = info.getFocusedDrawable(mContext);
@@ -47,6 +49,7 @@ public class PointMarker extends Marker {
         setNormalPin();
     }
 
+    // 設定為一般狀態
     public void setNormalPin() {
         setBitmap(AndroidGraphicFactory.convertToBitmap(mPinNormal));
         setVerticalOffset(-mPinNormal.getIntrinsicHeight()/2);
@@ -54,6 +57,7 @@ public class PointMarker extends Marker {
         mFocused = false;
     }
 
+    // 設定為選取狀態
     public void setFocusedPin() {
         if (mPinFocused==null) {
             return;
@@ -64,6 +68,7 @@ public class PointMarker extends Marker {
         mFocused = true;
     }
 
+    // 點擊事件，如果點擊動作在圖標範圍內就呈現選取狀態
     @Override
     public boolean onTap(LatLong tapLatLong, Point layerXY, Point tapXY) {
         if (isVisible()) {
@@ -83,11 +88,13 @@ public class PointMarker extends Marker {
         return false;
     }
 
+    // 善後動作
     @Override
     protected void onRemove() {
         setBitmap(null);
     }
 
+    // 重畫圖標
     @Override
     public synchronized void draw(BoundingBox boundingBox, byte zoomLevel, Canvas canvas, Point topLeftPoint) {
         super.draw(boundingBox, zoomLevel, canvas, topLeftPoint);
@@ -101,8 +108,8 @@ public class PointMarker extends Marker {
             long mapSize = MercatorProjection.getMapSize(zoomLevel, displayModel.getTileSize());
             double lng = this.getLatLong().longitude;
             double lat = this.getLatLong().latitude;
-            double cx = MercatorProjection.longitudeToPixelX(lng, mapSize) - topLeftPoint.x;
-            double cy = MercatorProjection.latitudeToPixelY(lat, mapSize) - topLeftPoint.y + 30;
+            double cx  = MercatorProjection.longitudeToPixelX(lng, mapSize) - topLeftPoint.x;
+            double cy  = MercatorProjection.latitudeToPixelY(lat, mapSize) - topLeftPoint.y + 30;
             canvas.drawText(mSubject, (int) cx, (int) cy, paint);
 
             // Emoji Test
