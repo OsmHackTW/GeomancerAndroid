@@ -23,15 +23,22 @@ import tacoball.com.geomancer.checkupdate.ConfirmUpdateService;
 public class MainUtils {
 
     private static final String TAG = "MainUtils";
-    private static final int    UPDATE_NFID = 233;
-    private static final String PK_WANNA_UPDATE = "map.wanna_update";
 
+    // 更新通知的 ID
+    private static final int NFID_UPDATE = 233;
+
+    // 使用者更新要求的 Key
+    private static final String PREFKEY_UPDATE_REQUEST = "UPDATE_REQUEST";
+
+    // 地圖檔名
+    public static final String MAP_NAME = "taiwan-taco.map";
+
+    // 更新伺服器
     public static final String UPDATE_SITE = "http://tacosync.com/geomancer"; // Web
     //public static final String UPDATE_SITE = "http://192.168.1.81/geomancer"; // Wifi LAN
     //public static final String UPDATE_SITE = "http://192.168.42.180/geomancer"; // USB LAN
 
-    public static final String MAP_NAME = "taiwan-taco.map";
-
+    // 需要檢查更新的檔案清單
     public static final String[] REQUIRED_FILES = {
         MAP_NAME,
         "unluckyhouse.sqlite",
@@ -104,10 +111,7 @@ public class MainUtils {
      */
     public static void clearUpdateNotification(Context context) {
         NotificationManager notiMgr = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notiMgr.cancel(TAG, UPDATE_NFID);
-
-        SharedPreferences.Editor pref = context.getSharedPreferences(TAG, Context.MODE_PRIVATE).edit();
-        pref.putBoolean(PK_WANNA_UPDATE, false).apply();
+        notiMgr.cancel(TAG, NFID_UPDATE);
     }
 
     /**
@@ -119,9 +123,6 @@ public class MainUtils {
         PendingIntent piYes = PendingIntent.getService(context, 0, itYes, PendingIntent.FLAG_UPDATE_CURRENT);
         PendingIntent piNo  = PendingIntent.getService(context, 0, itNo, PendingIntent.FLAG_UPDATE_CURRENT);
         long[] vpat = {0, 100, 100, 100};
-
-        SharedPreferences.Editor pref = context.getSharedPreferences(TAG, Context.MODE_PRIVATE).edit();
-        pref.putBoolean(PK_WANNA_UPDATE, true).apply();
 
         BitmapDrawable sic = (BitmapDrawable)context.getResources().getDrawable(R.mipmap.geomancer);
         // TODO: Don't know how to kill LINT message.
@@ -146,22 +147,31 @@ public class MainUtils {
             .build();
 
         NotificationManager notiMgr = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notiMgr.notify(TAG, UPDATE_NFID, nf);
+        notiMgr.notify(TAG, NFID_UPDATE, nf);
     }
 
+    /**
+     * 紀錄使用者更新要求
+     */
     public static void setUpdateRequest(Context context) {
         SharedPreferences.Editor pedit = PreferenceManager.getDefaultSharedPreferences(context).edit();
-        pedit.putBoolean("UPDATE_REQUEST", true).apply();
+        pedit.putBoolean(PREFKEY_UPDATE_REQUEST, true).apply();
     }
 
+    /**
+     * 清除使用者更新要求
+     */
     public static void clearUpdateRequest(Context context) {
         SharedPreferences.Editor pedit = PreferenceManager.getDefaultSharedPreferences(context).edit();
-        pedit.putBoolean("UPDATE_REQUEST", false).apply();
+        pedit.putBoolean(PREFKEY_UPDATE_REQUEST, false).apply();
     }
 
+    /**
+     * 確認使用者是否要求更新
+     */
     public static boolean hasUpdateRequest(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        return prefs.getBoolean("UPDATE_REQUEST", false);
+        return prefs.getBoolean(PREFKEY_UPDATE_REQUEST, false);
     }
 
 }
