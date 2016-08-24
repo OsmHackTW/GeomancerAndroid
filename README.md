@@ -6,7 +6,7 @@
 成果可以在 [Google Play](https://play.google.com/store/apps/details?id=tacoball.com.geomancer) 下載
 
 ### 閃退紀錄
-解決 | 日期 | 版本 | [現象]原因 | 機種 | Android
+解決 | 日期 | 版本 | [現象] 原因 | 機種 | Android
 ---- | ---- | ---- | ---- | ---- | ----
  | 2016-08-23 | 0.0.8 | | Galaxy Note 3 | 
 ✅ | 2016-08-18 | 0.0.7 | [OOB] 多工時沒鎖定陣列 | Xperia ZL | 5.1
