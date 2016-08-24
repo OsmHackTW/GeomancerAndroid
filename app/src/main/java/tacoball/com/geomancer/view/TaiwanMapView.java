@@ -277,9 +277,9 @@ public class TaiwanMapView extends MapView {
             setClickable(true);
             setCenter(new LatLong(mState.cLat, mState.cLng));
             setZoomLevel((byte) mState.zoom);
-            getMapZoomControls().setZoomLevelMin(MIN_ZOOM);
-            getMapZoomControls().setZoomLevelMax(MAX_ZOOM);
-            getMapZoomControls().setAutoHide(true);
+            setZoomLevelMin(MIN_ZOOM);
+            setZoomLevelMax(MAX_ZOOM);
+            //getMapZoomControls().setAutoHide(true);
             getMapZoomControls().show();
             getModel().mapViewPosition.setMapLimit(bbox);
 
