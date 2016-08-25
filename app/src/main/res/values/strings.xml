@@ -12,7 +12,8 @@
     <string name="pattern_measure_result" formatted="false">凶宅 %d 間、血汗工廠 %d 間</string>
     <string name="pattern_unluckyhouse_subject">凶宅 (%s)</string>
     <string name="pattern_unluckylabor_subject">血汗工廠 (%s)</string>
-    <string name="pattern_confirm_update">有新版地圖與人文地理資料，需要傳輸 %.2f MB，想現在更新嗎？</string>
+    <string name="pattern_confirm_update_long">有新版地圖與人文地理資料，需要傳輸 %.2f MB，想現在更新嗎？</string>
+    <string name="pattern_confirm_update_short">有 %.2f MB 資料可更新。</string>
 
     <!-- 一般用語 -->
     <string name="term_zoom_in_z15">地圖放大到 Z=15 才能算喔</string>

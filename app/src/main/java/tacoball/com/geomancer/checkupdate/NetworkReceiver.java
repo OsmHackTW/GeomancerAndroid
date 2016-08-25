@@ -22,9 +22,9 @@ public class NetworkReceiver extends BroadcastReceiver {
     private static final String TAG = "NetworkReceiver";
 
     // 流量管制參數
-    private static final long REPEATED    = 10;    // 10 秒內再觸發視為重複事件
-    private static final long INTERVAL    = 86400; // 兩次開啟網路的間隔時間(單位:秒)，超過此時間才允許下一次版本檢查
-    private static final int  PROBABILITY = 10;    // 分流機率
+    private static final long REPEATED    = 5;     // 5 秒內再觸發事件視為重複
+    private static final long INTERVAL    = 86400; // 每天只檢查一次更新
+    private static final int  PROBABILITY = 20;    // 20% 更新機率，沒更新的明天請早，用來分散流量
 
     // 除錯參數
     private static final boolean ENABLE_INTERVAL    = true; // 啟用間隔限制
@@ -32,6 +32,7 @@ public class NetworkReceiver extends BroadcastReceiver {
 
     // 上次啟用網路的時間
     private static long mPrevConnected = 0;
+    private static long mPrevOverInterval = 0;
 
     // 資源元件
     Context mContext;
@@ -50,17 +51,11 @@ public class NetworkReceiver extends BroadcastReceiver {
             NetworkInfo mobile = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
             boolean hasInternet = wifi.isConnected() || (MainUtils.canUpdateByMobile(context) && mobile.isConnected());
 
-            //String msg = String.format(Locale.getDefault(), "wifi=%s, mobile=%s", wifi.isConnected(), mobile.isConnected());
-            //Log.d(TAG, msg);
-
+            // 網路可使用也允許更新時，檢查需要更新的檔案
             if (hasInternet && canCheck()) {
-                //Log.d(TAG, "Check this time.");
                 mContext = context;
                 checkVersion();
-                //return;
             }
-
-            //Log.d(TAG, "Skip this time.");
         }
     }
 
@@ -93,23 +88,26 @@ public class NetworkReceiver extends BroadcastReceiver {
     // 分流控制程式
     private boolean canCheck() {
         long curr = System.currentTimeMillis();
+        long secdiff;
 
         // 防止重複事件
         // 行動網路開啟後，網路連線事件會連續觸發 4~5 個，不確定是系統問題還是手機問題
-        long secdiff = (curr-mPrevConnected)/1000;
+        secdiff = (curr-mPrevConnected)/1000;
         if (secdiff<REPEATED) {
-            //Log.d(TAG, "Repeated event.");
+            Log.d(TAG, "Repeated event.");
             return false;
         }
+        mPrevConnected = curr;
 
         // 間隔時間限制
+        secdiff = (curr-mPrevOverInterval)/1000;
         if (ENABLE_INTERVAL) {
             if (secdiff<INTERVAL) {
                 Log.d(TAG, "Limit by interval.");
                 return false;
             }
         }
-        mPrevConnected = curr;
+        mPrevOverInterval = curr;
 
         // 更新機率限制
         if (ENABLE_PROBABILITY) {

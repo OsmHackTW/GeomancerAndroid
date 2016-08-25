@@ -34,16 +34,19 @@ public class MainUtils {
     // 地圖檔名
     public static final String MAP_NAME = "taiwan-taco.map";
 
+    // 資料庫檔名
+    public static final String UNLUCKY_HOUSE = "unluckyhouse.sqlite";
+    public static final String UNLUCKY_LABOR = "unluckylabor.sqlite";
+
     // 更新伺服器
-    public static final String UPDATE_SITE = "http://tacosync.com/geomancer"; // Web
+    //public static final String UPDATE_SITE = "http://tacosync.com/geomancer"; // Web 1
+    public static final String UPDATE_SITE = "http://sto.tacosync.com/geomancer"; // Web 2
     //public static final String UPDATE_SITE = "http://192.168.1.81/geomancer"; // Wifi LAN
     //public static final String UPDATE_SITE = "http://192.168.42.180/geomancer"; // USB LAN
 
     // 需要檢查更新的檔案清單
     public static final String[] REQUIRED_FILES = {
-        MAP_NAME,
-        "unluckyhouse.sqlite",
-        "unluckylabor.sqlite"
+        MAP_NAME, UNLUCKY_HOUSE, UNLUCKY_LABOR
     };
 
     /**
@@ -129,15 +132,17 @@ public class MainUtils {
         // TODO: Don't know how to kill LINT message.
         Bitmap lic = sic.getBitmap();
 
-        String pat = context.getString(R.string.pattern_confirm_update);
-        String msg = String.format(Locale.getDefault(), pat, mblen);
+        String longPat = context.getString(R.string.pattern_confirm_update_long);
+        String longMsg = String.format(Locale.getDefault(), longPat, mblen);
 
-        // TODO: Optimize parameters
-        NotificationCompat.Style style = new NotificationCompat.BigTextStyle().bigText(msg);
+        String shortPat = context.getString(R.string.pattern_confirm_update_short);
+        String shortMsg = String.format(Locale.getDefault(), shortPat, mblen);
 
+        NotificationCompat.Style style = new NotificationCompat.BigTextStyle().bigText(longMsg);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         Notification nf = builder
             .setContentTitle(context.getString(R.string.term_update))
+            .setContentText(shortMsg)
             .setStyle(style)
             .setSmallIcon(android.R.drawable.ic_menu_info_details)
             .setLargeIcon(lic)
