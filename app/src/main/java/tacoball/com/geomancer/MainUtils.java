@@ -39,10 +39,14 @@ public class MainUtils {
     public static final String UNLUCKY_LABOR = "unluckylabor.sqlite";
 
     // 更新伺服器
-    //public static final String UPDATE_SITE = "http://tacosync.com/geomancer"; // Web 1
-    public static final String UPDATE_SITE = "http://sto.tacosync.com/geomancer"; // Web 2
-    //public static final String UPDATE_SITE = "http://192.168.1.81/geomancer"; // Wifi LAN
-    //public static final String UPDATE_SITE = "http://192.168.42.180/geomancer"; // USB LAN
+    public static final String[] MIRROR_SITES = {
+        "tacosync.com",     // Web 1
+        "sto.tacosync.com", // Web 2
+        "192.168.1.81",     // WiFi LAN (Debug)
+        "192.168.42.180"    // USB LAN  (Debug)
+    };
+    public static final String MIRROR_PATTERN = "http://%s/geomancer/%s.gz";
+    public static final int    MIRROR_NUM = 0;
 
     // 需要檢查更新的檔案清單
     public static final String[] REQUIRED_FILES = {
@@ -53,7 +57,7 @@ public class MainUtils {
      * 取得檔案的遠端位置
      */
     public static String getRemoteURL(int fileIndex) {
-        return String.format(Locale.getDefault(), "%s/%s.gz", UPDATE_SITE, REQUIRED_FILES[fileIndex]);
+        return String.format(Locale.getDefault(), MIRROR_PATTERN, MIRROR_SITES[MIRROR_NUM], REQUIRED_FILES[fileIndex]);
     }
 
     /**
