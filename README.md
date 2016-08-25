@@ -5,6 +5,16 @@
 
 成果可以在 [Google Play](https://play.google.com/store/apps/details?id=tacoball.com.geomancer) 下載
 
+### 待填坑事項
+需要大大協助改善 App 名稱、Logo、主題圖片
+* 有沒有比鄉民風水師更好的名稱？
+* 設計 Logo
+* 設計商店主題
+
+目前商店截圖如下：
+
+![商店示意圖](docs/images/storeview.jpg)
+
 ### 閃退紀錄
 解決 | 日期 | 版本 | [現象] 原因 | 機種 | Android
 ---- | ---- | ---- | ---- | ---- | ----
