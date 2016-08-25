@@ -139,11 +139,11 @@ public class MainUtils {
         Notification nf = builder
             .setContentTitle(context.getString(R.string.term_update))
             .setStyle(style)
-            .setSmallIcon(android.R.drawable.ic_dialog_info)
+            .setSmallIcon(android.R.drawable.ic_menu_info_details)
             .setLargeIcon(lic)
             .setVibrate(vpat)
-            .addAction(android.R.drawable.arrow_down_float, context.getString(R.string.term_yes), piYes)
-            .addAction(android.R.drawable.ic_delete, context.getString(R.string.term_no), piNo)
+            .addAction(android.R.drawable.ic_menu_save, context.getString(R.string.term_yes), piYes)
+            .addAction(android.R.drawable.ic_menu_delete, context.getString(R.string.term_no), piNo)
             .setAutoCancel(false)
             .build();
 
