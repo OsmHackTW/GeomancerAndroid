@@ -25,7 +25,7 @@ import tacoball.com.geomancer.checkupdate.FileUpdateManager;
 /**
  * 地圖與資料庫更新程式
  */
-public class MapUpdaterFragment extends Fragment {
+public class UpdateToolFragment extends Fragment {
 
     private static final String TAG = "MapUpdaterFragment";
 

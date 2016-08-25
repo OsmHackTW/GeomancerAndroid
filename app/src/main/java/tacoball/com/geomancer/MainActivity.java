@@ -63,7 +63,7 @@ public class MainActivity extends ActionBarActivity {
 
             if (needRequirements || userRequest) {
                 // 更新程式
-                current = new MapUpdaterFragment();
+                current = new UpdateToolFragment();
             } else {
                 // 主畫面程式
                 current = new MapViewFragment();
@@ -91,7 +91,7 @@ public class MainActivity extends ActionBarActivity {
                 if (current instanceof MapViewFragment) {
                     FragmentTransaction ft = getFragmentManager().beginTransaction();
                     ft.remove(current);
-                    ft.add(R.id.frag_container, new MapUpdaterFragment());
+                    ft.add(R.id.frag_container, new UpdateToolFragment());
                     ft.commit();
                 }
             }
