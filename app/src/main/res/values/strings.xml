@@ -14,6 +14,7 @@
     <string name="pattern_unluckylabor_subject">血汗工廠 (%s)</string>
     <string name="pattern_confirm_update_long">有新版地圖與人文地理資料，需要傳輸 %.2f MB，想現在更新嗎？</string>
     <string name="pattern_confirm_update_short">有 %.2f MB 資料可更新。</string>
+    <string name="pattern_enable_debugging">啟用了 %d 個除錯參數</string>
 
     <!-- 一般用語 -->
     <string name="term_zoom_in_z15">地圖放大到 Z=15 才能算喔</string>
@@ -32,5 +33,11 @@
 
     <!-- 除錯訊息 -->
     <string name="log_cancel_update">已取消更新</string>
+    <string name="log_simulate_download_failed">啟用一次性下載錯誤模擬</string>
+    <string name="log_simulate_repair_failed">啟用一次性修復錯誤模擬</string>
+    <string name="log_disable_interval_limit">停用檢查更新的時間間隔限制</string>
+    <string name="log_disable_probability_limit">停用檢查更新的機率分流限制</string>
+    <string name="log_use_debugging_mirror">線上更新資料源是測試主機</string>
+    <string name="log_see_debugging_point">啟用地圖元件除錯點功能</string>
 
 </resources>

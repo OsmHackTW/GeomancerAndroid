@@ -81,6 +81,10 @@ public class FileUpdateManager {
     // 緩衝區用量
     private static final int BUFFER_SIZE = 8192;
 
+    // 情境模擬參數
+    public static boolean forceDownloadFailed = true; // 模擬下載時發生錯誤
+    public static boolean forceRepairFailed   = true; // 模擬修復時發生錯誤
+
     // 由外部供應資源
     private File saveTo;
     private long partsize;
@@ -92,10 +96,6 @@ public class FileUpdateManager {
     private long mtime  = 0;  // 最後更新時間
     private int step;         // 步驟值
     private MessageDigest md; // 摘要演算法，目前僅使用 MD5
-
-    // 情境模擬參數
-    private boolean forceDownloadFailed = false; // 模擬下載時發生錯誤
-    private boolean forceRepairFailed   = false; // 模擬修復時發生錯誤
 
     // 執行中的子 Thread，僅限單工
     private final Object TASK_LOCK = new Object();

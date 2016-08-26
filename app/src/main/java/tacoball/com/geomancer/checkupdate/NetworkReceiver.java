@@ -27,8 +27,8 @@ public class NetworkReceiver extends BroadcastReceiver {
     private static final int  PROBABILITY = 20;    // 20% 更新機率，沒更新的明天請早，用來分散流量
 
     // 除錯參數
-    private static final boolean ENABLE_INTERVAL    = true; // 啟用間隔限制
-    private static final boolean ENABLE_PROBABILITY = true; // 啟用機率分流
+    public static final boolean ENABLE_INTERVAL    = false; // 啟用間隔限制
+    public static final boolean ENABLE_PROBABILITY = false; // 啟用機率分流
 
     // 上次啟用網路的時間
     private static long mPrevConnected = 0;

@@ -47,6 +47,8 @@ public class TaiwanMapView extends MapView {
 
     private static final String TAG = "TacoMapView";
 
+    public static final boolean SEE_DEBUGGING_POINT = true;
+
     private Context         mContext;
     private SensorManager   mSensorMgr;
     private LocationManager mLocationMgr;
@@ -240,7 +242,6 @@ public class TaiwanMapView extends MapView {
     }
 
     private void initView() throws IOException {
-        final boolean SEE_DEBUG_POINT = false;
         final byte MIN_ZOOM = 7;
         final byte MAX_ZOOM = 17;
 
@@ -250,7 +251,7 @@ public class TaiwanMapView extends MapView {
             AndroidGraphicFactory.clearResourceFileCache();
             AndroidGraphicFactory.clearResourceMemoryCache();
 
-            if (SEE_DEBUG_POINT) {
+            if (SEE_DEBUGGING_POINT) {
                 // 檢查點 121.4407269 25.0179735
                 mState.cLat = 25.0565;
                 mState.cLng = 121.5317;
@@ -263,7 +264,6 @@ public class TaiwanMapView extends MapView {
                 mState.zoom = pref.getInt("zoom", 15);
             }
 
-            Log.d(TAG, mapFile.getAbsolutePath());
             MapDataStore ds = new MapFile(mapFile);
             BoundingBox bbox = ds.boundingBox();
             ds.close();

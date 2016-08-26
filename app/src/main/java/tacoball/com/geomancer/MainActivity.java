@@ -10,12 +10,17 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.mapsforge.map.android.graphics.AndroidGraphicFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
+
+import tacoball.com.geomancer.checkupdate.FileUpdateManager;
+import tacoball.com.geomancer.checkupdate.NetworkReceiver;
+import tacoball.com.geomancer.view.TaiwanMapView;
 
 /**
  * 前端程式進入點
@@ -58,8 +63,8 @@ public class MainActivity extends ActionBarActivity {
             }
             boolean needRequirements = (exists < cnt);
 
-            String msg = String.format(Locale.getDefault(), "user=%s, sys=%s", userRequest, needRequirements);
-            Log.d(TAG, msg);
+            //String msg = String.format(Locale.getDefault(), "user=%s, sys=%s", userRequest, needRequirements);
+            //Log.d(TAG, msg);
 
             if (needRequirements || userRequest) {
                 // 更新程式
@@ -69,12 +74,13 @@ public class MainActivity extends ActionBarActivity {
                 current = new MapViewFragment();
             }
             ft.add(R.id.frag_container, current);
+            ft.commit();
         } catch(IOException ex) {
             // MainUtils.getFilePath() 發生錯誤
             Log.e(TAG, ex.getMessage());
+        } finally {
+            checkDebugParameters();
         }
-
-        ft.commit();
     }
 
     @Override
@@ -83,6 +89,48 @@ public class MainActivity extends ActionBarActivity {
         unregisterReceiver(receiver);
     }
 
+    // 地毯式檢查用到的除錯參數
+    private void checkDebugParameters() {
+        int cnt = 0;
+
+        if (FileUpdateManager.forceDownloadFailed) {
+            Log.w(TAG, getString(R.string.log_simulate_download_failed));
+            cnt++;
+        }
+
+        if (FileUpdateManager.forceRepairFailed) {
+            Log.w(TAG, getString(R.string.log_simulate_repair_failed));
+            cnt++;
+        }
+
+        if (!NetworkReceiver.ENABLE_INTERVAL) {
+            Log.w(TAG, getString(R.string.log_disable_interval_limit));
+            cnt++;
+        }
+
+        if (!NetworkReceiver.ENABLE_PROBABILITY) {
+            Log.w(TAG, getString(R.string.log_disable_probability_limit));
+            cnt++;
+        }
+
+        if (MainUtils.MIRROR_NUM != 0) {
+            Log.w(TAG, getString(R.string.log_use_debugging_mirror));
+            cnt++;
+        }
+
+        if (TaiwanMapView.SEE_DEBUGGING_POINT) {
+            Log.w(TAG, getString(R.string.log_see_debugging_point));
+            cnt++;
+        }
+
+        if (cnt > 0) {
+            String pat = getString(R.string.pattern_enable_debugging);
+            String msg = String.format(Locale.getDefault(), pat, cnt);
+            Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // 從地圖介面切換到更新介面
     private void swapToUpdateUI() {
         Handler handler = new Handler();
         handler.post(new Runnable() {
@@ -98,7 +146,8 @@ public class MainActivity extends ActionBarActivity {
         });
     }
 
-    BroadcastReceiver receiver = new BroadcastReceiver() {
+    // 廣播接收器，處理使用者更新要求用
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
 
         @Override
         public void onReceive(Context context, Intent intent) {

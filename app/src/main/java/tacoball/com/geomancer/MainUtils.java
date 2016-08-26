@@ -46,7 +46,7 @@ public class MainUtils {
         "192.168.42.180"    // USB LAN  (Debug)
     };
     public static final String MIRROR_PATTERN = "http://%s/geomancer/%s.gz";
-    public static final int    MIRROR_NUM = 0;
+    public static final int    MIRROR_NUM = 3;
 
     // 需要檢查更新的檔案清單
     public static final String[] REQUIRED_FILES = {
