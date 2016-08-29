@@ -19,7 +19,11 @@ public class ConfirmUpdateService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         MainUtils.clearUpdateNotification(this);
-        if (intent.getAction().equals("Yes")) {
+
+        // 在 Xperia Z5 上 Service 可能被不預期的程式啟動，導致 action 為 null 因此發生 NPE
+        // 網路開啟時 App 正好關閉中
+        String action = intent.getAction();
+        if (action!=null && action.equals("Yes")) {
             // 使用者要更新
             Log.d(TAG, "User accept updating.");
 

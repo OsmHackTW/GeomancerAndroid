@@ -29,6 +29,9 @@ public class UpdateToolFragment extends Fragment {
 
     private static final String TAG = "MapUpdaterFragment";
 
+    // 進入主畫面前的刻意等待時間
+    private static final long RESTART_DELAY = 3000;
+
     // 介面元件
     TextView    mTxvAction; // 步驟說明文字
     ProgressBar mPgbAction; // 進度條
@@ -49,7 +52,6 @@ public class UpdateToolFragment extends Fragment {
         ViewGroup layout = (ViewGroup)inflater.inflate(R.layout.fragment_updater, container, false);
 
         mTxvAction = (TextView)layout.findViewById(R.id.txvAction);
-        //mTxvAction.setText("檢查網路連線 ...");
 
         mPgbAction = (ProgressBar)layout.findViewById(R.id.pgbAction);
         mPgbAction.setProgress(0);
@@ -93,7 +95,12 @@ public class UpdateToolFragment extends Fragment {
      */
     @Override
     public void onDestroy() {
-        fum.cancel();
+        // 取消線上更新，並且不理會後續事件，避免 Activity 結束後閃退
+        if (fum!=null) {
+            fum.cancel();
+            fum.unsetListener();
+        }
+
         super.onDestroy();
     }
 
@@ -141,7 +148,7 @@ public class UpdateToolFragment extends Fragment {
                 activity.finish();
                 activity.startActivity(restartIntent);
             }
-        }, 5000);
+        }, RESTART_DELAY);
     }
 
     // 自動更新非同步流程管理

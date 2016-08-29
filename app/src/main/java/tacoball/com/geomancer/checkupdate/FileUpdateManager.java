@@ -34,15 +34,43 @@ public class FileUpdateManager {
 
     /**
      * 進度接收介面
+     * 採用懶人設計，沒興趣接收的事件可以不用實作
      */
-    public interface ProgressListener {
+    public static class ProgressListener {
+
+        protected boolean enableStdout = false;
+
+        /**
+         * 繼承用
+         */
+        public ProgressListener() { }
+
+        /**
+         * 預設進度接受器用
+         *
+         * @param enableStdout 是否開啟主控台輸出
+         */
+        public ProgressListener(boolean enableStdout) {
+            this.enableStdout = enableStdout;
+        }
+
         /**
          * 新版本通知
          *
          * @param length 新版本的檔案大小, 0 表示不用更新
          * @param mtime  新版本的更新時間，格式為 UNIX Timestamp
          */
-        void onCheckVersion(long length, long mtime);
+        public void onCheckVersion(long length, long mtime) {
+            if (enableStdout) {
+                if (length>0) {
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+                    String datestr = sdf.format(new Date(mtime));
+                    System.out.printf("發現新版本: %s\n", datestr);
+                } else {
+                    System.out.println("不用更新");
+                }
+            }
+        }
 
         /**
          * 下載進度通知
@@ -50,17 +78,29 @@ public class FileUpdateManager {
          * @param step    第幾步驟
          * @param percent 這個步驟的百分比
          */
-        void onNewProgress(int step, int percent);
+        public void onNewProgress(int step, int percent) {
+            if (enableStdout) {
+                System.out.printf("步驟 %d: 進度 %d%%\n", step, percent);
+            }
+        }
 
         /**
          * 下載完成
          */
-        void onComplete();
+        public void onComplete() {
+            if (enableStdout) {
+                System.out.println("更新完成");
+            }
+        }
 
         /**
          * 已取消動作
          */
-        void onCancel();
+        public void onCancel() {
+            if (enableStdout) {
+                System.out.println("已取消更新");
+            }
+        }
 
         /**
          * 錯誤通知
@@ -68,7 +108,11 @@ public class FileUpdateManager {
          * @param step   發生錯誤的步驟
          * @param reason 錯誤原因
          */
-        void onError(int step, String reason);
+        public void onError(int step, String reason) {
+            if (enableStdout) {
+                System.out.printf("發生錯誤: 步驟 %d, 原因 %s\n", step, reason);
+            }
+        }
 
     }
 
@@ -89,6 +133,7 @@ public class FileUpdateManager {
     private File saveTo;
     private long partsize;
     private ProgressListener listener;
+    private ProgressListener defaultListener;
 
     // 處理過程
     private long gzlen  = 0;  // 壓縮檔大小
@@ -100,6 +145,7 @@ public class FileUpdateManager {
     // 執行中的子 Thread，僅限單工
     private final Object TASK_LOCK = new Object();
     private Thread workingTask;
+    private boolean canceled = false;
 
     /**
      * 產生檔案更新管理機制 (精簡)
@@ -127,41 +173,9 @@ public class FileUpdateManager {
             // 應該不會發生
         }
 
-        // 預設的事件處理器，輸出到 STDOUT
-        listener = new ProgressListener() {
-
-            @Override
-            public void onCheckVersion(long length, long mtime) {
-                if (length>0) {
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
-                    String datestr = sdf.format(new Date(mtime));
-                    System.out.printf("發現新版本: %s\n", datestr);
-                } else {
-                    System.out.println("不用更新");
-                }
-            }
-
-            @Override
-            public void onNewProgress(int step, int percent) {
-                System.out.printf("步驟 %d: 進度 %d%%\n", step, percent);
-            }
-
-            @Override
-            public void onComplete() {
-                System.out.println("更新完成");
-            }
-
-            @Override
-            public void onCancel() {
-                System.out.println("已取消更新");
-            }
-
-            @Override
-            public void onError(int step, String reason) {
-                System.out.printf("發生錯誤: 步驟 %d, 原因 %s\n", step, reason);
-            }
-
-        };
+        // 預設的事件處理器，輸出到主控台
+        defaultListener = new ProgressListener(true);
+        listener = defaultListener;
     }
 
     /**
@@ -313,12 +327,11 @@ public class FileUpdateManager {
                 }
             }
 
-            iocnt = in.read(buffer);
-
             // 可取消設計
-            if (Thread.currentThread().isInterrupted()) {
-                break;
-            }
+            if (canceled) break;
+
+            // Thread 中斷後這個方法會產生 IOException，會導致取消作業不正常，所以一定要放在取消設計之後
+            iocnt = in.read(buffer);
         }
 
         out.close();
@@ -385,9 +398,7 @@ public class FileUpdateManager {
             }
 
             // 可取消設計
-            if (Thread.currentThread().isInterrupted()) {
-                return;
-            }
+            if (canceled) return;
         }
 
         // 計算需要修復的長度，用來計算修復進度
@@ -401,22 +412,20 @@ public class FileUpdateManager {
 
         // 修復損壞片段
         if (crashed.size()>0) {
-            int steelCrashed = 0;
+            int stillCrashed = 0;
             int fn = 0;
             for (int i : crashed) {
                 downloadPart(fileURL, i, fn++);
                 actual = getLocalPartChecksum(gzfile, i);
                 if (!actual.equals(expected[i])) {
-                    steelCrashed++;
+                    stillCrashed++;
                 }
 
                 // 可取消設計
-                if (Thread.currentThread().isInterrupted()) {
-                    return;
-                }
+                if (canceled) return;
             }
 
-            if (steelCrashed>0) {
+            if (stillCrashed>0) {
                 throw new IOException("檔案修復失敗");
             }
         }
@@ -466,16 +475,20 @@ public class FileUpdateManager {
             out.flush();
 
             // 可取消設計
-            if (Thread.currentThread().isInterrupted()) {
-                break;
-            }
+            if (canceled) break;
         }
 
         in.close();
         out.close();
 
-        if (!gzfile.delete()) {
-            throw new IOException("Cannot delete file after extracted.");
+        if (canceled) {
+            if (!exfile.delete()) {
+                throw new IOException("Cannot delete file after canceled.");
+            }
+        } else {
+            if (!gzfile.delete()) {
+                throw new IOException("Cannot delete file after extracted.");
+            }
         }
     }
 
@@ -561,8 +574,8 @@ public class FileUpdateManager {
                                 downloadPart(fileURL, i, 0);
 
                                 // 取消點 1
-                                if (Thread.currentThread().isInterrupted()) {
-                                    throw new InterruptedException("");
+                                if (canceled) {
+                                    throw new InterruptedException("在下載階段取消更新");
                                 }
                             }
 
@@ -579,8 +592,8 @@ public class FileUpdateManager {
                             repairTE(fileURL, gzfile);
 
                             // 取消點 2
-                            if (Thread.currentThread().isInterrupted()) {
-                                throw new InterruptedException("");
+                            if (canceled) {
+                                throw new InterruptedException("在修復階段取消更新");
                             }
 
                             // 解壓縮
@@ -589,8 +602,8 @@ public class FileUpdateManager {
                             extract(gzfile, exfile);
 
                             // 取消點 3
-                            if (Thread.currentThread().isInterrupted()) {
-                                throw new InterruptedException("");
+                            if (canceled) {
+                                throw new InterruptedException("在解壓縮階段取消更新");
                             }
 
                             // 本地檔案 mtime 與遠端檔案同步
@@ -654,10 +667,20 @@ public class FileUpdateManager {
                             listener.onNewProgress(step, 0);
                             repairTE(fileURL, gzfile);
 
+                            // 取消點 1
+                            if (canceled) {
+                                throw new InterruptedException("在修復階段取消更新");
+                            }
+
                             // 解壓縮
                             step = STEP_EXTRACT;
                             listener.onNewProgress(step, 0);
                             extract(gzfile, exfile);
+
+                            // 取消點 2
+                            if (canceled) {
+                                throw new InterruptedException("在解壓縮階段取消更新");
+                            }
 
                             // 本地檔案 mtime 與遠端檔案同步
                             if (!exfile.setLastModified(mtime)) {
@@ -669,6 +692,9 @@ public class FileUpdateManager {
                         } catch(IOException ex) {
                             workingTask = null;
                             listener.onError(step, ex.getMessage());
+                        } catch(InterruptedException ex) {
+                            workingTask = null;
+                            listener.onCancel();
                         }
                     }
                 };
@@ -683,6 +709,7 @@ public class FileUpdateManager {
     public void cancel() {
         synchronized(TASK_LOCK) {
             if (workingTask!=null) {
+                canceled = true;
                 workingTask.interrupt();
             }
         }
@@ -695,6 +722,13 @@ public class FileUpdateManager {
      */
     public void setListener(ProgressListener listener) {
         this.listener = listener;
+    }
+
+    /**
+     * 解除事件捕捉器，流程控制用
+     */
+    public void unsetListener() {
+        listener = defaultListener;
     }
 
     /**
