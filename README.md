@@ -5,6 +5,11 @@
 
 成果可以在 [Google Play](https://play.google.com/store/apps/details?id=tacoball.com.geomancer) 下載
 
+### 使用趨勢
+![安裝趨勢](docs/images/trend.png)
+
+裝機數/安裝次數：235/1009 (2016-08-25)
+
 ### 待填坑事項
 需要大大協助改善 App 名稱、Logo、主題圖片
 * 有沒有比鄉民風水師更好的名稱？
