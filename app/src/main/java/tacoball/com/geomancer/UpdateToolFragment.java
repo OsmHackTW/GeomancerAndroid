@@ -77,9 +77,9 @@ public class UpdateToolFragment extends Fragment {
                 // 啟動檔案更新循環
                 String fileURL = MainUtils.getRemoteURL(fileIndex);
                 File   saveTo  = MainUtils.getSavePath(getActivity(), fileIndex);
-                fum = new FileUpdateManager(saveTo);
+                fum = new FileUpdateManager();
                 fum.setListener(listener);
-                fum.checkVersion(fileURL);
+                fum.checkVersion(fileURL, saveTo);
             } catch(IOException ex) {
                 mTxvAction.setText(R.string.prompt_cannot_access_storage);
             }
@@ -160,7 +160,11 @@ public class UpdateToolFragment extends Fragment {
         public void onCheckVersion(long length, long mtime) {
             if (length > 0) {
                 String fileURL = MainUtils.getRemoteURL(fileIndex);
-                fum.update(fileURL);
+                try {
+                    fum.update(fileURL, MainUtils.getSavePath(getActivity(), fileIndex));
+                } catch(IOException ex) {
+                    // TODO
+                }
             } else {
                 checkNext();
             }
@@ -196,8 +200,8 @@ public class UpdateToolFragment extends Fragment {
                     String fileURL = MainUtils.getRemoteURL(fileIndex);
                     File saveTo = MainUtils.getSavePath(getActivity(), fileIndex);
                     // TODO: merge saveto & checkVersion
-                    fum.setSaveTo(saveTo);
-                    fum.checkVersion(fileURL);
+                    //fum.setSaveTo(saveTo);
+                    fum.checkVersion(fileURL, saveTo);
                 } catch(IOException ex) {
                     // TODO
                 }
@@ -241,7 +245,11 @@ public class UpdateToolFragment extends Fragment {
         public void onClick(View v) {
             mBtnRepair.setVisibility(View.INVISIBLE);
             String fileURL = MainUtils.getRemoteURL(fileIndex);
-            fum.repair(fileURL);
+            try {
+                fum.repair(fileURL, MainUtils.getSavePath(getActivity(), fileIndex));
+            } catch(IOException ex) {
+                // TODO
+            }
         }
     };
 

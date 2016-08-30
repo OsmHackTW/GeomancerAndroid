@@ -2,10 +2,11 @@ package tacoball.com.geomancer.checkupdate;
 
 import org.apache.commons.io.IOUtils;
 
-import java.io.ByteArrayOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -149,21 +150,17 @@ public class FileUpdateManager {
 
     /**
      * 產生檔案更新管理機制 (精簡)
-     *
-     * @param saveTo 本地儲存路徑
      */
-    public FileUpdateManager(File saveTo) {
-        this(saveTo, 1048576L);
+    public FileUpdateManager() {
+        this(1048576L);
     }
 
     /**
      * 產生檔案更新管理機制 (完整)
      *
-     * @param saveTo   本地儲存路徑
      * @param partsize 分段大小
      */
-    public FileUpdateManager(File saveTo, long partsize) {
-        this.saveTo = saveTo;
+    public FileUpdateManager(long partsize) {
         this.partsize = partsize;
         this.step = STEP_PREPARE;
 
@@ -179,7 +176,10 @@ public class FileUpdateManager {
     }
 
     /**
-     * 取得遠端檔案資訊，會取得更新時間 (Last-Modified) 與檔案長度 (Content-Length)
+     * 取得遠端檔案資訊
+     * - 取得更新時間 (Last-Modified)
+     * - 取得檔案長度 (Content-Length)
+     * - 下載新版 MD5 檔案，儲存為 (*.md5.new)
      *
      * @param fileURL 檔案網址
      */
@@ -198,6 +198,29 @@ public class FileUpdateManager {
 
         if (resp != 200) {
             throw new IOException(String.format(Locale.getDefault(), "HTTP %d", resp));
+        }
+
+        boolean aborted = false;
+        String checksumURL  = fileURL.substring(0, fileURL.lastIndexOf('.')) + ".md5";
+        File   checksumFile = getChecksumFile(fileURL, true);
+        url = new URL(checksumURL);
+        conn = (HttpURLConnection)url.openConnection();
+        conn.connect();
+
+        try {
+            InputStream  in  = conn.getInputStream();
+            OutputStream out = new FileOutputStream(checksumFile);
+            IOUtils.copy(in, out);
+            out.close();
+            in.close();
+        } catch(IOException ex) {
+            aborted = true;
+        }
+
+        conn.disconnect();
+
+        if (aborted) {
+            throw new IOException("無法取得摘要值");
         }
     }
 
@@ -234,45 +257,19 @@ public class FileUpdateManager {
     }
 
     /**
-     * 取得分段摘要值
+     * 取得 MD5 檔案
      *
      * @param fileURL 檔案網址
+     * @return MD5 檔案
      */
-    private String[] getRemoteChecksum(String fileURL) throws IOException {
-        boolean aborted = false;
-        int cnt = getPartCount();
-        String[] checksums = new String[cnt];
-
-        String checksumURL = fileURL.substring(0, fileURL.lastIndexOf('.')) + ".md5";
-        URL url = new URL(checksumURL);
-        HttpURLConnection conn = (HttpURLConnection)url.openConnection();
-        conn.connect();
-
-        try {
-            InputStream  in  = conn.getInputStream();
-            OutputStream out = new ByteArrayOutputStream();
-            IOUtils.copyLarge(in, out);
-            String[] lines = out.toString().split("\n");
-            out.close();
-            in.close();
-
-            if (lines.length >= cnt) {
-                checksums = new String[cnt];
-                for (int i=0;i<cnt;i++) {
-                    checksums[i] = lines[i].substring(0, 32);
-                }
-            }
-        } catch(StringIndexOutOfBoundsException | IOException ex) {
-            aborted = true;
+    private File getChecksumFile(String fileURL, boolean newVersion) {
+        int begin = fileURL.lastIndexOf('/') + 1;
+        int end   = fileURL.lastIndexOf('.');
+        String suffix = ".md5";
+        if (newVersion) {
+            suffix += ".new";
         }
-
-        conn.disconnect();
-
-        if (aborted) {
-            throw new IOException("無法取得摘要值");
-        }
-
-        return checksums;
+        return new File(saveTo, fileURL.substring(begin,end) + suffix);
     }
 
     /**
@@ -339,6 +336,19 @@ public class FileUpdateManager {
         conn.disconnect();
     }
 
+    private String[] loadChecksum(String fileURL) throws IOException {
+        String[] md5list = new String[getPartCount()+1];
+
+        File f = getChecksumFile(fileURL, false);
+        BufferedReader r = new BufferedReader(new FileReader(f));
+        for (int i=0;i<md5list.length;i++) {
+            md5list[i] = r.readLine();
+        }
+        r.close();
+
+        return md5list;
+    }
+
     /**
      * 取得本地檔案分段摘要
      *
@@ -388,7 +398,7 @@ public class FileUpdateManager {
     private void repairTE(String fileURL, File gzfile) throws IOException {
         // 檢查損壞片段
         String actual;
-        String[] expected = getRemoteChecksum(fileURL);
+        String[] expected = loadChecksum(fileURL);
         ArrayList<Integer> crashed = new ArrayList<>();
         int cnt = getPartCount();
         for (int i=0;i<cnt;i++) {
@@ -502,20 +512,33 @@ public class FileUpdateManager {
      */
     public boolean updateRequired(final String fileURL, final long mtimeMin) {
         File exfile = getExtractedFile(fileURL);
-        File gzfile = getGzipFile(fileURL);
 
-        if (!exfile.exists()) {
+        // 檔案存在
+        if (!exfile.exists() || exfile.length()==0) {
             return true;
         }
 
-        System.out.printf(" mtime current: %d\n", exfile.lastModified());
-        System.out.printf("mtime required: %d\n", mtimeMin);
+        // 檔案版本高於最低要求
         if (exfile.lastModified()<mtimeMin) {
             return true;
         }
 
-        if (gzfile.exists()) {
+        // MD5 存在
+        File f = getChecksumFile(fileURL, false);
+        if (!f.exists()) {
             return true;
+        }
+
+        // 最後 1MB MD5 正確
+        try {
+            String[] md5list = loadChecksum(fileURL);
+            int lastpart = (int)((exfile.length()-1) / partsize);
+            String md5last = getLocalPartChecksum(exfile, lastpart);
+            if (!md5list[md5list.length-1].equals(md5last)) {
+                return true;
+            }
+        } catch(IOException ex) {
+            listener.onError(step, ex.getMessage());
         }
 
         return false;
@@ -526,9 +549,11 @@ public class FileUpdateManager {
      *
      * @param fileURL 檔案網址
      */
-    public void checkVersion(final String fileURL) {
+    public void checkVersion(final String fileURL, File saveTo) {
         synchronized(TASK_LOCK) {
             if (workingTask==null) {
+                this.saveTo = saveTo;
+
                 workingTask = new Thread() {
                     @Override
                     public void run() {
@@ -561,9 +586,12 @@ public class FileUpdateManager {
      *
      * @param fileURL 檔案網址
      */
-    public void update(final String fileURL) {
+    public void update(final String fileURL, final File saveTo) {
         synchronized(TASK_LOCK) {
             if (workingTask==null) {
+
+                this.saveTo = saveTo;
+
                 workingTask = new Thread() {
                     @Override
                     public void run() {
@@ -591,6 +619,13 @@ public class FileUpdateManager {
                             // 如果這動作已經被 checkVersion() 處理了就跳過
                             if (mtime==0) {
                                 getMetadata(fileURL);
+                            }
+                            File cfn = getChecksumFile(fileURL, true);
+                            File cfc = getChecksumFile(fileURL, false);
+                            if (cfn.exists()) {
+                                if (!cfn.renameTo(cfc)) {
+                                    throw new IOException("MD5 檔案重新命名失敗");
+                                }
                             }
                             listener.onNewProgress(step, 100);
 
@@ -663,9 +698,11 @@ public class FileUpdateManager {
      *
      * @param fileURL 檔案網址
      */
-    public void repair(final String fileURL) {
+    public void repair(final String fileURL, final File saveTo) {
         synchronized(TASK_LOCK) {
             if (workingTask==null) {
+                this.saveTo = saveTo;
+
                 workingTask = new Thread() {
                     @Override
                     public void run() {
@@ -684,6 +721,13 @@ public class FileUpdateManager {
                             // 如果這動作已經被 checkVersion() 處理了就跳過
                             if (mtime==0) {
                                 getMetadata(fileURL);
+                            }
+                            File cfn = getChecksumFile(fileURL, true);
+                            File cfc = getChecksumFile(fileURL, false);
+                            if (cfn.exists()) {
+                                if (!cfn.renameTo(cfc)) {
+                                    throw new IOException("MD5 檔案重新命名失敗");
+                                }
                             }
                             listener.onNewProgress(step, 100);
 
@@ -758,15 +802,6 @@ public class FileUpdateManager {
      */
     public void unsetListener() {
         listener = defaultListener;
-    }
-
-    /**
-     * 變更儲存位置
-     *
-     * @param saveTo 儲存位置
-     */
-    public void setSaveTo(File saveTo) {
-        this.saveTo = saveTo;
     }
 
 }
