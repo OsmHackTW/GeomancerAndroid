@@ -126,8 +126,8 @@ public class FileUpdateManager {
     private static final int BUFFER_SIZE = 8192;
 
     // 情境模擬參數
-    public static boolean forceDownloadFailed = true; // 模擬下載時發生錯誤
-    public static boolean forceRepairFailed   = true; // 模擬修復時發生錯誤
+    public static boolean forceDownloadFailed = false; // 模擬下載時發生錯誤
+    public static boolean forceRepairFailed   = false; // 模擬修復時發生錯誤
 
     // 由外部供應資源
     private File saveTo;
@@ -490,6 +490,35 @@ public class FileUpdateManager {
                 throw new IOException("Cannot delete file after extracted.");
             }
         }
+    }
+
+    /**
+     * 檢查檔案是否必要更新
+     * (如果處於必要更新狀態，可以設計成不出現更新通知)
+     *
+     * @param  fileURL  檔案遠端位置
+     * @param  mtimeMin 檔案最小時間限制
+     * @return 是否必要更新
+     */
+    public boolean updateRequired(final String fileURL, final long mtimeMin) {
+        File exfile = getExtractedFile(fileURL);
+        File gzfile = getGzipFile(fileURL);
+
+        if (!exfile.exists()) {
+            return true;
+        }
+
+        System.out.printf(" mtime current: %d\n", exfile.lastModified());
+        System.out.printf("mtime required: %d\n", mtimeMin);
+        if (exfile.lastModified()<mtimeMin) {
+            return true;
+        }
+
+        if (gzfile.exists()) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

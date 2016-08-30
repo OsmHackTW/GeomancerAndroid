@@ -47,7 +47,7 @@ public class TaiwanMapView extends MapView {
 
     private static final String TAG = "TacoMapView";
 
-    public static final boolean SEE_DEBUGGING_POINT = true;
+    public static final boolean SEE_DEBUGGING_POINT = false;
 
     private Context         mContext;
     private SensorManager   mSensorMgr;

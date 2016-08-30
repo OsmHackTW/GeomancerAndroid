@@ -144,6 +144,8 @@ public class UpdateToolFragment extends Fragment {
             @Override
             public void run() {
                 Activity activity = getActivity();
+                if (activity==null) return;
+
                 Intent restartIntent = new Intent(activity, MainActivity.class);
                 activity.finish();
                 activity.startActivity(restartIntent);

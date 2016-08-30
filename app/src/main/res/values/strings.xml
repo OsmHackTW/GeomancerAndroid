@@ -39,5 +39,6 @@
     <string name="log_disable_probability_limit">停用檢查更新的機率分流限制</string>
     <string name="log_use_debugging_mirror">線上更新資料源是測試主機</string>
     <string name="log_see_debugging_point">啟用地圖元件除錯點功能</string>
+    <string name="log_simulate_old_mtime">模擬檔案太舊強制更新</string>
 
 </resources>

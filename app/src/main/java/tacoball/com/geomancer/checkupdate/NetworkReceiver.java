@@ -27,8 +27,8 @@ public class NetworkReceiver extends BroadcastReceiver {
     private static final int  PROBABILITY = 20;    // 20% 更新機率，沒更新的明天請早，用來分散流量
 
     // 除錯參數
-    public static final boolean ENABLE_INTERVAL    = false; // 啟用間隔限制
-    public static final boolean ENABLE_PROBABILITY = false; // 啟用機率分流
+    public static final boolean ENABLE_INTERVAL    = true; // 啟用間隔限制
+    public static final boolean ENABLE_PROBABILITY = true; // 啟用機率分流
 
     // 上次啟用網路的時間
     private static long mPrevConnected = 0;
@@ -65,8 +65,22 @@ public class NetworkReceiver extends BroadcastReceiver {
             mFileIndex   = 0;
             mTotalLength = 0;
             mFum = new FileUpdateManager(MainUtils.getSavePath(mContext, mFileIndex));
-            mFum.setListener(listener);
-            mFum.checkVersion(MainUtils.getRemoteURL(mFileIndex));
+
+            int cnt = 0;
+            for (int i=0; i<MainUtils.REQUIRED_FILES.length; i++) {
+                mFum.setSaveTo(MainUtils.getSavePath(mContext, i));
+                if (mFum.updateRequired(MainUtils.getRemoteURL(i), MainUtils.REQUIRED_MTIME[i])) {
+                    cnt++;
+                }
+            }
+
+            if (cnt==0) {
+                mFum.setSaveTo(MainUtils.getSavePath(mContext, mFileIndex));
+                mFum.setListener(listener);
+                mFum.checkVersion(MainUtils.getRemoteURL(mFileIndex));
+            } else {
+                Log.w(TAG, "需要強制更新，不顯示系統通知");
+            }
         } catch(IOException ex) {
             Log.e(TAG, MainUtils.getReason(ex));
         }
@@ -100,14 +114,14 @@ public class NetworkReceiver extends BroadcastReceiver {
         mPrevConnected = curr;
 
         // 間隔時間限制
-        secdiff = (curr-mPrevOverInterval)/1000;
         if (ENABLE_INTERVAL) {
+            secdiff = (curr-mPrevOverInterval)/1000;
             if (secdiff<INTERVAL) {
                 Log.d(TAG, "Limit by interval.");
                 return false;
             }
+            mPrevOverInterval = curr;
         }
-        mPrevOverInterval = curr;
 
         // 更新機率限制
         if (ENABLE_PROBABILITY) {
@@ -147,21 +161,6 @@ public class NetworkReceiver extends BroadcastReceiver {
         @Override
         public void onError(int step, String reason) {
             Log.e(TAG, reason);
-        }
-
-        @Override
-        public void onNewProgress(int step, int percent) {
-            // Unused
-        }
-
-        @Override
-        public void onComplete() {
-            // Unused
-        }
-
-        @Override
-        public void onCancel() {
-            // Unused
         }
 
     };

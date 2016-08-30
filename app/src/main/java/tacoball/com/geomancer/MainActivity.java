@@ -29,6 +29,8 @@ public class MainActivity extends ActionBarActivity {
 
     private static final String TAG = "MainActivity";
 
+    private static final boolean SIMULATE_OLD_MTIME = true;
+
     private Fragment current;
 
     @Override
@@ -52,19 +54,28 @@ public class MainActivity extends ActionBarActivity {
             boolean userRequest = MainUtils.hasUpdateRequest(this);
             MainUtils.clearUpdateRequest(this);
 
-            // 必要檔案更新檢查
-            int cnt = MainUtils.REQUIRED_FILES.length;
-            int exists = 0;
-            for (int i=0;i<cnt;i++) {
-                File required = MainUtils.getFilePath(this, i);
-                if (required.exists()) {
-                    exists++;
+            // 模擬第二個檔案太舊
+            if (SIMULATE_OLD_MTIME) {
+                File f = MainUtils.getFilePath(this, 2);
+                long otime = MainUtils.REQUIRED_MTIME[2] - 86400000;
+                if (!f.setLastModified(otime)) {
+                    Log.e(TAG, "Cannot set mtime.");
                 }
             }
-            boolean needRequirements = (exists < cnt);
 
-            //String msg = String.format(Locale.getDefault(), "user=%s, sys=%s", userRequest, needRequirements);
-            //Log.d(TAG, msg);
+            // 必要檔案更新檢查
+            int cnt = 0;
+            FileUpdateManager fum = new FileUpdateManager(MainUtils.getSavePath(this, 0));
+            for (int i=0; i<MainUtils.REQUIRED_FILES.length; i++) {
+                fum.setSaveTo(MainUtils.getSavePath(this, i));
+                if (fum.updateRequired(MainUtils.getRemoteURL(i), MainUtils.REQUIRED_MTIME[i])) {
+                    cnt++;
+                }
+            }
+            boolean needRequirements = (cnt>0);
+
+            String msg = String.format(Locale.getDefault(), "user=%s, sys=%s", userRequest, needRequirements);
+            Log.d(TAG, msg);
 
             if (needRequirements || userRequest) {
                 // 更新程式
@@ -120,6 +131,11 @@ public class MainActivity extends ActionBarActivity {
 
         if (TaiwanMapView.SEE_DEBUGGING_POINT) {
             Log.w(TAG, getString(R.string.log_see_debugging_point));
+            cnt++;
+        }
+
+        if (SIMULATE_OLD_MTIME) {
+            Log.w(TAG, getString(R.string.log_simulate_old_mtime));
             cnt++;
         }
 

@@ -54,6 +54,13 @@ public class MainUtils {
         MAP_NAME, UNLUCKY_HOUSE, UNLUCKY_LABOR
     };
 
+    // 檔案版本最低要求 (單位: Unix Timestamp x 1000)
+    public static final long[] REQUIRED_MTIME = {
+        1471928015000L,
+        1472060789000L,
+        1472028096000L
+    };
+
     /**
      * 取得檔案的遠端位置
      */
