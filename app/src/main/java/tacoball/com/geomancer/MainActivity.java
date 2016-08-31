@@ -29,7 +29,7 @@ public class MainActivity extends ActionBarActivity {
 
     private static final String TAG = "MainActivity";
 
-    private static final boolean SIMULATE_OLD_MTIME = true;
+    private static final boolean SIMULATE_OLD_MTIME = false;
 
     private Fragment current;
 
@@ -65,17 +65,17 @@ public class MainActivity extends ActionBarActivity {
 
             // 必要檔案更新檢查
             int cnt = 0;
-            FileUpdateManager fum = new FileUpdateManager(MainUtils.getSavePath(this, 0));
+            FileUpdateManager fum = new FileUpdateManager();
             for (int i=0; i<MainUtils.REQUIRED_FILES.length; i++) {
-                fum.setSaveTo(MainUtils.getSavePath(this, i));
-                if (fum.updateRequired(MainUtils.getRemoteURL(i), MainUtils.REQUIRED_MTIME[i])) {
+                File saveTo   = MainUtils.getSavePath(this, i);
+                long mtimeMin = MainUtils.REQUIRED_MTIME[i];
+                if (fum.isRequired(MainUtils.getRemoteURL(i), saveTo, mtimeMin)) {
+                    String msg = String.format(Locale.getDefault(), "檔案 %d 需要強制更新", i);
+                    Log.d(TAG, msg);
                     cnt++;
                 }
             }
             boolean needRequirements = (cnt>0);
-
-            String msg = String.format(Locale.getDefault(), "user=%s, sys=%s", userRequest, needRequirements);
-            Log.d(TAG, msg);
 
             if (needRequirements || userRequest) {
                 // 更新程式

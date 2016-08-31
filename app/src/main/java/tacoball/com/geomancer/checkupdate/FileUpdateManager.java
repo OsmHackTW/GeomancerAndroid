@@ -9,6 +9,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.net.HttpURLConnection;
@@ -140,7 +141,8 @@ public class FileUpdateManager {
     private long gzlen  = 0;  // 壓縮檔大小
     private long fixlen = 0;  // 需要修復的大小
     private long mtime  = 0;  // 最後更新時間
-    private int step;         // 步驟值
+    private int  step;        // 步驟值
+    private String[] partsum; // 下載壓縮檔每個片段的摘要值
     private MessageDigest md; // 摘要演算法，目前僅使用 MD5
 
     // 執行中的子 Thread，僅限單工
@@ -160,7 +162,7 @@ public class FileUpdateManager {
      *
      * @param partsize 分段大小
      */
-    public FileUpdateManager(long partsize) {
+    public FileUpdateManager(final long partsize) {
         this.partsize = partsize;
         this.step = STEP_PREPARE;
 
@@ -177,13 +179,14 @@ public class FileUpdateManager {
 
     /**
      * 取得遠端檔案資訊
-     * - 取得更新時間 (Last-Modified)
+     * - 取得修改時間 (Last-Modified)
      * - 取得檔案長度 (Content-Length)
-     * - 下載新版 MD5 檔案，儲存為 (*.md5.new)
+     * - 取得遠端壓縮檔每 1MB 片段的 MD5
      *
      * @param fileURL 檔案網址
      */
-    private void getMetadata(String fileURL) throws IOException {
+    private void getMetadata(final String fileURL) throws IOException {
+        // 取得修改時間與長度
         URL url = new URL(fileURL);
         HttpURLConnection conn = (HttpURLConnection)url.openConnection();
         conn.setRequestMethod("HEAD");
@@ -200,28 +203,21 @@ public class FileUpdateManager {
             throw new IOException(String.format(Locale.getDefault(), "HTTP %d", resp));
         }
 
-        boolean aborted = false;
-        String checksumURL  = fileURL.substring(0, fileURL.lastIndexOf('.')) + ".md5";
-        File   checksumFile = getChecksumFile(fileURL, true);
-        url = new URL(checksumURL);
+        // 取得壓縮檔每 1MB 片段的 MD5
+        int cnt = getPartCount();
+        partsum = new String[cnt];
+        String checksumURL = fileURL.substring(0, fileURL.lastIndexOf('.')) + ".pmd5";
+        url  = new URL(checksumURL);
         conn = (HttpURLConnection)url.openConnection();
         conn.connect();
+        BufferedReader r = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 
-        try {
-            InputStream  in  = conn.getInputStream();
-            OutputStream out = new FileOutputStream(checksumFile);
-            IOUtils.copy(in, out);
-            out.close();
-            in.close();
-        } catch(IOException ex) {
-            aborted = true;
+        for (int i=0;i<cnt;i++) {
+            partsum[i] = r.readLine();
         }
 
+        r.close();
         conn.disconnect();
-
-        if (aborted) {
-            throw new IOException("無法取得摘要值");
-        }
     }
 
     /**
@@ -239,7 +235,7 @@ public class FileUpdateManager {
      * @param fileURL 檔案網址
      * @return gzip 檔案
      */
-    private File getGzipFile(String fileURL) {
+    private File getGzipFile(final String fileURL) {
         int begin = fileURL.lastIndexOf('/') + 1;
         return new File(saveTo, fileURL.substring(begin));
     }
@@ -250,7 +246,7 @@ public class FileUpdateManager {
      * @param fileURL 檔案網址
      * @return 解壓縮檔案
      */
-    private File getExtractedFile(String fileURL) {
+    private File getExtractedFile(final String fileURL) {
         int begin = fileURL.lastIndexOf('/') + 1;
         int end   = fileURL.lastIndexOf('.');
         return new File(saveTo, fileURL.substring(begin,end));
@@ -262,24 +258,20 @@ public class FileUpdateManager {
      * @param fileURL 檔案網址
      * @return MD5 檔案
      */
-    private File getChecksumFile(String fileURL, boolean newVersion) {
+    private File getChecksumFile(final String fileURL) {
         int begin = fileURL.lastIndexOf('/') + 1;
         int end   = fileURL.lastIndexOf('.');
-        String suffix = ".md5";
-        if (newVersion) {
-            suffix += ".new";
-        }
-        return new File(saveTo, fileURL.substring(begin,end) + suffix);
+        return new File(saveTo, fileURL.substring(begin,end) + ".lmd5");
     }
 
     /**
-     * 分段下載
+     * 下載檔案片段
      *
      * @param fileURL 檔案網址
      * @param number  分段編號
-     * @param fixnum  已修復分段數 (僅修復模式需要用到)
+     * @param fixnum  已修復片段數 (僅修復模式需要用到)
      */
-    private void downloadPart(String fileURL, int number, int fixnum) throws IOException {
+    private void downloadPart(final String fileURL, final int number, final int fixnum) throws IOException {
         // 故意讓 3, 8, 13, 18, ... 等片段發生錯誤
         if (forceDownloadFailed && (number%5)==3) {
             return;
@@ -336,17 +328,38 @@ public class FileUpdateManager {
         conn.disconnect();
     }
 
-    private String[] loadChecksum(String fileURL) throws IOException {
-        String[] md5list = new String[getPartCount()+1];
+    /**
+     * 下載解壓縮後檔案最後 1MB 的 MD5
+     *
+     * @param fileURL 檔案網址
+     */
+    private void downloadLastPartMD5(String fileURL) throws IOException {
+        URL url = new URL(fileURL.substring(0, fileURL.lastIndexOf('.')) + ".lmd5");
+        HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+        conn.connect();
+        InputStream in = conn.getInputStream();
 
-        File f = getChecksumFile(fileURL, false);
-        BufferedReader r = new BufferedReader(new FileReader(f));
-        for (int i=0;i<md5list.length;i++) {
-            md5list[i] = r.readLine();
-        }
+        File f = getChecksumFile(fileURL);
+        OutputStream out = new FileOutputStream(f);
+
+        IOUtils.copy(in, out);
+
+        in.close();
+        out.close();
+        conn.disconnect();
+    }
+
+    /**
+     * 取得解壓縮檔案最後 1MB 的 MD5
+     *
+     * @param fileURL 檔案網址
+     * @return        最後 1MB 的 MD5
+     */
+    private String getLastPartChecksum(String fileURL) throws IOException {
+        BufferedReader r = new BufferedReader(new FileReader(getChecksumFile(fileURL)));
+        String checksum = r.readLine();
         r.close();
-
-        return md5list;
+        return checksum;
     }
 
     /**
@@ -356,7 +369,7 @@ public class FileUpdateManager {
      * @param number 分段順序
      * @return       摘要值 (Hex 字串)
      */
-    private String getLocalPartChecksum(File gzfile, int number) throws IOException {
+    private String getLocalPartChecksum(final File gzfile, final int number) throws IOException {
         FileInputStream   fis = new FileInputStream(gzfile);
         DigestInputStream dis = new DigestInputStream(fis, md);
 
@@ -395,15 +408,14 @@ public class FileUpdateManager {
      * @param fileURL 檔案網址
      * @param gzfile  本地檔案
      */
-    private void repairTE(String fileURL, File gzfile) throws IOException {
+    private void repairTE(final String fileURL, final File gzfile) throws IOException {
         // 檢查損壞片段
         String actual;
-        String[] expected = loadChecksum(fileURL);
         ArrayList<Integer> crashed = new ArrayList<>();
         int cnt = getPartCount();
         for (int i=0;i<cnt;i++) {
             actual = getLocalPartChecksum(gzfile, i);
-            if (!actual.equals(expected[i])) {
+            if (!actual.equals(partsum[i])) {
                 crashed.add(i);
             }
 
@@ -427,7 +439,7 @@ public class FileUpdateManager {
             for (int i : crashed) {
                 downloadPart(fileURL, i, fn++);
                 actual = getLocalPartChecksum(gzfile, i);
-                if (!actual.equals(expected[i])) {
+                if (!actual.equals(partsum[i])) {
                     stillCrashed++;
                 }
 
@@ -443,11 +455,12 @@ public class FileUpdateManager {
 
     /**
      * 取得解壓縮後長度
+     * (僅供 extract 使用，作為進度計算的分母)
      *
      * @param gzfile 壓縮檔
      * @return       解壓縮長度
      */
-    private static long getExtractedLength(File gzfile) throws IOException {
+    private static long getExtractedLength(final File gzfile) throws IOException {
         long size = 0;
 
         RandomAccessFile raf = new RandomAccessFile(gzfile, "r");
@@ -466,7 +479,7 @@ public class FileUpdateManager {
      * @param gzfile 壓縮檔
      * @param exfile 解壓縮檔
      */
-    private void extract(File gzfile, File exfile) throws IOException {
+    private void extract(final File gzfile, final File exfile) throws IOException {
         InputStream  in  = new GZIPInputStream(new FileInputStream(gzfile));
         OutputStream out = new FileOutputStream(exfile);
 
@@ -507,10 +520,12 @@ public class FileUpdateManager {
      * (如果處於必要更新狀態，可以設計成不出現更新通知)
      *
      * @param  fileURL  檔案遠端位置
+     * @param  saveTo   儲存位置
      * @param  mtimeMin 檔案最小時間限制
      * @return 是否必要更新
      */
-    public boolean updateRequired(final String fileURL, final long mtimeMin) {
+    public boolean isRequired(final String fileURL, final File saveTo, final long mtimeMin) {
+        this.saveTo = saveTo;
         File exfile = getExtractedFile(fileURL);
 
         // 檔案存在
@@ -524,17 +539,17 @@ public class FileUpdateManager {
         }
 
         // MD5 存在
-        File f = getChecksumFile(fileURL, false);
+        File f = getChecksumFile(fileURL);
         if (!f.exists()) {
             return true;
         }
 
-        // 最後 1MB MD5 正確
+        // 最後 1MB MD5 正確，避免應用程式無預警錯誤
         try {
-            String[] md5list = loadChecksum(fileURL);
             int lastpart = (int)((exfile.length()-1) / partsize);
-            String md5last = getLocalPartChecksum(exfile, lastpart);
-            if (!md5list[md5list.length-1].equals(md5last)) {
+            String md5actual   = getLocalPartChecksum(exfile, lastpart);
+            String md5expected = getLastPartChecksum(fileURL);
+            if (!md5actual.equals(md5expected)) {
                 return true;
             }
         } catch(IOException ex) {
@@ -549,7 +564,7 @@ public class FileUpdateManager {
      *
      * @param fileURL 檔案網址
      */
-    public void checkVersion(final String fileURL, File saveTo) {
+    public void checkVersion(final String fileURL, final File saveTo) {
         synchronized(TASK_LOCK) {
             if (workingTask==null) {
                 this.saveTo = saveTo;
@@ -620,13 +635,6 @@ public class FileUpdateManager {
                             if (mtime==0) {
                                 getMetadata(fileURL);
                             }
-                            File cfn = getChecksumFile(fileURL, true);
-                            File cfc = getChecksumFile(fileURL, false);
-                            if (cfn.exists()) {
-                                if (!cfn.renameTo(cfc)) {
-                                    throw new IOException("MD5 檔案重新命名失敗");
-                                }
-                            }
                             listener.onNewProgress(step, 100);
 
                             // 下載所有分割
@@ -659,6 +667,9 @@ public class FileUpdateManager {
                             if (canceled) {
                                 throw new InterruptedException("在修復階段取消更新");
                             }
+
+                            // 下載解壓縮後檔案最後 1MB 的 MD5
+                            downloadLastPartMD5(fileURL);
 
                             // 解壓縮
                             step = STEP_EXTRACT;
@@ -722,13 +733,6 @@ public class FileUpdateManager {
                             if (mtime==0) {
                                 getMetadata(fileURL);
                             }
-                            File cfn = getChecksumFile(fileURL, true);
-                            File cfc = getChecksumFile(fileURL, false);
-                            if (cfn.exists()) {
-                                if (!cfn.renameTo(cfc)) {
-                                    throw new IOException("MD5 檔案重新命名失敗");
-                                }
-                            }
                             listener.onNewProgress(step, 100);
 
                             if (forceRepairFailed) {
@@ -744,6 +748,9 @@ public class FileUpdateManager {
                             if (canceled) {
                                 throw new InterruptedException("在修復階段取消更新");
                             }
+
+                            // 下載解壓縮後檔案最後 1MB 的 MD5
+                            downloadLastPartMD5(fileURL);
 
                             // 解壓縮
                             step = STEP_EXTRACT;
@@ -793,7 +800,7 @@ public class FileUpdateManager {
      *
      * @param listener 事件捕捉器
      */
-    public void setListener(ProgressListener listener) {
+    public void setListener(final ProgressListener listener) {
         this.listener = listener;
     }
 

@@ -158,15 +158,27 @@ public class UpdateToolFragment extends Fragment {
 
         @Override
         public void onCheckVersion(long length, long mtime) {
-            if (length > 0) {
-                String fileURL = MainUtils.getRemoteURL(fileIndex);
-                try {
-                    fum.update(fileURL, MainUtils.getSavePath(getActivity(), fileIndex));
-                } catch(IOException ex) {
-                    // TODO
+            try {
+                File saveTo = MainUtils.getSavePath(getActivity(), fileIndex);
+                if (length > 0) {
+                    String fileURL = MainUtils.getRemoteURL(fileIndex);
+                    File gzfile = new File(saveTo, MainUtils.REQUIRED_FILES[fileIndex] + ".gz");
+
+                    if (gzfile.exists()) {
+                        fum.repair(fileURL, saveTo);
+                    } else {
+                        fum.update(fileURL, saveTo);
+                    }
+                } else {
+                    long mtimeMin = MainUtils.REQUIRED_MTIME[fileIndex];
+                    if (fum.isRequired(MainUtils.getRemoteURL(fileIndex), saveTo, mtimeMin)) {
+                        fum.update(MainUtils.getRemoteURL(fileIndex), saveTo);
+                    } else {
+                        checkNext();
+                    }
                 }
-            } else {
-                checkNext();
+            } catch(IOException ex) {
+                Log.e(TAG, MainUtils.getReason(ex));
             }
         }
 
@@ -199,11 +211,9 @@ public class UpdateToolFragment extends Fragment {
                 try {
                     String fileURL = MainUtils.getRemoteURL(fileIndex);
                     File saveTo = MainUtils.getSavePath(getActivity(), fileIndex);
-                    // TODO: merge saveto & checkVersion
-                    //fum.setSaveTo(saveTo);
                     fum.checkVersion(fileURL, saveTo);
                 } catch(IOException ex) {
-                    // TODO
+                    Log.e(TAG, MainUtils.getReason(ex));
                 }
             } else {
                 // If total length is zero, activity would restart infinitely.
@@ -246,9 +256,10 @@ public class UpdateToolFragment extends Fragment {
             mBtnRepair.setVisibility(View.INVISIBLE);
             String fileURL = MainUtils.getRemoteURL(fileIndex);
             try {
-                fum.repair(fileURL, MainUtils.getSavePath(getActivity(), fileIndex));
+                File saveTo = MainUtils.getSavePath(getActivity(), fileIndex);
+                fum.repair(fileURL, saveTo);
             } catch(IOException ex) {
-                // TODO
+                Log.e(TAG, MainUtils.getReason(ex));
             }
         }
     };

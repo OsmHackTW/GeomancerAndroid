@@ -7,6 +7,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
 import java.util.Random;
@@ -64,20 +65,21 @@ public class NetworkReceiver extends BroadcastReceiver {
         try {
             mFileIndex   = 0;
             mTotalLength = 0;
-            mFum = new FileUpdateManager(MainUtils.getSavePath(mContext, mFileIndex));
+            mFum = new FileUpdateManager();
 
             int cnt = 0;
             for (int i=0; i<MainUtils.REQUIRED_FILES.length; i++) {
-                mFum.setSaveTo(MainUtils.getSavePath(mContext, i));
-                if (mFum.updateRequired(MainUtils.getRemoteURL(i), MainUtils.REQUIRED_MTIME[i])) {
+                File saveTo   = MainUtils.getSavePath(mContext, i);
+                long mtimeMin = MainUtils.REQUIRED_MTIME[i];
+                if (mFum.isRequired(MainUtils.getRemoteURL(i), saveTo, mtimeMin)) {
                     cnt++;
                 }
             }
 
             if (cnt==0) {
-                mFum.setSaveTo(MainUtils.getSavePath(mContext, mFileIndex));
+                File saveTo = MainUtils.getSavePath(mContext, mFileIndex);
                 mFum.setListener(listener);
-                mFum.checkVersion(MainUtils.getRemoteURL(mFileIndex));
+                mFum.checkVersion(MainUtils.getRemoteURL(mFileIndex), saveTo);
             } else {
                 Log.w(TAG, "需要強制更新，不顯示系統通知");
             }
@@ -147,9 +149,8 @@ public class NetworkReceiver extends BroadcastReceiver {
             mFileIndex++;
             if (mFileIndex < MainUtils.REQUIRED_FILES.length) {
                 try {
-                    // TODO: merge saveto & checkVersion
-                    mFum.setSaveTo(MainUtils.getSavePath(mContext, mFileIndex));
-                    mFum.checkVersion(MainUtils.getRemoteURL(mFileIndex));
+                    File saveTo = MainUtils.getSavePath(mContext, mFileIndex);
+                    mFum.checkVersion(MainUtils.getRemoteURL(mFileIndex), saveTo);
                 } catch(IOException ex) {
                     Log.e(TAG, MainUtils.getReason(ex));
                 }
