@@ -46,6 +46,9 @@ public class MainActivity extends ActionBarActivity {
         filter.addAction("UPDATE");
         this.registerReceiver(receiver, filter);
 
+        // 清理儲存空間
+        MainUtils.cleanStorage(this);
+
         // 配置 Fragment
         FragmentTransaction ft = getFragmentManager().beginTransaction();
 

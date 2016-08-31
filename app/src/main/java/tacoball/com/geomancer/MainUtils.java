@@ -10,6 +10,9 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
+
+import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -99,6 +102,22 @@ public class MainUtils {
      */
     public static File getFilePath(Context context, int fileIndex) throws IOException {
         return new File(getSavePath(context, fileIndex), REQUIRED_FILES[fileIndex]);
+    }
+
+    /**
+     * 清理儲存空間
+     */
+    public static void cleanStorage(Context context) {
+        File[] dirs = context.getExternalFilesDirs("database");
+        for (int i=dirs.length-1;i>=0;i--) {
+            if (dirs[i]!=null) {
+                try {
+                    FileUtils.deleteDirectory(dirs[i]);
+                } catch(IOException ex) {
+                    Log.e(TAG, getReason(ex));
+                }
+            }
+        }
     }
 
     /**
