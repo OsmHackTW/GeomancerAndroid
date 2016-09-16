@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -61,6 +63,15 @@ public class UpdateToolFragment extends Fragment {
         mBtnRepair.setOnClickListener(repairListener);
 
         mHandler = new Handler();
+
+        // 設定版本字串
+        try {
+            PackageInfo packageInfo = getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0);
+            TextView txvVersion = (TextView)layout.findViewById(R.id.txvVersion);
+            txvVersion.setText(packageInfo.versionName);
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.e(TAG, e.getMessage());
+        }
 
         // 檢查網路連線
         boolean hasNetwork = false;
@@ -202,6 +213,7 @@ public class UpdateToolFragment extends Fragment {
             String pat = getString(R.string.pattern_update_error);
             String msg = String.format(Locale.getDefault(), pat, getStepName(step, false));
             setErrorMessage(msg);
+            Log.e(TAG, reason);
         }
 
         // 繼續處理下一個檔案

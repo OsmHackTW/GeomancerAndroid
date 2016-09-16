@@ -162,18 +162,45 @@ public class MapViewFragment extends Fragment {
                 cur.close();
 
                 // 查詢血汗工廠
-                sql = "SELECT id,exe_id,corperation,detail,ref_law,boss,exe_date,lat,lng FROM taipei " +
+                sql = "SELECT id,doc_id,corp,law,boss,dt_exe,gov,lat,lng FROM unluckylabor " +
                       "WHERE lat>=? AND lat<=? AND lng>=? AND lng<=?";
                 cur = mUnluckyLaborDB.rawQuery(sql, params);
                 if (cur.getCount()>0) {
                     while (cur.moveToNext()) {
+                        String corp   = cur.getString(cur.getColumnIndex("corp"));
+                        String doc_id = cur.getString(cur.getColumnIndex("doc_id"));
+                        String law    = cur.getString(cur.getColumnIndex("law"));
+                        String boss   = cur.getString(cur.getColumnIndex("boss"));
+                        String dt_exe = cur.getString(cur.getColumnIndex("dt_exe"));
+                        String gov    = cur.getString(cur.getColumnIndex("gov"));
+                        double lat    = cur.getDouble(cur.getColumnIndex("lat"));
+                        double lng    = cur.getDouble(cur.getColumnIndex("lng"));
+
+                        StringBuilder law_desc = new StringBuilder();
+                        String[] rules = law.split(";");
+                        for (String rule : rules) {
+                            if (law_desc.length()>0) {
+                                law_desc.append('\n');
+                            }
+                            law_desc.append(rule.replaceFirst("(\\d+)", "勞動基準法第$1條").replaceFirst("\\-(\\d+)", "第$1項"));
+                        }
+
                         String pat     = getString(R.string.pattern_unluckylabor_subject);
-                        String subject = String.format(Locale.getDefault(), pat, cur.getString(2));
-                        String detail  = String.format(Locale.getDefault(), "%s\n%s\n%s", cur.getString(1), cur.getString(4), cur.getString(3));
-                        double lat = cur.getDouble(7);
-                        double lng = cur.getDouble(8);
+                        String subject = String.format(Locale.getDefault(), pat, corp);
+                        String detail  = String.format(Locale.getDefault(), "%s (%s)\n%s %s\n違反勞基法項目：%s", doc_id, dt_exe, corp, boss, law_desc.toString());
+                        String url     = "";
+                        if (gov.equals("臺北市")) {
+                            url = "http://web2.bola.taipei/bolasearch/chhtml/page/20?q47=" + corp;
+                        }
+                        if (gov.equals("新北市")) {
+                            url = "http://ilabor.ntpc.gov.tw/cloud/Violate/filter?name1=" + corp;
+                        }
+                        if (gov.equals("高雄市")) {
+                            url = "http://labor.kcg.gov.tw/IllegalList.aspx?appname=IllegalList";
+                        }
                         PointInfo p = new PointInfo(lat, lng, subject, R.drawable.pin_unluckylabor, R.drawable.pin_unluckylabor_bright);
                         p.setDescription(detail);
+                        p.setURL(url);
                         infolist.add(p);
                         ulcnt++;
                     }

@@ -50,7 +50,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="0.0.8"
+            android:text="x.y.z"
             android:id="@+id/txvVersion" />
 
         <TextView

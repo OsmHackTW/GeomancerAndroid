@@ -43,14 +43,15 @@ public class MainUtils {
 
     // 更新伺服器
     public static final String[] MIRROR_SITES = {
-        "tacosync.com",     // Web 1
-        "sto.tacosync.com", // Web 2
-        "192.168.1.81",     // WiFi LAN 1 (Debug)
-        "192.168.1.172",    // WiFi LAN 2 (Debug)
-        "192.168.42.180"    // USB LAN (Debug)
+        "mirror.ossplanet.net",  // Mirror
+        "tacosync.com",          // Web 1
+        "sto.tacosync.com",      // Web 2
+        "192.168.1.81",          // WiFi LAN 1 (Debug)
+        "192.168.1.172",         // WiFi LAN 2 (Debug)
+        "192.168.42.12"          // USB LAN (Debug)
     };
-    public static final String MIRROR_PATTERN = "http://%s/geomancer/%s.gz";
-    public static final int    MIRROR_NUM = 4;
+    public static final String MIRROR_PATTERN = "http://%s/geomancer/0.0.10/%s.gz";
+    public static final int    MIRROR_NUM = 0;
 
     // 需要檢查更新的檔案清單
     public static final String[] REQUIRED_FILES = {
@@ -58,10 +59,11 @@ public class MainUtils {
     };
 
     // 檔案版本最低要求 (單位: Unix Timestamp x 1000)
+    // 使用這個指令觀察: stat -c '%Y %n' *.gz
     public static final long[] REQUIRED_MTIME = {
         1471928015000L,
         1472000000000L,
-        1472000000000L
+        1473845300000L
     };
 
     /**
