@@ -42,7 +42,5 @@
 * RE - 執行期間錯誤
 
 ### 資料檔位置
-離線地圖、凶宅資料庫、違反勞基法資料庫不在 App 中，程式執行時才去鏡相站取得，目前有三個鏡相站：
-* http://ftp.ubuntu-tw.org/mirror/geomancer/
+離線地圖、凶宅資料庫、違反勞基法資料庫不在 App 中，程式執行時才去鏡相站取得，目前有一個鏡像站：
 * http://mirror.ossplanet.net/geomancer/
-* http://tacosync.com/geomancer/
