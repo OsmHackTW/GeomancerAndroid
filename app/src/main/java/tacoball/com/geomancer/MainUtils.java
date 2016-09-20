@@ -48,7 +48,7 @@ public class MainUtils {
         "sto.tacosync.com",      // Web 2
         "192.168.1.81",          // WiFi LAN 1 (Debug)
         "192.168.1.172",         // WiFi LAN 2 (Debug)
-        "192.168.42.12"          // USB LAN (Debug)
+        "192.168.42.170"         // USB LAN (Debug)
     };
     public static final String MIRROR_PATTERN = "http://%s/geomancer/0.0.10/%s.gz";
     public static final int    MIRROR_NUM = 0;

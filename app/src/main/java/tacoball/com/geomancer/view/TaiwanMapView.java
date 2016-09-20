@@ -29,9 +29,10 @@ import org.mapsforge.map.android.rendertheme.AssetsRenderTheme;
 import org.mapsforge.map.android.util.AndroidUtil;
 import org.mapsforge.map.android.view.MapView;
 import org.mapsforge.map.datastore.MapDataStore;
+import org.mapsforge.map.layer.TileLayer;
+import org.mapsforge.map.layer.cache.FileSystemTileCache;
 import org.mapsforge.map.layer.cache.TileCache;
 import org.mapsforge.map.layer.overlay.Marker;
-import org.mapsforge.map.layer.renderer.TileRendererLayer;
 import org.mapsforge.map.reader.MapFile;
 
 import java.io.File;
@@ -201,10 +202,6 @@ public class TaiwanMapView extends MapView {
 
     @Override
     public void destroy() {
-        // TODO: Remove this after #659 solved
-        // Avoid Issue #659, https://github.com/mapsforge/mapsforge/issues/659
-        //mMyLocationMarker.setBitmap(null);
-
         // TODO: Release map resources
         //mMapFile.close();
 
@@ -288,31 +285,37 @@ public class TaiwanMapView extends MapView {
         }
     }
 
-    private TileRendererLayer loadThemeLayer(String themeName) throws IOException {
+    private TileLayer loadThemeLayer(String themeName) throws IOException {
         return loadThemeLayer(themeName, true);
     }
 
-    private TileRendererLayer loadThemeLayer(String themeName, boolean isTransparent) throws IOException {
+    private TileLayer loadThemeLayer(String themeName, boolean isTransparent) throws IOException {
         String themeFileName  = String.format("%sTheme.xml", themeName);
         String cacheName = String.format("%sCache", themeName);
 
-        TileCache cache = AndroidUtil.createTileCache(
-            mContext,
-            cacheName,
-            getModel().displayModel.getTileSize(),
-            1f,
-            getModel().frameBufferModel.getOverdrawFactor()
-        );
+        TileCache cache;
+        boolean useTwoLevel = false;
 
-        // TODO: Alternative way, maybe it is better.
-        /*
-        TileCache cache = AndroidUtil.createExternalStorageTileCache(
-            mContext,
-            themeCacheName,
-            7,
-            getModel().displayModel.getTileSize()
-        );
-        */
+        if (useTwoLevel) {
+            cache = AndroidUtil.createTileCache(
+                mContext,
+                cacheName,
+                getModel().displayModel.getTileSize(),
+                1f,
+                getModel().frameBufferModel.getOverdrawFactor()
+            );
+        } else {
+            // Get best cache dir
+            File bestDir = null;
+            File[] dirs = mContext.getExternalCacheDirs();
+            for (File dir : dirs) {
+                if (dir != null) {
+                    bestDir = dir;
+                }
+            }
+            File cacheDir = new File(bestDir, cacheName);
+            cache = new FileSystemTileCache(500, cacheDir, AndroidGraphicFactory.INSTANCE, true);
+        }
 
         File mapFilePath = MainUtils.getFilePath(mContext, 0);
 
