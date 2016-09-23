@@ -27,7 +27,6 @@ import org.mapsforge.core.model.LatLong;
 import org.mapsforge.map.android.graphics.AndroidGraphicFactory;
 import org.mapsforge.map.android.rendertheme.AssetsRenderTheme;
 import org.mapsforge.map.android.util.AndroidUtil;
-import org.mapsforge.map.android.view.MapView;
 import org.mapsforge.map.datastore.MapDataStore;
 import org.mapsforge.map.layer.TileLayer;
 import org.mapsforge.map.layer.cache.FileSystemTileCache;
@@ -44,11 +43,13 @@ import tacoball.com.geomancer.MainUtils;
 /**
  * 台灣地圖前端
  */
-public class TaiwanMapView extends MapView {
+public class TaiwanMapView extends ParallelMapView {
 
     private static final String TAG = "TacoMapView";
 
     public static final boolean SEE_DEBUGGING_POINT = false;
+
+    private static final boolean USE_TWO_LEVEL_CACHE = true;
 
     private Context         mContext;
     private SensorManager   mSensorMgr;
@@ -266,9 +267,10 @@ public class TaiwanMapView extends MapView {
             ds.close();
 
             // add Layer to mapView
-            getLayerManager().getLayers().add(loadThemeLayer("TaiwanGrounds", false));
-            getLayerManager().getLayers().add(loadThemeLayer("TaiwanRoads"));
-            getLayerManager().getLayers().add(loadThemeLayer("TaiwanPoints"));
+            getLayerManager().getLayers().add(loadThemeLayer("Taiwan", false));
+            //getLayerManager().getLayers().add(loadThemeLayer("TaiwanGrounds", false));
+            //getLayerManager().getLayers().add(loadThemeLayer("TaiwanRoads"));
+            //getLayerManager().getLayers().add(loadThemeLayer("TaiwanPoints"));
 
             // set UI of mapView
             setClickable(true);
@@ -277,6 +279,7 @@ public class TaiwanMapView extends MapView {
             setZoomLevelMin(MIN_ZOOM);
             setZoomLevelMax(MAX_ZOOM);
             //getMapZoomControls().setAutoHide(true);
+            //getFpsCounter().setVisible(true);
             getMapZoomControls().show();
             getModel().mapViewPosition.setMapLimit(bbox);
 
@@ -291,21 +294,22 @@ public class TaiwanMapView extends MapView {
 
     private TileLayer loadThemeLayer(String themeName, boolean isTransparent) throws IOException {
         String themeFileName  = String.format("%sTheme.xml", themeName);
-        String cacheName = String.format("%sCache", themeName);
+        final String cacheName = String.format("%sCache", themeName);
 
-        TileCache cache;
-        boolean useTwoLevel = false;
+        final TileCache cache;
+        final int cacheSize = 64; // 64 x 256 x 256 x 4 (about 16MB)
 
-        if (useTwoLevel) {
-            cache = AndroidUtil.createTileCache(
+        if (USE_TWO_LEVEL_CACHE) {
+            // The second level is not SD card but an emulated one.
+            cache = AndroidUtil.createExternalStorageTileCache(
                 mContext,
                 cacheName,
+                cacheSize,
                 getModel().displayModel.getTileSize(),
-                1f,
-                getModel().frameBufferModel.getOverdrawFactor()
+                false
             );
         } else {
-            // Get best cache dir
+            // Get best cache dir, really get SD card not emulated.
             File bestDir = null;
             File[] dirs = mContext.getExternalCacheDirs();
             for (File dir : dirs) {
