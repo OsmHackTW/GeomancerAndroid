@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="3">
+
+            <TextView
+                android:text="@string/term_contributors"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_columnSpan="3"
+                android:layout_marginTop="0dp"
+                android:gravity="center_horizontal"
+                android:padding="10dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+
+            <TextView
+                android:text="@string/term_map"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:padding="5dp"
+                android:layout_width="135dp" />
+
+            <TextView
+                android:text="© OpenStreetMap 貢獻者"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_columnSpan="2"
+                android:padding="5dp" />
+
+            <TextView
+                android:text="@string/term_unluckyhouse"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:padding="5dp" />
+
+            <TextView
+                android:text="台灣凶宅網 貼文大大"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_columnSpan="2"
+                android:padding="5dp" />
+
+            <TextView
+                android:text="@string/term_unluckylabor_integration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_rowSpan="4"
+                android:layout_gravity="end"
+                android:padding="5dp"
+                android:gravity="end" />
+
+            <TextView
+                android:text="@string/term_taipei"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:text="台北市政府勞動局" />
+
+            <TextView
+                android:text="@string/term_kaohsiung"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp" />
+
+            <TextView
+                android:text="高雄市政府勞工局"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp" />
+
+            <TextView
+                android:text="@string/term_taoyuan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp" />
+
+            <TextView
+                android:text="雁子"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp" />
+
+            <TextView
+                android:text="@string/term_other_counties"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp" />
+
+            <TextView
+                android:text="小璋丸"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp" />
+
+            <TextView
+                android:text="@string/term_unluckylabor_rawdata"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_rowSpan="4"
+                android:layout_gravity="end"
+                android:padding="5dp"
+                android:gravity="end" />
+
+            <TextView
+                android:text="@string/term_newtaipei"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:gravity="end" />
+
+            <TextView
+                android:text="新北市政府勞工局"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:gravity="end" />
+
+            <TextView
+                android:text="@string/term_taoyuan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:gravity="end" />
+
+            <TextView
+                android:text="桃園市政府勞動局"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:gravity="end" />
+
+            <TextView
+                android:text="@string/term_taichung"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:gravity="end" />
+
+            <TextView
+                android:text="台中市政府勞工局"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:gravity="end" />
+
+            <TextView
+                android:text="@string/term_tainan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:gravity="end" />
+
+            <TextView
+                android:text="台南市政府勞工局"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:gravity="end" />
+
+            <TextView
+                android:text="@string/term_stability"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:padding="5dp" />
+
+            <TextView
+                android:text="Google Play 評論用戶"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_columnSpan="2"
+                android:padding="5dp" />
+
+            <TextView
+                android:text="@string/term_development"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:padding="5dp" />
+
+            <TextView
+                android:text="小璋丸"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_columnSpan="2"
+                android:padding="5dp" />
+
+            <TextView
+                android:text="@string/term_illustrator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:padding="5dp" />
+
+            <TextView
+                android:text="正在徵求志工"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_columnSpan="2"
+                android:padding="5dp" />
+
+            <TextView
+                android:text="@string/term_promoted_by"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_columnSpan="3"
+                android:gravity="center_horizontal"
+                android:padding="10dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_columnSpan="3"
+                android:layout_gravity="center"
+                android:layout_marginBottom="5dp"
+                app:srcCompat="@drawable/g0v_dark"
+                android:background="@android:color/background_dark" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_columnSpan="3"
+                android:layout_gravity="center"
+                android:text="第21次黑客松" />
+
+            <!-- for scrolling test -->
+            <TextView
+                android:text="\n"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_columnSpan="3" />
+
+        </GridLayout>
+
+    </ScrollView>
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        app:srcCompat="?attr/homeAsUpIndicator"
+        android:id="@+id/imgBack" />
+
+</RelativeLayout>

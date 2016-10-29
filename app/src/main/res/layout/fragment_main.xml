@@ -109,50 +109,80 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
-        android:background="@drawable/geomancer_info_border"
-        android:layout_margin="5dp"
+        android:layout_margin="3dp"
+        android:columnCount="2"
+        android:rowCount="2"
         android:visibility="invisible"
+        android:background="@drawable/geomancer_info_border"
         android:useDefaultMargins="false"
         android:id="@+id/glyPointInfo">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:padding="2dp"
+            android:paddingEnd="6dp"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="摘要"
-            android:id="@+id/txvSummaryLabel"
-            android:layout_column="0"
-            android:layout_row="0"
-            android:layout_marginRight="5dp" />
+            android:text="@string/term_summary"
+            android:id="@+id/txvSummaryLabel" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:padding="2dp"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="test"
-            android:id="@+id/txvSummaryContent"
-            android:layout_row="0"
-            android:layout_column="1" />
+            android:id="@+id/txvSummaryContent" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:padding="2dp"
+            android:paddingEnd="6dp"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="連結"
-            android:id="@+id/txvURLLabel"
-            android:layout_column="0"
-            android:layout_row="1"
-            android:layout_marginTop="3dp" />
+            android:text="@string/term_data_source"
+            android:id="@+id/txvURLLabel" />
 
-        <TextView
+        <tacoball.com.geomancer.view.LinkView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:padding="2dp"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="test"
-            android:autoLink="web"
-            android:linksClickable="true"
-            android:id="@+id/txvURLContent"
-            android:layout_marginTop="3dp" />
+            android:id="@+id/txvURLContent" />
+
     </GridLayout>
+
+    <tacoball.com.geomancer.view.CircleButton
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="10dp"
+        android:src="@drawable/arrow_up"
+        android:id="@+id/btnMore" />
+
+    <tacoball.com.geomancer.view.CircleButton
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/btnMore"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="10dp"
+        android:visibility="invisible"
+        android:src="@drawable/arrow_up"
+        android:id="@+id/btnContributors" />
+
+    <tacoball.com.geomancer.view.CircleButton
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/btnContributors"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="10dp"
+        android:visibility="invisible"
+        android:src="@drawable/arrow_up"
+        android:id="@+id/btnLicense" />
 
 </RelativeLayout>
