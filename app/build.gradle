@@ -1,14 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion '23.0.2'
+    compileSdkVersion 23
+    buildToolsVersion '24.0.2'
     defaultConfig {
         applicationId "tacoball.com.geomancer"
         minSdkVersion 19
         targetSdkVersion 21
-        versionCode 12
-        versionName "0.0.12"
+        versionCode 100
+        versionName "0.1.0"
     }
 }
 
@@ -21,8 +21,9 @@ dependencies {
     //}
 
     compile 'commons-io:commons-io:2.5'
-    compile 'com.android.support:appcompat-v7:21.0.3'
-    //compile 'com.android.support:support-v4:21.0.3'
+    compile 'com.android.support:appcompat-v7:23.2.1'
     //compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    // Unit test
     testCompile 'junit:junit:4.12'
 }
