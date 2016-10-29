@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -35,23 +36,26 @@ public class MainUtils {
     private static final String PREFKEY_UPDATE_BY_MOFILE = "UPDATE_FROM_MOFILE"; // 允許行動網路更新
 
     // 地圖檔名
-    public static final String MAP_NAME = "taiwan-taco.map";
+    private static final String MAP_NAME = "taiwan-taco.map";
 
     // 資料庫檔名
-    public static final String UNLUCKY_HOUSE = "unluckyhouse.sqlite";
-    public static final String UNLUCKY_LABOR = "unluckylabor.sqlite";
+    private static final String UNLUCKY_HOUSE = "unluckyhouse.sqlite";
+    private static final String UNLUCKY_LABOR = "unluckylabor.sqlite";
+
+    // 前端狀態事件的分類名稱
+    private static final String INTENT_CATEGORY = "tacoball.com.geomancer.FrontEndState";
 
     // 更新伺服器
-    public static final String[] MIRROR_SITES = {
+    public  static final int    MIRROR_NUM = 0;
+    private static final String MIRROR_PATTERN = "http://%s/geomancer/0.0.10/%s.gz";
+    private static final String[] MIRROR_SITES = {
         "mirror.ossplanet.net",  // Mirror
         "tacosync.com",          // Web 1
         "sto.tacosync.com",      // Web 2
         "192.168.1.81",          // WiFi LAN 1 (Debug)
         "192.168.1.172",         // WiFi LAN 2 (Debug)
-        "192.168.42.170"         // USB LAN (Debug)
+        "192.168.42.29"          // USB LAN (Debug)
     };
-    public static final String MIRROR_PATTERN = "http://%s/geomancer/0.0.10/%s.gz";
-    public static final int    MIRROR_NUM = 0;
 
     // 需要檢查更新的檔案清單
     public static final String[] REQUIRED_FILES = {
@@ -219,6 +223,34 @@ public class MainUtils {
     public static boolean canUpdateByMobile(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getBoolean(PREFKEY_UPDATE_BY_MOFILE, true);
+    }
+
+    /**
+     * 產生 Fragment 切換事件
+     *
+     * @param action 動作名稱
+     * @return Fragment 切換事件
+     */
+    public static Intent buildFragmentSwitchIntent(String action) {
+        Intent i = new Intent();
+        i.addCategory(INTENT_CATEGORY);
+        i.setAction(action);
+        return i;
+    }
+
+    /**
+     * 產生 Fragment 切換事件過濾器
+     *
+     * @return Fragment 切換事件過濾器
+     */
+    public static IntentFilter buildFragmentSwitchIntentFilter() {
+        IntentFilter filter = new IntentFilter();
+        filter.addCategory(INTENT_CATEGORY);
+        filter.addAction("MAIN");
+        filter.addAction("UPDATE");
+        filter.addAction("CONTRIBUTORS");
+        filter.addAction("LICENSE");
+        return filter;
     }
 
 }

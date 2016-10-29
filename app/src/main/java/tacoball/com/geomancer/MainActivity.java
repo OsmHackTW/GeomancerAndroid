@@ -1,14 +1,13 @@
 package tacoball.com.geomancer;
 
-import android.app.Fragment;
-import android.app.FragmentTransaction;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -16,6 +15,7 @@ import org.mapsforge.map.android.graphics.AndroidGraphicFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Locale;
 
 import tacoball.com.geomancer.checkupdate.FileUpdateManager;
@@ -25,13 +25,11 @@ import tacoball.com.geomancer.view.TaiwanMapView;
 /**
  * 前端程式進入點
  */
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
 
     private static final boolean SIMULATE_OLD_MTIME = false;
-
-    private Fragment current;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,15 +40,10 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
 
         // 配置廣播接收器
-        IntentFilter filter = new IntentFilter();
-        filter.addAction("UPDATE");
-        this.registerReceiver(receiver, filter);
+        this.registerReceiver(receiver, MainUtils.buildFragmentSwitchIntentFilter());
 
         // 清理儲存空間
         MainUtils.cleanStorage(this);
-
-        // 配置 Fragment
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
 
         try {
             // 使用者要求更新檢查
@@ -82,13 +75,11 @@ public class MainActivity extends ActionBarActivity {
 
             if (needRequirements || userRequest) {
                 // 更新程式
-                current = new UpdateToolFragment();
+                changeFragment(new UpdateToolFragment());
             } else {
                 // 主畫面程式
-                current = new MapViewFragment();
+                changeFragment(new MapViewFragment());
             }
-            ft.add(R.id.frag_container, current);
-            ft.commit();
         } catch(IOException ex) {
             // MainUtils.getFilePath() 發生錯誤
             Log.e(TAG, ex.getMessage());
@@ -149,20 +140,23 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-    // 從地圖介面切換到更新介面
-    private void swapToUpdateUI() {
-        Handler handler = new Handler();
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                if (current instanceof MapViewFragment) {
-                    FragmentTransaction ft = getFragmentManager().beginTransaction();
-                    ft.remove(current);
-                    ft.add(R.id.frag_container, new UpdateToolFragment());
-                    ft.commit();
+    // 切換 Fragment
+    private void changeFragment(Fragment nextFrag) {
+        Log.d(TAG, nextFrag.getClass().getSimpleName());
+
+        List<Fragment> frags = getSupportFragmentManager().getFragments();
+        if (frags != null) {
+            for (Fragment prevFrag : frags) {
+                if (prevFrag != null && prevFrag.getClass() == nextFrag.getClass()) {
+                    Log.d(TAG, "Exists this fragment, skip replacement.");
+                    return;
                 }
             }
-        });
+        }
+
+        FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
+        trans.replace(R.id.frag_container, nextFrag);
+        trans.commit();
     }
 
     // 廣播接收器，處理使用者更新要求用
@@ -170,10 +164,33 @@ public class MainActivity extends ActionBarActivity {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals("UPDATE")) {
-                Log.d(TAG, "Request update from broadcast.");
+            String msg = String.format(Locale.getDefault(), "Got broadcast intent action=%s", intent.getAction());
+            Log.d(TAG, msg);
+
+            if (intent.getAction().equals("MAIN")) {
                 MainUtils.clearUpdateRequest(MainActivity.this);
-                swapToUpdateUI();
+                changeFragment(new MapViewFragment());
+            }
+
+            if (intent.getAction().equals("UPDATE")) {
+                MainUtils.clearUpdateRequest(MainActivity.this);
+                changeFragment(new UpdateToolFragment());
+            }
+
+            if (intent.getAction().equals("CONTRIBUTORS")) {
+                Fragment f = new SimpleFragment();
+                Bundle args = new Bundle();
+                args.putInt("LAYOUT_ID", R.layout.fragment_contributors);
+                f.setArguments(args);
+                changeFragment(f);
+            }
+
+            if (intent.getAction().equals("LICENSE")) {
+                Fragment f = new SimpleFragment();
+                Bundle args = new Bundle();
+                args.putInt("LAYOUT_ID", R.layout.fragment_license);
+                f.setArguments(args);
+                changeFragment(f);
             }
         }
 

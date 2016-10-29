@@ -1,15 +1,13 @@
 package tacoball.com.geomancer;
 
-import android.app.Activity;
-import android.app.Fragment;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,7 +30,7 @@ public class UpdateToolFragment extends Fragment {
     private static final String TAG = "MapUpdaterFragment";
 
     // 進入主畫面前的刻意等待時間
-    private static final long RESTART_DELAY = 3000;
+    private static final long RESTART_DELAY = 1500;
 
     // 介面元件
     TextView    mTxvAction; // 步驟說明文字
@@ -154,12 +152,8 @@ public class UpdateToolFragment extends Fragment {
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                Activity activity = getActivity();
-                if (activity==null) return;
-
-                Intent restartIntent = new Intent(activity, MainActivity.class);
-                activity.finish();
-                activity.startActivity(restartIntent);
+                // Switch fragment
+                getActivity().sendBroadcast(MainUtils.buildFragmentSwitchIntent("MAIN"));
             }
         }, RESTART_DELAY);
     }
