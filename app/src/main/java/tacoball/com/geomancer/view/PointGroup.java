@@ -1,10 +1,13 @@
 package tacoball.com.geomancer.view;
 
 import android.content.Context;
+import android.text.Html;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import org.mapsforge.map.layer.Layers;
+
+import java.util.Locale;
 
 /**
  * 圖標群組
@@ -27,10 +30,12 @@ public class PointGroup {
      * 配置圖標群組
      */
     public PointGroup(Context context, Layers layers, int maxCount) {
-        mPointMarkers = new PointMarker[maxCount];
-        for (int i=0;i<maxCount;i++) {
-            mPointMarkers[i] = new PointMarker(context, this);
-            layers.add(mPointMarkers[i]);
+        synchronized (WRITE_LOCK) {
+            mPointMarkers = new PointMarker[maxCount];
+            for (int i = 0; i < maxCount; i++) {
+                mPointMarkers[i] = new PointMarker(context, this);
+                layers.add(mPointMarkers[i]);
+            }
         }
     }
 
@@ -63,9 +68,13 @@ public class PointGroup {
      */
     public void setPoints(final PointInfo[] info) {
         synchronized (WRITE_LOCK) {
-            int count = Math.min(mPointMarkers.length, info.length);
-            for (int i = 0; i < count; i++) {
-                mPointMarkers[i].update(info[i]);
+            for (int i = 0; i < mPointMarkers.length; i++) {
+                if (i < info.length) {
+                    mPointMarkers[i].update(info[i]);
+                    mPointMarkers[i].setVisible(true);
+                } else {
+                    mPointMarkers[i].setVisible(false);
+                }
             }
 
             mPointInfo = info;
@@ -90,7 +99,9 @@ public class PointGroup {
                     if (mPointInfo[i].getURL().equals("")) {
                         mTxvURL.setText("(無)");
                     } else {
-                        mTxvURL.setText(mPointInfo[i].getURL());
+                        PointInfo p = mPointInfo[i];
+                        String text = String.format(Locale.getDefault(), "<a href=\"%s\">%s</a>", p.getURL(), p.getDataSource());
+                        mTxvURL.setText(Html.fromHtml(text));
                     }
                     mInfoContainer.setVisibility(ViewGroup.VISIBLE);
                     continue;

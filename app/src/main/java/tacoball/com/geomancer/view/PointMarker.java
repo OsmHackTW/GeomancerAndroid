@@ -33,11 +33,10 @@ public class PointMarker extends Marker {
 
     // 配置空白圖標
     public PointMarker(Context context, PointGroup pointGroup) {
-        super(new LatLong(25.0, 119.5), null, 0, 0);
-        setVisible(false, true);
-
+        super(new LatLong(25.0816, 121.5426), null, 0, 0);
         mContext = context;
         mPointGroup = pointGroup;
+        setVisible(false);
     }
 
     // 更新圖標資訊，讓圖標能重複利用
@@ -53,7 +52,6 @@ public class PointMarker extends Marker {
     public void setNormalPin() {
         setBitmap(AndroidGraphicFactory.convertToBitmap(mPinNormal));
         setVerticalOffset(-mPinNormal.getIntrinsicHeight()/2);
-        setVisible(true, true);
         mFocused = false;
     }
 
@@ -64,7 +62,6 @@ public class PointMarker extends Marker {
         }
         setBitmap(AndroidGraphicFactory.convertToBitmap(mPinFocused));
         setVerticalOffset(-mPinFocused.getIntrinsicHeight() / 2);
-        setVisible(true, true);
         mFocused = true;
     }
 

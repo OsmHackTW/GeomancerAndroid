@@ -284,7 +284,7 @@ public class TaiwanMapView extends ParallelMapView {
             getModel().mapViewPosition.setMapLimit(bbox);
 
             // Build pin_unluckyhouse points
-            mPointGroup = new PointGroup(getContext(), getLayerManager().getLayers(), 25);
+            mPointGroup = new PointGroup(getContext(), getLayerManager().getLayers(), 1000);
         }
     }
 
