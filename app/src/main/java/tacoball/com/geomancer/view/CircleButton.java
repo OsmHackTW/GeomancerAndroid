@@ -43,7 +43,7 @@ public class CircleButton extends AppCompatImageView {
         // Create circle mask
         Bitmap mask = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         tempCv.setBitmap(mask);
-        p.setARGB(255, 255, 255, 255);
+        p.setColor(0xffffffff);
         tempCv.drawCircle(w/2, h/2, w/2-1, p);
 
         // Paste Image
@@ -59,7 +59,7 @@ public class CircleButton extends AppCompatImageView {
         p.setXfermode(null);
 
         // Draw circle border
-        p.setARGB(255, 0, 128, 0);
+        p.setColor(0xff7b5d1d);
         p.setStyle(Paint.Style.STROKE);
         p.setStrokeWidth(strokeWidth);
         tempCv.drawCircle(w/2, h/2, w/2-(float)Math.ceil(strokeWidth/2), p);

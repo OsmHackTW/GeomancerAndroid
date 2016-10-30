@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 
 import org.mapsforge.core.graphics.Align;
+import org.mapsforge.core.graphics.Bitmap;
 import org.mapsforge.core.graphics.Canvas;
 import org.mapsforge.core.graphics.Paint;
 import org.mapsforge.core.graphics.Style;
@@ -94,7 +95,17 @@ public class PointMarker extends Marker {
     // 重畫圖標
     @Override
     public synchronized void draw(BoundingBox boundingBox, byte zoomLevel, Canvas canvas, Point topLeftPoint) {
-        super.draw(boundingBox, zoomLevel, canvas, topLeftPoint);
+        // super.draw(boundingBox, zoomLevel, canvas, topLeftPoint);
+
+        long mapSize = MercatorProjection.getMapSize(zoomLevel, displayModel.getTileSize());
+        double lng = this.getLatLong().longitude;
+        double lat = this.getLatLong().latitude;
+
+        Bitmap b = getBitmap();
+        double px = MercatorProjection.longitudeToPixelX(lng, mapSize) - topLeftPoint.x - b.getWidth()/2;
+        double py = MercatorProjection.latitudeToPixelY(lat, mapSize) - topLeftPoint.y - b.getHeight();
+        canvas.drawBitmap(b, (int)px, (int)py);
+
         if (mFocused) {
             Paint paint = AndroidGraphicFactory.INSTANCE.createPaint();
             paint.setStyle(Style.FILL);
@@ -102,15 +113,9 @@ public class PointMarker extends Marker {
             paint.setTextSize(40);
             paint.setTextAlign(Align.CENTER);
 
-            long mapSize = MercatorProjection.getMapSize(zoomLevel, displayModel.getTileSize());
-            double lng = this.getLatLong().longitude;
-            double lat = this.getLatLong().latitude;
             double cx  = MercatorProjection.longitudeToPixelX(lng, mapSize) - topLeftPoint.x;
             double cy  = MercatorProjection.latitudeToPixelY(lat, mapSize) - topLeftPoint.y + 30;
             canvas.drawText(mSubject, (int) cx, (int) cy, paint);
-
-            // Emoji Test
-            //canvas.drawText("\u260e", (int) cx, (int) cy, paint);
         }
     }
 

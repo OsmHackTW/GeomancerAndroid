@@ -160,7 +160,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginRight="5dp"
         android:layout_marginTop="10dp"
-        android:src="@drawable/arrow_up"
+        android:src="@drawable/more96"
         android:id="@+id/btnMore" />
 
     <tacoball.com.geomancer.view.CircleButton
@@ -171,7 +171,7 @@
         android:layout_marginRight="5dp"
         android:layout_marginTop="10dp"
         android:visibility="invisible"
-        android:src="@drawable/arrow_up"
+        android:src="@drawable/contrib96"
         android:id="@+id/btnContributors" />
 
     <tacoball.com.geomancer.view.CircleButton
@@ -182,7 +182,7 @@
         android:layout_marginRight="5dp"
         android:layout_marginTop="10dp"
         android:visibility="invisible"
-        android:src="@drawable/arrow_up"
+        android:src="@drawable/license96"
         android:id="@+id/btnLicense" />
 
 </RelativeLayout>
