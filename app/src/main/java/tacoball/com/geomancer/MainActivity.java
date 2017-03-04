@@ -11,6 +11,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
+
 import org.mapsforge.map.android.graphics.AndroidGraphicFactory;
 
 import java.io.File;
@@ -18,6 +20,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
+import io.fabric.sdk.android.Fabric;
 import tacoball.com.geomancer.checkupdate.FileUpdateManager;
 import tacoball.com.geomancer.checkupdate.NetworkReceiver;
 import tacoball.com.geomancer.view.TaiwanMapView;
@@ -34,10 +37,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
 
         // 配置 Android 繪圖資源，必須在 inflate 之前完成
         AndroidGraphicFactory.createInstance(getApplication());
         setContentView(R.layout.activity_main);
+        Log.d(TAG, "啟動");
 
         // 配置廣播接收器
         this.registerReceiver(receiver, MainUtils.buildFragmentSwitchIntentFilter());
@@ -178,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             if (intent.getAction().equals("CONTRIBUTORS")) {
-                // W/MapWorkerPool: Shutdown workers executor failed
+                // W/MapWorkerPool: Shutdown workers executor failed (MapWorkerPool.java:125)
                 Fragment f = new SimpleFragment();
                 Bundle args = new Bundle();
                 args.putInt("LAYOUT_ID", R.layout.fragment_contributors);
@@ -187,7 +192,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             if (intent.getAction().equals("LICENSE")) {
-                // W/MapWorkerPool: Shutdown workers executor failed
+                // W/MapWorkerPool: Shutdown workers executor failed (MapWorkerPool.java:125)
                 Fragment f = new SimpleFragment();
                 Bundle args = new Bundle();
                 args.putInt("LAYOUT_ID", R.layout.fragment_license);

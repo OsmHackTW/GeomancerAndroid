@@ -106,6 +106,10 @@ public class MapViewFragment extends Fragment {
         return mFragLayout;
     }
 
+    public void forceCrash(View view) {
+        throw new RuntimeException("This is a crash");
+    }
+
     /**
      * 善後動作
      */

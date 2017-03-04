@@ -763,6 +763,7 @@ public class FileUpdateManager {
                             }
 
                             // 本地檔案 mtime 與遠端檔案同步
+                            // TODO: 三星手機無法執行此動作
                             if (!exfile.setLastModified(mtime)) {
                                 throw new IOException("Cannot set mtime.");
                             }
