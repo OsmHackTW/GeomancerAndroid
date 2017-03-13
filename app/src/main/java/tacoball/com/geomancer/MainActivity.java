@@ -15,13 +15,10 @@ import com.crashlytics.android.Crashlytics;
 
 import org.mapsforge.map.android.graphics.AndroidGraphicFactory;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
 import io.fabric.sdk.android.Fabric;
-import tacoball.com.geomancer.checkupdate.FileUpdateManager;
 import tacoball.com.geomancer.checkupdate.NetworkReceiver;
 import tacoball.com.geomancer.view.TaiwanMapView;
 
@@ -50,47 +47,7 @@ public class MainActivity extends AppCompatActivity {
         // 清理儲存空間
         MainUtils.cleanStorage(this);
 
-        try {
-            // 使用者要求更新檢查
-            boolean userRequest = MainUtils.hasUpdateRequest(this);
-            MainUtils.clearUpdateRequest(this);
-
-            // 模擬第二個檔案太舊
-            if (SIMULATE_OLD_MTIME) {
-                File f = MainUtils.getFilePath(this, 2);
-                long otime = MainUtils.REQUIRED_MTIME[2] - 86400000;
-                if (!f.setLastModified(otime)) {
-                    Log.e(TAG, "Cannot set mtime.");
-                }
-            }
-
-            // 必要檔案更新檢查
-            int cnt = 0;
-            FileUpdateManager fum = new FileUpdateManager();
-            for (int i=0; i<MainUtils.REQUIRED_FILES.length; i++) {
-                File saveTo   = MainUtils.getSavePath(this, i);
-                long mtimeMin = MainUtils.REQUIRED_MTIME[i];
-                if (fum.isRequired(MainUtils.getRemoteURL(i), saveTo, mtimeMin)) {
-                    String msg = String.format(Locale.getDefault(), "檔案 %d 需要強制更新", i);
-                    Log.d(TAG, msg);
-                    cnt++;
-                }
-            }
-            boolean needRequirements = (cnt>0);
-
-            if (needRequirements || userRequest) {
-                // 更新程式
-                changeFragment(new UpdateToolFragment());
-            } else {
-                // 主畫面程式
-                changeFragment(new MapViewFragment());
-            }
-        } catch(IOException ex) {
-            // MainUtils.getFilePath() 發生錯誤
-            Log.e(TAG, ex.getMessage());
-        } finally {
-            checkDebugParameters();
-        }
+        changeFragment(new UpdateToolFragment());
     }
 
     @Override
@@ -102,16 +59,6 @@ public class MainActivity extends AppCompatActivity {
     // 地毯式檢查用到的除錯參數
     private void checkDebugParameters() {
         int cnt = 0;
-
-        if (FileUpdateManager.forceDownloadFailed) {
-            Log.w(TAG, getString(R.string.log_simulate_download_failed));
-            cnt++;
-        }
-
-        if (FileUpdateManager.forceRepairFailed) {
-            Log.w(TAG, getString(R.string.log_simulate_repair_failed));
-            cnt++;
-        }
 
         if (!NetworkReceiver.ENABLE_INTERVAL) {
             Log.w(TAG, getString(R.string.log_disable_interval_limit));

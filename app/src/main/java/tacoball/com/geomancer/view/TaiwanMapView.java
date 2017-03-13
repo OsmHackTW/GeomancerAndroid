@@ -32,7 +32,6 @@ import org.mapsforge.map.layer.TileLayer;
 import org.mapsforge.map.layer.cache.FileSystemTileCache;
 import org.mapsforge.map.layer.cache.TileCache;
 import org.mapsforge.map.layer.overlay.Marker;
-import org.mapsforge.map.reader.MapFile;
 
 import java.io.File;
 import java.io.IOException;
@@ -243,49 +242,46 @@ public class TaiwanMapView extends ParallelMapView {
         final byte MIN_ZOOM = 7;
         final byte MAX_ZOOM = 17;
 
-        File mapFile = MainUtils.getFilePath(mContext, 0);
+        AndroidGraphicFactory.clearResourceFileCache();
+        AndroidGraphicFactory.clearResourceMemoryCache();
 
-        if (mapFile.exists()) {
-            AndroidGraphicFactory.clearResourceFileCache();
-            AndroidGraphicFactory.clearResourceMemoryCache();
-
-            if (SEE_DEBUGGING_POINT) {
-                // 檢查點 121.4407269 25.0179735
-                mState.cLat = 25.0565;
-                mState.cLng = 121.5317;
-                mState.zoom = 11;
-            } else {
-                // Load state or initial state
-                SharedPreferences pref = mContext.getSharedPreferences(TAG, Context.MODE_PRIVATE);
-                mState.cLat = pref.getFloat("cLat", 25.0744f);
-                mState.cLng = pref.getFloat("cLng", 121.5391f);
-                mState.zoom = pref.getInt("zoom", 15);
-            }
-
-            MapDataStore ds = new MapFile(mapFile);
-            BoundingBox bbox = ds.boundingBox();
-            ds.close();
-
-            // add Layer to mapView
-            getLayerManager().getLayers().add(loadThemeLayer("Taiwan", false));
-            //getLayerManager().getLayers().add(loadThemeLayer("TaiwanGrounds", false));
-            //getLayerManager().getLayers().add(loadThemeLayer("TaiwanRoads"));
-            //getLayerManager().getLayers().add(loadThemeLayer("TaiwanPoints"));
-
-            // set UI of mapView
-            setClickable(true);
-            setCenter(new LatLong(mState.cLat, mState.cLng));
-            setZoomLevel((byte) mState.zoom);
-            setZoomLevelMin(MIN_ZOOM);
-            setZoomLevelMax(MAX_ZOOM);
-            //getMapZoomControls().setAutoHide(true);
-            //getFpsCounter().setVisible(true);
-            getMapZoomControls().show();
-            getModel().mapViewPosition.setMapLimit(bbox);
-
-            // Build pin_unluckyhouse points
-            mPointGroup = new PointGroup(getContext(), getLayerManager().getLayers(), 1000);
+        if (SEE_DEBUGGING_POINT) {
+            // 檢查點 121.4407269 25.0179735
+            mState.cLat = 25.0565;
+            mState.cLng = 121.5317;
+            mState.zoom = 11;
+        } else {
+            // Load state or initial state
+            SharedPreferences pref = mContext.getSharedPreferences(TAG, Context.MODE_PRIVATE);
+            mState.cLat = pref.getFloat("cLat", 25.0744f);
+            mState.cLng = pref.getFloat("cLng", 121.5391f);
+            mState.zoom = pref.getInt("zoom", 15);
         }
+
+        // 這個地圖只是用來觀察 BBox
+        MapDataStore map = MainUtils.openMapData(mContext);
+        BoundingBox bbox = map.boundingBox();
+        map.close();
+
+        // add Layer to mapView
+        getLayerManager().getLayers().add(loadThemeLayer("Taiwan", false));
+        //getLayerManager().getLayers().add(loadThemeLayer("TaiwanGrounds", false));
+        //getLayerManager().getLayers().add(loadThemeLayer("TaiwanRoads"));
+        //getLayerManager().getLayers().add(loadThemeLayer("TaiwanPoints"));
+
+        // set UI of mapView
+        setClickable(true);
+        setCenter(new LatLong(mState.cLat, mState.cLng));
+        setZoomLevel((byte) mState.zoom);
+        setZoomLevelMin(MIN_ZOOM);
+        setZoomLevelMax(MAX_ZOOM);
+        //getMapZoomControls().setAutoHide(true);
+        //getFpsCounter().setVisible(true);
+        getMapZoomControls().show();
+        getModel().mapViewPosition.setMapLimit(bbox);
+
+        // Build pin_unluckyhouse points
+        mPointGroup = new PointGroup(getContext(), getLayerManager().getLayers(), 1000);
     }
 
     private TileLayer loadThemeLayer(String themeName) throws IOException {
@@ -321,12 +317,10 @@ public class TaiwanMapView extends ParallelMapView {
             cache = new FileSystemTileCache(500, cacheDir, AndroidGraphicFactory.INSTANCE, true);
         }
 
-        File mapFilePath = MainUtils.getFilePath(mContext, 0);
-
         return AndroidUtil.createTileRendererLayer(
             cache,
             getModel().mapViewPosition,
-            new MapFile(mapFilePath),
+            MainUtils.openMapData(mContext),
             new AssetsRenderTheme(mContext, "themes/", themeFileName),
             isTransparent,
             true,

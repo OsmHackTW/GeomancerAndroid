@@ -3,12 +3,8 @@ package tacoball.com.geomancer.checkupdate;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.util.Log;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Locale;
 import java.util.Random;
 
@@ -37,7 +33,6 @@ public class NetworkReceiver extends BroadcastReceiver {
 
     // 資源元件
     Context mContext;
-    FileUpdateManager mFum;
 
     // 狀態值
     private int  mFileIndex;
@@ -47,6 +42,8 @@ public class NetworkReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if (intent.getAction().equals("android.net.conn.CONNECTIVITY_CHANGE")) {
+            // TODO: 網路環境檢查程式需要重構，暫時先停用背景檢查機制
+            /*
             ConnectivityManager connMgr = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo wifi   = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
             NetworkInfo mobile = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
@@ -57,35 +54,13 @@ public class NetworkReceiver extends BroadcastReceiver {
                 mContext = context;
                 checkVersion();
             }
+            */
         }
     }
 
     // 檢查檔案版本
     private void checkVersion() {
-        try {
-            mFileIndex   = 0;
-            mTotalLength = 0;
-            mFum = new FileUpdateManager();
-
-            int cnt = 0;
-            for (int i=0; i<MainUtils.REQUIRED_FILES.length; i++) {
-                File saveTo   = MainUtils.getSavePath(mContext, i);
-                long mtimeMin = MainUtils.REQUIRED_MTIME[i];
-                if (mFum.isRequired(MainUtils.getRemoteURL(i), saveTo, mtimeMin)) {
-                    cnt++;
-                }
-            }
-
-            if (cnt==0) {
-                File saveTo = MainUtils.getSavePath(mContext, mFileIndex);
-                mFum.setListener(listener);
-                mFum.checkVersion(MainUtils.getRemoteURL(mFileIndex), saveTo);
-            } else {
-                Log.w(TAG, "需要強制更新，不顯示系統通知");
-            }
-        } catch(IOException ex) {
-            Log.e(TAG, MainUtils.getReason(ex));
-        }
+        // TODO: 使用新架構檢查
     }
 
     // 傳輸量計算完成後處理
@@ -97,8 +72,6 @@ public class NetworkReceiver extends BroadcastReceiver {
             msg = String.format(Locale.getDefault(), "有檔案需要更新，共 %.2f MB", mblen);
         }
         Log.d(TAG, msg);
-
-        mFum = null;
     }
 
     // 分流控制程式
@@ -136,34 +109,5 @@ public class NetworkReceiver extends BroadcastReceiver {
 
         return true;
     }
-
-    // 待更新項目傳輸量計算
-    private FileUpdateManager.ProgressListener listener = new FileUpdateManager.ProgressListener() {
-
-        @Override
-        public void onCheckVersion(long length, long mtime) {
-            if (length>0) {
-                mTotalLength += length;
-            }
-
-            mFileIndex++;
-            if (mFileIndex < MainUtils.REQUIRED_FILES.length) {
-                try {
-                    File saveTo = MainUtils.getSavePath(mContext, mFileIndex);
-                    mFum.checkVersion(MainUtils.getRemoteURL(mFileIndex), saveTo);
-                } catch(IOException ex) {
-                    Log.e(TAG, MainUtils.getReason(ex));
-                }
-            } else {
-                checkComplete();
-            }
-        }
-
-        @Override
-        public void onError(int step, String reason) {
-            Log.e(TAG, reason);
-        }
-
-    };
 
 }

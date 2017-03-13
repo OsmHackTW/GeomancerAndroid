@@ -1,9 +1,10 @@
 package tacoball.com.geomancer;
 
-import android.support.v4.app.Fragment;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -94,20 +95,14 @@ public class MapViewFragment extends Fragment {
 
         // 資料庫配置
         try {
-            String path;
-            path = MainUtils.getFilePath(getActivity(), 1).getAbsolutePath();
-            mUnluckyHouseDB = SQLiteDatabase.openDatabase(path, null, SQLiteDatabase.OPEN_READONLY);
-            path = MainUtils.getFilePath(getActivity(), 2).getAbsolutePath();
-            mUnluckyLaborDB = SQLiteDatabase.openDatabase(path, null, SQLiteDatabase.OPEN_READONLY);
+            Context ctx = getActivity();
+            mUnluckyHouseDB = MainUtils.openReadOnlyDB(ctx, MainUtils.UNLUCKY_HOUSE);
+            mUnluckyLaborDB = MainUtils.openReadOnlyDB(ctx, MainUtils.UNLUCKY_LABOR);
         } catch(IOException ex) {
             Log.e(TAG, ex.getMessage());
         }
 
         return mFragLayout;
-    }
-
-    public void forceCrash(View view) {
-        throw new RuntimeException("This is a crash");
     }
 
     /**

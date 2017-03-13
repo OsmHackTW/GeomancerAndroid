@@ -8,9 +8,8 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 
 /**
- * Created by raymond on 2016/10/27.
+ * 簡易頁面用的 Fragment，目前用於授權和貢獻者頁面
  */
-
 public class SimpleFragment extends Fragment {
 
     @Override

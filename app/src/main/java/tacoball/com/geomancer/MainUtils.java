@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.preference.PreferenceManager;
@@ -14,6 +15,8 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import org.apache.commons.io.FileUtils;
+import org.mapsforge.map.datastore.MapDataStore;
+import org.mapsforge.map.reader.MapFile;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,21 +36,20 @@ public class MainUtils {
 
     // 各偏好設定 KEY 值
     private static final String PREFKEY_UPDATE_REQUEST   = "UPDATE_REQUEST";     // 使用者要求更新
-    private static final String PREFKEY_UPDATE_BY_MOFILE = "UPDATE_FROM_MOFILE"; // 允許行動網路更新
+    private static final String PREFKEY_UPDATE_BY_MOBILE = "UPDATE_FROM_MOBILE"; // 允許行動網路更新
 
     // 地圖檔名
-    private static final String MAP_NAME = "taiwan-taco.map";
+    public static final String MAP_NAME = "taiwan-taco.map";
 
     // 資料庫檔名
-    private static final String UNLUCKY_HOUSE = "unluckyhouse.sqlite";
-    private static final String UNLUCKY_LABOR = "unluckylabor.sqlite";
+    public static final String UNLUCKY_HOUSE = "unluckyhouse.sqlite";
+    public static final String UNLUCKY_LABOR = "unluckylabor.sqlite";
 
     // 前端狀態事件的分類名稱
     private static final String INTENT_CATEGORY = "tacoball.com.geomancer.FrontEndState";
 
     // 更新伺服器
-    public  static final int    MIRROR_NUM = 0;
-    private static final String MIRROR_PATTERN = "http://%s/geomancer/0.0.10/%s.gz";
+    public static final int       MIRROR_NUM = 2;
     private static final String[] MIRROR_SITES = {
         "mirror.ossplanet.net",  // Mirror
         "tacosync.com",          // Web 1
@@ -57,57 +59,42 @@ public class MainUtils {
         "192.168.42.29"          // USB LAN (Debug)
     };
 
-    // 需要檢查更新的檔案清單
-    public static final String[] REQUIRED_FILES = {
-        MAP_NAME, UNLUCKY_HOUSE, UNLUCKY_LABOR
-    };
-
-    // 檔案版本最低要求 (單位: Unix Timestamp x 1000)
-    // 使用這個指令觀察: stat -c '%Y %n' *.gz
-    public static final long[] REQUIRED_MTIME = {
-        1471928015000L,
-        1472000000000L,
-        1473845300000L
-    };
-
-    /**
-     * 取得檔案的遠端位置
-     */
-    public static String getRemoteURL(int fileIndex) {
-        return String.format(Locale.getDefault(), MIRROR_PATTERN, MIRROR_SITES[MIRROR_NUM], REQUIRED_FILES[fileIndex]);
+    public static String getUpdateSource() {
+        return String.format(Locale.getDefault(), "http://%s/geomancer/0.1.0", MIRROR_SITES[MIRROR_NUM]);
     }
 
-    /**
-     * 取得檔案的本地存檔路徑
-     */
-    public static File getSavePath(Context context, int fileIndex) throws IOException {
-        if (context==null) {
-            throw new IOException("Context is null");
-        }
-
-        if (fileIndex>=REQUIRED_FILES.length) {
-            throw new IOException("fileIndex out of range");
-        }
-
-        String filename = REQUIRED_FILES[fileIndex];
-        int begin = filename.lastIndexOf('.') + 1;
-        String ext = filename.substring(begin);
-        String category = ext;
-        if (ext.equals("sqlite")) category = "db";
-
-        File[] dirs = context.getExternalFilesDirs(category);
+    public static File getDbPath(Context context) throws IOException {
+        File[] dirs = context.getExternalFilesDirs("db");
         for (int i=dirs.length-1;i>=0;i--) {
             if (dirs[i]!=null) return dirs[i];
         }
-
-        throw new IOException("Cannot get save path");
+        throw new IOException("");
     }
 
-    /**
-     * 取得檔案的本地完整路徑
-     */
-    public static File getFilePath(Context context, int fileIndex) throws IOException {
-        return new File(getSavePath(context, fileIndex), REQUIRED_FILES[fileIndex]);
+    public static File getLogPath(Context context) throws IOException {
+        File[] dirs = context.getExternalFilesDirs("log");
+        for (int i=dirs.length-1;i>=0;i--) {
+            if (dirs[i]!=null) return dirs[i];
+        }
+        throw new IOException("");
+    }
+
+    public static File getMapPath(Context context) throws IOException {
+        File[] dirs = context.getExternalFilesDirs("map");
+        for (int i=dirs.length-1;i>=0;i--) {
+            if (dirs[i]!=null) return dirs[i];
+        }
+        throw new IOException("");
+    }
+
+    public static MapDataStore openMapData(Context context) throws IOException {
+        File path = new File(getMapPath(context), MAP_NAME);
+        return new MapFile(path);
+    }
+
+    public static SQLiteDatabase openReadOnlyDB(Context context, String filename) throws IOException {
+        String path = getDbPath(context).getAbsolutePath() + "/" + filename;
+        return SQLiteDatabase.openDatabase(path, null, SQLiteDatabase.OPEN_READONLY);
     }
 
     /**
@@ -124,6 +111,8 @@ public class MainUtils {
                 }
             }
         }
+
+        // TODO: 移除故障的殘留檔案
     }
 
     /**
@@ -222,7 +211,7 @@ public class MainUtils {
      */
     public static boolean canUpdateByMobile(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        return prefs.getBoolean(PREFKEY_UPDATE_BY_MOFILE, true);
+        return prefs.getBoolean(PREFKEY_UPDATE_BY_MOBILE, true);
     }
 
     /**

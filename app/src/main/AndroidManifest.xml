@@ -20,6 +20,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:hardwareAccelerated="false">
+
         <activity
             android:screenOrientation="portrait"
             android:launchMode="singleTop"
@@ -42,6 +43,7 @@
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="429ffc1f1fdc628a44125f28c9f0219bdc52b27e" />
+
     </application>
 
 </manifest>
