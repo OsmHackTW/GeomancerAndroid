@@ -111,11 +111,12 @@ public class UpdateToolFragment extends Fragment {
                     Log.e(TAG, "使用者要求更新");
                 }
             } else {
-                mTxvAction.setText(R.string.prompt_cannot_access_network);
+                setMessage(ctx.getString(R.string.prompt_cannot_access_network), false);
                 Log.e(TAG, "無法更新");
             }
         } else {
             // 延遲一小段時間後直接進入主畫面
+            setMessage(ctx.getString(R.string.prompt_validated), false);
             gotoMap();
             Log.e(TAG, "不需要更新");
         }
