@@ -6,6 +6,7 @@
     <!-- UI 提示訊息 -->
     <string name="prompt_cannot_access_storage">無法存取檔案，是否儲存空間已用盡？</string>
     <string name="prompt_cannot_access_network">需要網路連線更新地圖，請打開網路後重試</string>
+    <string name="prompt_validated">檔案確認完成，即將進入鄉民風水師</string>
 
     <!-- 組合句型 -->
     <string name="pattern_update_error">%s階段發生錯誤</string>
