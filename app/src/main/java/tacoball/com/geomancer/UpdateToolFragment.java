@@ -66,10 +66,18 @@ public class UpdateToolFragment extends Fragment {
             Log.e(TAG, e.getMessage());
         }
 
+        // 執行一次更新流程
+        update();
+
+        return layout;
+    }
+
+    private void update() {
         Context ctx = getActivity();
 
         // 檢查使用者是否要求更新
         boolean userRequest = MainUtils.hasUpdateRequest(ctx);
+        // TODO: 需要改成更新完成後才消除記號
         MainUtils.clearUpdateRequest(ctx);
 
         // 目錄配置
@@ -81,8 +89,8 @@ public class UpdateToolFragment extends Fragment {
             mapPath = MainUtils.getMapPath(ctx);
             logPath = MainUtils.getLogPath(ctx);
         } catch(IOException ex) {
-            mTxvAction.setText(R.string.prompt_cannot_access_storage);
-            return layout;
+            setMessage(ctx.getString(R.string.prompt_cannot_access_storage), true);
+            return;
         }
 
         // 檢查應用程式是否要求更新
@@ -111,7 +119,7 @@ public class UpdateToolFragment extends Fragment {
                     Log.e(TAG, "使用者要求更新");
                 }
             } else {
-                setMessage(ctx.getString(R.string.prompt_cannot_access_network), false);
+                setMessage(ctx.getString(R.string.prompt_cannot_access_network), true);
                 Log.e(TAG, "無法更新");
             }
         } else {
@@ -120,8 +128,6 @@ public class UpdateToolFragment extends Fragment {
             gotoMap();
             Log.e(TAG, "不需要更新");
         }
-
-        return layout;
     }
 
     /**
@@ -217,7 +223,7 @@ public class UpdateToolFragment extends Fragment {
         @Override
         public void onClick(View v) {
             mBtnRepair.setVisibility(View.INVISIBLE);
-            // TODO: 暫不實作
+            update();
         }
     };
 

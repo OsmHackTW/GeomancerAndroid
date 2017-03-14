@@ -20,9 +20,9 @@ public class FixedFpsSurfaceView extends SurfaceView {
 
     private static final String TAG = "FixedFpsSurfaceView";
     private static final int FPS = 24;
-    private static final boolean TRACE = false;
+    private static final boolean TRACE = true;
 
-    private ParallelMapView parallelMapView;
+    private SurfaceMapView parallelMapView;
 
     public FixedFpsSurfaceView(Context context) {
         this(context, null);
@@ -41,11 +41,11 @@ public class FixedFpsSurfaceView extends SurfaceView {
         }
     }
 
-    public ParallelMapView getParentViewGroup() {
+    public SurfaceMapView getParentViewGroup() {
         if (parallelMapView == null) {
             ViewParent parent = getParent();
-            if (parent instanceof ParallelMapView) {
-                parallelMapView = (ParallelMapView)parent;
+            if (parent instanceof SurfaceMapView) {
+                parallelMapView = (SurfaceMapView)parent;
             }
         }
 

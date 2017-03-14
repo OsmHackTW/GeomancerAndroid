@@ -32,6 +32,7 @@ import org.mapsforge.map.layer.TileLayer;
 import org.mapsforge.map.layer.cache.FileSystemTileCache;
 import org.mapsforge.map.layer.cache.TileCache;
 import org.mapsforge.map.layer.overlay.Marker;
+import org.mapsforge.map.android.view.MapView;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,7 +43,7 @@ import tacoball.com.geomancer.MainUtils;
 /**
  * 台灣地圖前端
  */
-public class TaiwanMapView extends ParallelMapView {
+public class TaiwanMapView extends MapView {
 
     private static final String TAG = "TacoMapView";
 
@@ -202,6 +203,7 @@ public class TaiwanMapView extends ParallelMapView {
 
     @Override
     public void destroy() {
+        Log.w(TAG, "消滅 TaiwanMapView");
         // TODO: Release map resources
         //mMapFile.close();
 
@@ -265,9 +267,6 @@ public class TaiwanMapView extends ParallelMapView {
 
         // add Layer to mapView
         getLayerManager().getLayers().add(loadThemeLayer("Taiwan", false));
-        //getLayerManager().getLayers().add(loadThemeLayer("TaiwanGrounds", false));
-        //getLayerManager().getLayers().add(loadThemeLayer("TaiwanRoads"));
-        //getLayerManager().getLayers().add(loadThemeLayer("TaiwanPoints"));
 
         // set UI of mapView
         setClickable(true);
@@ -282,10 +281,6 @@ public class TaiwanMapView extends ParallelMapView {
 
         // Build pin_unluckyhouse points
         mPointGroup = new PointGroup(getContext(), getLayerManager().getLayers(), 1000);
-    }
-
-    private TileLayer loadThemeLayer(String themeName) throws IOException {
-        return loadThemeLayer(themeName, true);
     }
 
     private TileLayer loadThemeLayer(String themeName, boolean isTransparent) throws IOException {

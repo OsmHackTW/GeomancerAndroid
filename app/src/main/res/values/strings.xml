@@ -25,6 +25,7 @@
     <string name="term_extracting">正在解壓縮</string>
     <string name="term_repairing">正在修復</string>
     <string name="term_map">地圖檔</string>
+    <string name="term_mirror_hosting">資料主機</string>
     <string name="term_unluckyhouse_db">凶宅資料庫</string>
     <string name="term_unluckylabor_db">血汗勞工資料庫</string>
     <string name="term_peace">平安無事</string>

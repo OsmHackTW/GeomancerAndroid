@@ -10,15 +10,15 @@ import org.mapsforge.map.android.view.MapView;
 /**
  * Android MapView using SurfaceView
  */
-public class ParallelMapView extends MapView {
+public class SurfaceMapView extends MapView {
 
     private FixedFpsSurfaceView mapSurface;
 
-    public ParallelMapView(Context context) {
+    public SurfaceMapView(Context context) {
         this(context, null);
     }
 
-    public ParallelMapView(Context context, AttributeSet attrs) {
+    public SurfaceMapView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
         // Create SurfaceView to draw tiles.
@@ -50,8 +50,10 @@ public class ParallelMapView extends MapView {
 
     @Override
     public void destroy() {
-        super.destroy();
+        this.removeViewInLayout(mapSurface);
+        // mapSurface.release();
         mapSurface = null;
+        super.destroy();
     }
 
 }

@@ -44,9 +44,9 @@ public class MapViewFragment extends Fragment {
     private TextView      mTxvHint;        // 地圖放大提示訊息
     private Button        mBtPosition;     // 定位按鈕
     private Button        mBtMeasure;      // 測量風水按鈕
-    private CircleButton mBtMore; //
-    private CircleButton mBtContributors; //
-    private CircleButton mBtLicense;      //
+    private CircleButton  mBtMore;         // 展開/收合按鈕
+    private CircleButton  mBtContributors; // 貢獻者按鈕
+    private CircleButton  mBtLicense;      // 授權按鈕
 
     // 資源元件
     private SQLiteDatabase mUnluckyHouseDB;
@@ -110,11 +110,13 @@ public class MapViewFragment extends Fragment {
      */
     @Override
     public void onDestroyView() {
+        Log.w(TAG, "消滅 MapViewFragment");
         mMapView.destroyAll();
 
         if (mUnluckyHouseDB != null) {
             mUnluckyHouseDB.close();
         }
+
         if (mUnluckyLaborDB != null) {
             mUnluckyLaborDB.close();
         }

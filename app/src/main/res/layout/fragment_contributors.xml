@@ -53,6 +53,20 @@
                 android:padding="5dp" />
 
             <TextView
+                android:text="@string/term_mirror_hosting"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:padding="5dp"
+                android:layout_width="135dp" />
+
+            <TextView
+                android:text="OSSPlanet.net"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_columnSpan="2"
+                android:padding="5dp" />
+
+            <TextView
                 android:text="@string/term_unluckylabor_integration"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -184,11 +198,11 @@
                 android:padding="5dp" />
 
             <TextView
-                android:text="唐鳳"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_columnSpan="2"
-                android:padding="5dp" />
+                android:padding="5dp"
+                android:text="Audrey Tang" />
 
             <TextView
                 android:text="@string/term_development"
@@ -234,23 +248,25 @@
                 android:layout_height="wrap_content"
                 android:layout_columnSpan="3"
                 android:layout_gravity="center"
+                android:layout_marginBottom="10dp"
+                android:background="@android:color/black"
+                app:srcCompat="@drawable/g0v_dark" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_columnSpan="3"
+                android:layout_gravity="center"
                 android:layout_marginBottom="5dp"
-                app:srcCompat="@drawable/g0v_dark"
-                android:background="@android:color/background_dark" />
+                android:text="第 21 次黑客松" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_columnSpan="3"
                 android:layout_gravity="center"
-                android:text="零時政府 - 第21次黑客松" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_columnSpan="3"
-                android:layout_gravity="center"
-                android:text="零時政府 - 第23次黑客松" />
+                android:layout_marginBottom="5dp"
+                android:text="第 23 次黑客松" />
 
             <!-- for scrolling test -->
             <TextView
