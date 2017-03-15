@@ -4,8 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -100,15 +98,7 @@ public class UpdateToolFragment extends Fragment {
         boolean appRequest = !aum.isUseful("0.1.0");
 
         // 檢查網路連線
-        // TODO: 搬到 MainUtils
-        boolean hasNetwork = false;
-        ConnectivityManager connMgr = (ConnectivityManager)getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-        for (NetworkInfo ni : connMgr.getAllNetworkInfo()) {
-            if (ni.isConnected()) {
-                hasNetwork = true;
-                break;
-            }
-        }
+        boolean hasNetwork = MainUtils.isNetworkConnected(getActivity());
 
         // 有必要更新時，執行更新作業
         if (appRequest || userRequest) {

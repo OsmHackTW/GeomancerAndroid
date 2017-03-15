@@ -10,6 +10,8 @@ import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -137,6 +139,21 @@ public class MainUtils {
     public static SQLiteDatabase openReadOnlyDB(Context context, String filename) throws IOException {
         String path = getDbPath(context).getAbsolutePath() + "/" + filename;
         return SQLiteDatabase.openDatabase(path, null, SQLiteDatabase.OPEN_READONLY);
+    }
+
+    /**
+     * 檢查是否可以傳輸資料
+     *
+     * @param context Activity 或 Service
+     * @return 是否可以傳輸
+     */
+    public static boolean isNetworkConnected(Context context) {
+        ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo ni = cm.getActiveNetworkInfo();
+
+        // TODO: 檢查是否限用 WiFi
+
+        return ni.isConnected();
     }
 
     /**
