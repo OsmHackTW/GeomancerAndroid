@@ -11,20 +11,23 @@ import android.graphics.drawable.Drawable;
 import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 
+/**
+ * 覆蓋在地圖介面上的圓形按鈕，用來切換 Fragment
+ */
 public class CircleButton extends AppCompatImageView {
 
-    public CircleButton(Context context) {
-        super(context);
-    }
-
+    /**
+     * 建構方法
+     */
     public CircleButton(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public CircleButton(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-    }
-
+    /**
+     * 畫圓形按鈕的動作細節
+     *
+     * @param canvas 畫布
+     */
     @Override
     protected void onDraw(Canvas canvas) {
         Canvas tempCv = new Canvas();

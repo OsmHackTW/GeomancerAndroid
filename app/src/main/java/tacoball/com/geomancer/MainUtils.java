@@ -29,6 +29,7 @@ import tacoball.com.geomancer.checkupdate.ConfirmUpdateService;
  */
 public class MainUtils {
 
+    // 除錯標籤
     private static final String TAG = "MainUtils";
 
     // 更新通知的 ID
@@ -59,10 +60,22 @@ public class MainUtils {
         "192.168.42.29"          // USB LAN (Debug)
     };
 
+    /**
+     * 取得更新鏡像站的網址
+     *
+     * @return 網址
+     */
     public static String getUpdateSource() {
         return String.format(Locale.getDefault(), "http://%s/geomancer/0.1.0", MIRROR_SITES[MIRROR_NUM]);
     }
 
+    /**
+     * 取得 DB 路徑
+     *
+     * @param context Activity 或 Service
+     * @return DB 路徑
+     * @throws IOException
+     */
     public static File getDbPath(Context context) throws IOException {
         File[] dirs = context.getExternalFilesDirs("db");
         for (int i=dirs.length-1;i>=0;i--) {
@@ -71,6 +84,13 @@ public class MainUtils {
         throw new IOException("");
     }
 
+    /**
+     * 取得紀錄檔路徑
+     *
+     * @param context Activity 或 Service
+     * @return 紀錄檔路徑
+     * @throws IOException
+     */
     public static File getLogPath(Context context) throws IOException {
         File[] dirs = context.getExternalFilesDirs("log");
         for (int i=dirs.length-1;i>=0;i--) {
@@ -79,6 +99,13 @@ public class MainUtils {
         throw new IOException("");
     }
 
+    /**
+     * 取得地圖路徑
+     *
+     * @param context Activity 或 Service
+     * @return 地圖路徑
+     * @throws IOException
+     */
     public static File getMapPath(Context context) throws IOException {
         File[] dirs = context.getExternalFilesDirs("map");
         for (int i=dirs.length-1;i>=0;i--) {
@@ -87,11 +114,26 @@ public class MainUtils {
         throw new IOException("");
     }
 
+    /**
+     * 開啟地圖
+     *
+     * @param context Activity 或 Service
+     * @return 圖資存取介面
+     * @throws IOException
+     */
     public static MapDataStore openMapData(Context context) throws IOException {
         File path = new File(getMapPath(context), MAP_NAME);
         return new MapFile(path);
     }
 
+    /**
+     * 唯讀模式開啟 SQLite 資料庫
+     *
+     * @param context Activity 或 Service
+     * @param filename 資料庫檔名
+     * @return 資料庫連線
+     * @throws IOException
+     */
     public static SQLiteDatabase openReadOnlyDB(Context context, String filename) throws IOException {
         String path = getDbPath(context).getAbsolutePath() + "/" + filename;
         return SQLiteDatabase.openDatabase(path, null, SQLiteDatabase.OPEN_READONLY);
