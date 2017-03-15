@@ -30,7 +30,7 @@ public class UpdateToolFragment extends Fragment {
     private static final String TAG = "MapUpdaterFragment";
 
     // 進入主畫面前的刻意等待時間
-    private static final long RESTART_DELAY = 1500;
+    private static final long RESTART_DELAY = 500;
 
     // 介面元件
     TextView    mTxvAction; // 步驟說明文字

@@ -27,12 +27,12 @@ import org.mapsforge.core.model.LatLong;
 import org.mapsforge.map.android.graphics.AndroidGraphicFactory;
 import org.mapsforge.map.android.rendertheme.AssetsRenderTheme;
 import org.mapsforge.map.android.util.AndroidUtil;
+import org.mapsforge.map.android.view.MapView;
 import org.mapsforge.map.datastore.MapDataStore;
 import org.mapsforge.map.layer.TileLayer;
 import org.mapsforge.map.layer.cache.FileSystemTileCache;
 import org.mapsforge.map.layer.cache.TileCache;
 import org.mapsforge.map.layer.overlay.Marker;
-import org.mapsforge.map.android.view.MapView;
 
 import java.io.File;
 import java.io.IOException;
@@ -62,9 +62,6 @@ public class TaiwanMapView extends MapView {
     private State mState = new State();
     private StateChangeListener mStateChangeListener;
 
-    private boolean mOneTimePositioning = false;
-    private boolean mGpsEnabled         = false;
-
     private long mPrevOnDraw = 10;
 
     public static class State {
@@ -80,6 +77,9 @@ public class TaiwanMapView extends MapView {
         void onStateChanged(State state);
     }
 
+    /**
+     * 配置地圖
+     */
     public TaiwanMapView(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
 
@@ -96,10 +96,20 @@ public class TaiwanMapView extends MapView {
         }
     }
 
+    /**
+     * 配置地圖操作狀態接收器
+     *
+     * @param listener
+     */
     public void setStateChangeListener(StateChangeListener listener) {
         mStateChangeListener = listener;
     }
 
+    /**
+     * 設定所在位置圖標
+     *
+     * @param resId 圖標資源 ID
+     */
     public void setMyLocationImage(int resId) {
         // API 21
         //Drawable d = mContext.getDrawable(resId);
@@ -117,10 +127,21 @@ public class TaiwanMapView extends MapView {
         }
     }
 
-    public void gotoMyPosition() {
-        mOneTimePositioning = true;
-        if (!mGpsEnabled) {
-            enableGps();
+    /**
+     * 移動到目前位置
+     */
+    public boolean gotoMyPosition() {
+        boolean gps = mLocationMgr.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        boolean net = mLocationMgr.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+
+        if (gps || net) {
+            mLocationMgr.requestSingleUpdate(LocationManager.GPS_PROVIDER, mLocListener, null);
+            Log.e(TAG, "GPS 取座標");
+            mLocationMgr.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, mLocListener, null);
+            Log.e(TAG, "網路取座標");
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -134,72 +155,6 @@ public class TaiwanMapView extends MapView {
         mPointGroup.setDescriptionView(descView);
         mPointGroup.setURLView(urlView);
     }
-
-    /*
-    public void startTracing() {
-        mOneTimePositioning = false;
-        if (!mGpsEnabled) {
-            enableGps();
-        }
-    }
-
-    public void cancelTracing() {
-        if (mGpsEnabled&&!mOneTimePositioning) {
-            disableGps();
-        }
-    }
-    */
-
-    /**
-     * 63ms at Taipei Station Zoom=15
-     */
-    /*
-    public List<PointOfInterest> searchPOIs() {
-        List<PointOfInterest> poisInScreen = new ArrayList<>();
-
-        byte z = (byte)mState.zoom;
-        if (z<15) return poisInScreen;
-
-        BoundingBox bbox = getBoundingBox();
-
-        int minTy = MercatorProjection.latitudeToTileY(bbox.maxLatitude, z);
-        int minTx = MercatorProjection.longitudeToTileX(bbox.minLongitude, z);
-        int maxTy = MercatorProjection.latitudeToTileY(bbox.minLatitude, z);
-        int maxTx = MercatorProjection.longitudeToTileX(bbox.maxLongitude, z);
-
-        // Step 1
-        for (int tx=minTx;tx<=maxTx;tx++) {
-            for (int ty=minTy;ty<=maxTy;ty++) {
-                Tile tile = new Tile(tx, ty, z, 256);
-                MapReadResult result = mMapFile.readMapData(tile);
-                for (PointOfInterest poi : result.pointOfInterests) {
-                    if (bbox.contains(poi.position)) {
-                        poisInScreen.add(poi);
-                    }
-                }
-            }
-        }
-
-        // Step 2
-        // TODO: ...
-
-        return poisInScreen;
-    }
-    */
-
-    /*
-    private static String tagsToString(List<Tag> tags) {
-        StringBuffer sbuf = new StringBuffer();
-
-        for (Tag tag : tags) {
-            String tagstr = String.format("%s=\"%s\"", tag.key, tag.value);
-            sbuf.append(tagstr);
-            sbuf.append(" ");
-        }
-
-        return sbuf.toString().trim();
-    }
-    */
 
     @Override
     public void destroy() {
@@ -220,24 +175,8 @@ public class TaiwanMapView extends MapView {
         super.destroy();
     }
 
-    private void enableGps() {
-        // 接收方位感應器和 GPS 訊號
-        if (mLocationMgr.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            mGpsEnabled = true;
-            mLocationMgr.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 10.0f, mLocListener);
-        }
-
-        /*
-        List<String> providers = mLocationMgr.getAllProviders();
-        for (String p : providers) {
-            mLocationMgr.requestLocationUpdates(p, 1000, 10.0f, mLocListener);
-        }
-        */
-    }
-
     private void disableGps() {
         mLocationMgr.removeUpdates(mLocListener);
-        mGpsEnabled = false;
     }
 
     private void initView() throws IOException {
@@ -283,6 +222,9 @@ public class TaiwanMapView extends MapView {
         mPointGroup = new PointGroup(getContext(), getLayerManager().getLayers(), 1000);
     }
 
+    /**
+     * 圖層載入程式
+     */
     private TileLayer loadThemeLayer(String themeName, boolean isTransparent) throws IOException {
         String themeFileName  = String.format("%sTheme.xml", themeName);
         final String cacheName = String.format("%sCache", themeName);
@@ -323,12 +265,20 @@ public class TaiwanMapView extends MapView {
         );
     }
 
+    /**
+     * 觸發狀態變更事件
+     */
     private void triggerStateChange() {
         if (mStateChangeListener!=null) {
             mStateChangeListener.onStateChanged(mState);
         }
     }
 
+    /**
+     * 繪圖動作
+     *
+     * @param androidCanvas 畫布
+     */
     @Override
     protected void onDraw(Canvas androidCanvas) {
         super.onDraw(androidCanvas);
@@ -352,6 +302,9 @@ public class TaiwanMapView extends MapView {
         }
     }
 
+    /**
+     * 方位角資訊處理程式
+     */
     private SensorEventListener mAzimuthListener = new SensorEventListener() {
 
         private static final double AZIMUTH_THRESHOLD = 3.0;
@@ -396,6 +349,9 @@ public class TaiwanMapView extends MapView {
 
     };
 
+    /**
+     * 收到位置資訊的處理
+     */
     private LocationListener mLocListener = new LocationListener() {
 
         @Override
@@ -408,14 +364,12 @@ public class TaiwanMapView extends MapView {
             String msg = String.format(Locale.getDefault(), "我的位置: (%.2f, %.2f)", mState.myLat, mState.myLng);
             Log.i(TAG, msg);
 
+            // 所在位置顯示圖標
             if (mMyLocationMarker!=null) {
                 mMyLocationMarker.setLatLong(newLoc);
             }
 
-            if (mOneTimePositioning) {
-                disableGps();
-            }
-
+            // 移動地圖到所在位置
             getModel().mapViewPosition.setCenter(newLoc);
             getModel().mapViewPosition.setZoomLevel((byte)16);
         }

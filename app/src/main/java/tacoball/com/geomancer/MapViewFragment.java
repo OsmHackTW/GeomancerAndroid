@@ -133,7 +133,10 @@ public class MapViewFragment extends Fragment {
         public void onClick(View v) {
             // 定位
             if (v==mBtPosition) {
-                mMapView.gotoMyPosition();
+                if (!mMapView.gotoMyPosition()) {
+                    // 無法定位，建議使用者啟用定位功能
+                    Toast.makeText(getActivity(), R.string.prompt_cannot_access_location, Toast.LENGTH_LONG).show();
+                }
             }
 
             if (v==mBtMore) {
