@@ -1,5 +1,6 @@
 package tacoball.com.geomancer;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -99,6 +100,7 @@ public class UpdateToolFragment extends Fragment {
         boolean appRequest = !aum.isUseful("0.1.0");
 
         // 檢查網路連線
+        // TODO: 搬到 MainUtils
         boolean hasNetwork = false;
         ConnectivityManager connMgr = (ConnectivityManager)getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         for (NetworkInfo ni : connMgr.getAllNetworkInfo()) {
@@ -111,6 +113,7 @@ public class UpdateToolFragment extends Fragment {
         // 有必要更新時，執行更新作業
         if (appRequest || userRequest) {
             if (hasNetwork) {
+                setMessage(ctx.getString(R.string.prompt_cannot_access_network), false);
                 aum.addListener(updateListener);
                 aum.start(MainUtils.getUpdateSource());
                 if (appRequest) {
@@ -212,8 +215,11 @@ public class UpdateToolFragment extends Fragment {
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                // Switch fragment
-                getActivity().sendBroadcast(MainUtils.buildFragmentSwitchIntent("MAIN"));
+                // #58 這個時機可能 App 已經被關閉，需要迴避 NPE 發生。
+                Activity activity = getActivity();
+                if (activity != null) {
+                    getActivity().sendBroadcast(MainUtils.buildFragmentSwitchIntent("MAIN"));
+                }
             }
         }, RESTART_DELAY);
     }
