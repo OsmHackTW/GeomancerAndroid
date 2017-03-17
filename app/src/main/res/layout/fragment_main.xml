@@ -2,12 +2,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <tacoball.com.geomancer.view.TaiwanMapView
-        android:id="@+id/mapView"
+    <org.mapsforge.map.android.rotation.RotateView
+        android:id="@+id/rotateView"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_above="@+id/buttonsBar" />
+        android:layout_above="@+id/buttonsBar">
+
+        <tacoball.com.geomancer.view.TaiwanMapView
+            android:id="@+id/mapView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </org.mapsforge.map.android.rotation.RotateView>
 
     <LinearLayout
         android:orientation="horizontal"
@@ -18,34 +25,25 @@
         android:background="#303030">
 
         <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:id="@+id/btPosition"
-            android:text="我的位置"
-            android:drawableLeft="@android:drawable/ic_menu_compass"
-            android:layout_weight="1"
-            android:layout_marginLeft="20dp" />
-
-        <Button
+            style="@style/Widget.AppCompat.Button.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="掐指一算"
-            android:drawableLeft="@android:drawable/ic_menu_search"
+            android:layout_marginStart="20dp"
+            android:layout_weight="1"
+            android:drawableStart="@android:drawable/ic_menu_compass"
+            android:text="@string/term_my_position" />
+
+        <Button
             android:id="@+id/btMeasure"
-            android:layout_weight="1"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp" />
-
-        <!--
-        <Button
+            style="@style/Widget.AppCompat.Button.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/btReport"
-            android:text="八卦通報"
-            android:layout_weight="1"
             android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp" />
-        -->
+            android:layout_marginRight="20dp"
+            android:layout_weight="1"
+            android:drawableStart="@android:drawable/ic_menu_search"
+            android:text="@string/term_measure" />
 
     </LinearLayout>
 
@@ -53,42 +51,42 @@
         android:orientation="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignBottom="@id/mapView"
-        android:layout_marginRight="5dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignBottom="@id/rotateView"
+        android:layout_marginEnd="5dp"
         android:id="@+id/statusBar"
         android:layout_marginBottom="50dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="(25.0000, 121.0000)"
+            android:text="@string/term_mock_location"
             android:id="@+id/txvLocation"
-            android:layout_marginRight="10dp" />
+            android:layout_marginEnd="10dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Z="
+            android:text="@string/term_zoom_is"
             android:id="@+id/txvZoomLabel" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="10"
+            android:text="@string/term_mock_zoom"
             android:id="@+id/txvZoomValue" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Azimuth="
+            android:text="@string/term_azimuth_is"
             android:id="@+id/txvAzimuthLabel"
-            android:layout_marginLeft="10dp" />
+            android:layout_marginStart="10dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="30"
+            android:text="@string/term_mock_azimuth"
             android:id="@+id/txvAzimuthValue" />
 
     </LinearLayout>
@@ -121,6 +119,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="2dp"
+            android:paddingStart="0dp"
             android:paddingEnd="6dp"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="@string/term_summary"
@@ -131,13 +130,14 @@
             android:layout_height="wrap_content"
             android:padding="2dp"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="test"
+            android:text="@string/term_mock_something"
             android:id="@+id/txvSummaryContent" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="2dp"
+            android:paddingStart="0dp"
             android:paddingEnd="6dp"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="@string/term_data_source"
@@ -148,7 +148,7 @@
             android:layout_height="wrap_content"
             android:padding="2dp"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="test"
+            android:text="@string/term_mock_something"
             android:id="@+id/txvURLContent" />
 
     </GridLayout>
@@ -156,9 +156,9 @@
     <tacoball.com.geomancer.view.CircleButton
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
-        android:layout_marginRight="5dp"
+        android:layout_marginEnd="5dp"
         android:layout_marginTop="10dp"
         android:src="@drawable/more96"
         android:id="@+id/btnMore" />
@@ -166,9 +166,9 @@
     <tacoball.com.geomancer.view.CircleButton
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_below="@id/btnMore"
-        android:layout_marginRight="5dp"
+        android:layout_marginEnd="5dp"
         android:layout_marginTop="10dp"
         android:visibility="invisible"
         android:src="@drawable/contrib96"
@@ -177,9 +177,9 @@
     <tacoball.com.geomancer.view.CircleButton
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_below="@id/btnContributors"
-        android:layout_marginRight="5dp"
+        android:layout_marginEnd="5dp"
         android:layout_marginTop="10dp"
         android:visibility="invisible"
         android:src="@drawable/license96"
