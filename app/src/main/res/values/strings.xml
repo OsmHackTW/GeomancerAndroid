@@ -4,74 +4,74 @@
     <string name="app_name">鄉民風水師</string>
 
     <!-- UI 提示訊息 -->
-    <string name="prompt_cannot_access_storage">無法存取檔案，是否儲存空間已用盡？</string>
-    <string name="prompt_cannot_access_network">需要網路連線更新地圖，請打開網路後重試</string>
     <string name="prompt_cannot_access_location">定位功能沒開啟，請先打開吧</string>
+    <string name="prompt_cannot_access_network">需要網路連線更新地圖，請打開網路後重試</string>
+    <string name="prompt_cannot_access_storage">無法存取檔案，是否儲存空間已用盡？</string>
     <string name="prompt_validated">檔案確認完成，稍候進入鄉民風水師</string>
 
     <!-- 組合句型 -->
-    <string name="pattern_update_error">%s階段發生錯誤</string>
-    <string name="pattern_measure_result" formatted="false">凶宅 %d 間、血汗工廠 %d 間</string>
-    <string name="pattern_unluckyhouse_subject">凶宅 (%s)</string>
-    <string name="pattern_unluckylabor_subject">血汗工廠 (%s)</string>
     <string name="pattern_confirm_update_long">有新版地圖與人文地理資料，需要傳輸 %.2f MB，想現在更新嗎？</string>
     <string name="pattern_confirm_update_short">有 %.2f MB 資料可更新。</string>
     <string name="pattern_enable_debugging">啟用了 %d 個除錯參數</string>
+    <string name="pattern_measure_result" formatted="false">凶宅 %d 間、血汗工廠 %d 間</string>
+    <string name="pattern_update_error">%s階段發生錯誤</string>
+    <string name="pattern_unluckyhouse_subject">凶宅 (%s)</string>
+    <string name="pattern_unluckylabor_subject">血汗工廠 (%s)</string>
 
     <!-- 一般用語 -->
-    <string name="term_zoom_in_z15">地圖放大到 Z=13 才能算喔</string>
     <string name="term_check_connectivity">檢查網路連線</string>
-    <string name="term_preparing">準備下載</string>
+    <string name="term_coastline">海岸線圖資</string>
+    <string name="term_contributors">貢獻者/貢獻單位</string>
+    <string name="term_data_source">資料來源</string>
+    <string name="term_development">軟體開發</string>
+    <string name="term_device_test">協助測試</string>
     <string name="term_downloading">正在下載</string>
     <string name="term_extracting">正在解壓縮</string>
-    <string name="term_repairing">正在修復</string>
+    <string name="term_g0v">零時政府</string>
+    <string name="term_illustrator">插圖設計</string>
+    <string name="term_kaohsiung">高雄市</string>
+    <string name="term_licenses">授權資訊</string>
+    <string name="term_license_apache_20"><a href="https://www.apache.org/licenses/LICENSE-2.0">Apache 2.0</a></string>
+    <string name="term_license_lgpl_30"><a href="https://www.gnu.org/licenses/lgpl-3.0.en.html">LGPL 3.0</a></string>
+    <string name="term_license_odbl_10"><a href="http://opendatacommons.org/licenses/odbl/">ODbL 1.0</a></string>
     <string name="term_map">地圖檔</string>
     <string name="term_mirror_hosting">資料主機</string>
-    <string name="term_unluckyhouse_db">凶宅資料庫</string>
-    <string name="term_unluckylabor_db">血汗勞工資料庫</string>
-    <string name="term_peace">平安無事</string>
-    <string name="term_update">資料更新</string>
-    <string name="term_yes">好喔</string>
-    <string name="term_no">鼻要</string>
-    <string name="term_contributors">貢獻者/貢獻單位</string>
-    <string name="term_unluckyhouse">凶宅資訊</string>
-    <string name="term_unluckylabor">違反勞基法事業</string>
-    <string name="term_unluckylabor_integration">違反勞基法事業\n格式化資料</string>
-    <string name="term_unluckylabor_rawdata">違反勞基法事業\n法定資料</string>
-    <string name="term_illustrator">插圖設計</string>
-    <string name="term_licenses">授權資訊</string>
-    <string name="term_taipei">臺北市</string>
     <string name="term_newtaipei">新北市</string>
-    <string name="term_taoyuan">桃園市</string>
+    <string name="term_no">鼻要</string>
+    <string name="term_odl">開放資料授權</string>
+    <string name="term_osl">開放原始碼授權</string>
+    <string name="term_osm">開放街圖圖資</string>
+    <string name="term_other_counties">其他縣市</string>
+    <string name="term_peace">平安無事</string>
+    <string name="term_pkg_androidsvg">androidsvg 1.2.2</string>
+    <string name="term_pkg_commonsio">commons-io 2.5</string>
+    <string name="term_pkg_mapsforge">mapsforge 0.6.1</string>
+    <string name="term_preparing">準備下載</string>
+    <string name="term_promoted_by">專案促成</string>
+    <string name="term_repairing">正在修復</string>
+    <string name="term_summary">摘要</string>
     <string name="term_taichung">台中市</string>
     <string name="term_tainan">台南市</string>
-    <string name="term_kaohsiung">高雄市</string>
-    <string name="term_other_counties">其他縣市</string>
-    <string name="term_summary">摘要</string>
-    <string name="term_data_source">資料來源</string>
-    <string name="term_promoted_by">專案促成</string>
-    <string name="term_g0v">零時政府</string>
-    <string name="term_device_test">協助測試</string>
-    <string name="term_development">軟體開發</string>
-    <string name="term_osl">開放原始碼授權</string>
-    <string name="term_odl">開放資料授權</string>
-    <string name="term_osm">開放街圖圖資</string>
-    <string name="term_coastline">海岸線圖資</string>
-    <string name="term_pkg_mapsforge">mapsforge 0.6.1</string>
-    <string name="term_pkg_commonsio">commons-io 2.5</string>
-    <string name="term_pkg_androidsvg">androidsvg 1.2.2</string>
-    <string name="term_license_odbl_10"><a href="http://opendatacommons.org/licenses/odbl/">ODbL 1.0</a></string>
-    <string name="term_license_lgpl_30"><a href="https://www.gnu.org/licenses/lgpl-3.0.en.html">LGPL 3.0</a></string>
-    <string name="term_license_apache_20"><a href="https://www.apache.org/licenses/LICENSE-2.0">Apache 2.0</a></string>
+    <string name="term_taipei">臺北市</string>
+    <string name="term_taoyuan">桃園市</string>
+    <string name="term_unluckyhouse">凶宅資訊</string>
+    <string name="term_unluckyhouse_db">凶宅資料庫</string>
+    <string name="term_unluckylabor">違反勞基法事業</string>
+    <string name="term_unluckylabor_integration">違反勞基法事業\n格式化資料</string>
+    <string name="term_unluckylabor_db">血汗勞工資料庫</string>
+    <string name="term_unluckylabor_rawdata">違反勞基法事業\n法定資料</string>
+    <string name="term_update">資料更新</string>
+    <string name="term_yes">好喔</string>
+    <string name="term_zoom_in_z15">地圖放大到 Z=13 才能算喔</string>
 
     <!-- 除錯訊息 -->
     <string name="log_cancel_update">已取消更新</string>
-    <string name="log_simulate_download_failed">啟用一次性下載錯誤模擬</string>
-    <string name="log_simulate_repair_failed">啟用一次性修復錯誤模擬</string>
     <string name="log_disable_interval_limit">停用檢查更新的時間間隔限制</string>
     <string name="log_disable_probability_limit">停用檢查更新的機率分流限制</string>
-    <string name="log_use_debugging_mirror">線上更新資料源是測試主機</string>
     <string name="log_see_debugging_point">啟用地圖元件除錯點功能</string>
+    <string name="log_simulate_download_failed">啟用一次性下載錯誤模擬</string>
     <string name="log_simulate_old_mtime">模擬檔案太舊強制更新</string>
+    <string name="log_simulate_repair_failed">啟用一次性修復錯誤模擬</string>
+    <string name="log_use_debugging_mirror">線上更新資料源是測試主機</string>
 
 </resources>
