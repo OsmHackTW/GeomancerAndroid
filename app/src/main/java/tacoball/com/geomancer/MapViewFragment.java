@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.mapsforge.core.model.BoundingBox;
+import org.mapsforge.map.android.rotation.RotateView;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -47,6 +48,7 @@ public class MapViewFragment extends Fragment {
     private CircleButton  mBtMore;         // 展開/收合按鈕
     private CircleButton  mBtContributors; // 貢獻者按鈕
     private CircleButton  mBtLicense;      // 授權按鈕
+    private RotateView    mRotateView;     // 旋轉元件
 
     // 資源元件
     private SQLiteDatabase mUnluckyHouseDB;
@@ -84,6 +86,9 @@ public class MapViewFragment extends Fragment {
         mMapView = (TaiwanMapView)mFragLayout.findViewById(R.id.mapView);
         mMapView.setMyLocationImage(R.drawable.arrow_up);
         mMapView.setInfoView(vgInfoContainer, txvSummaryContent, txvURLContent);
+
+        // 旋轉元件
+        mRotateView = (RotateView)mFragLayout.findViewById(R.id.rotateView);
 
         // 事件配置
         mBtPosition.setOnClickListener(mClickListener);
@@ -306,6 +311,11 @@ public class MapViewFragment extends Fragment {
 
             String txtAzimuth = String.format(Locale.getDefault(), "%.2f", state.myAzimuth);
             mTxvAzimuth.setText(txtAzimuth);
+
+            // TODO: 最佳化旋轉功能
+            // * 啟用/停用
+            // * 角度 72 等份防抖動
+            mRotateView.setHeading((float)-state.myAzimuth);
 
             if (state.zoom>=ZOOM_LIMIT) {
                 mTxvHint.setVisibility(View.INVISIBLE);

@@ -19,7 +19,7 @@
     <string name="pattern_unluckylabor_subject">血汗工廠 (%s)</string>
 
     <!-- 一般用語 -->
-    <string name="term_azimuth_is">Azimuth=</string>
+    <string name="term_azimuth_is">方位角=</string>
     <string name="term_check_connectivity">檢查網路連線</string>
     <string name="term_coastline">海岸線圖資</string>
     <string name="term_contributors">貢獻者/貢獻單位</string>
@@ -40,7 +40,7 @@
     <string name="term_mirror_hosting">資料主機</string>
     <string name="term_mock_azimuth">30.0</string>
     <string name="term_mock_location">(25.0000, 121.0000)</string>
-    <string name="term_mock_something">Something ...</string>
+    <string name="term_mock_something">Something</string>
     <string name="term_mock_zoom">15</string>
     <string name="term_my_position">我的位置</string>
     <string name="term_newtaipei">新北市</string>
@@ -70,7 +70,7 @@
     <string name="term_update">資料更新</string>
     <string name="term_yes">好喔</string>
     <string name="term_zoom_in_z15">地圖放大到 Z=13 才能算喔</string>
-    <string name="term_zoom_is">Z=</string>
+    <string name="term_zoom_is">縮放等級=</string>
 
     <!-- 除錯訊息 -->
     <string name="log_cancel_update">已取消更新</string>
