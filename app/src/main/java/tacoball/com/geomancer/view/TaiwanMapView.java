@@ -83,23 +83,25 @@ public class TaiwanMapView extends MapView {
     public TaiwanMapView(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
 
-        try {
-            mContext     = context;
-            mSensorMgr   = (SensorManager) mContext.getSystemService(Context.SENSOR_SERVICE);
-            mLocationMgr = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
+        if (!isInEditMode()) {
+            try {
+                mContext     = context;
+                mSensorMgr   = (SensorManager) mContext.getSystemService(Context.SENSOR_SERVICE);
+                mLocationMgr = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
 
-            Sensor rv = mSensorMgr.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
-            mSensorMgr.registerListener(mAzimuthListener, rv, SensorManager.SENSOR_DELAY_UI);
-            initView();
-        } catch(IOException ex) {
-            Log.e(TAG, ex.getMessage());
+                Sensor rv = mSensorMgr.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+                mSensorMgr.registerListener(mAzimuthListener, rv, SensorManager.SENSOR_DELAY_UI);
+                initView();
+            } catch(IOException ex) {
+                Log.e(TAG, ex.getMessage());
+            }
         }
     }
 
     /**
      * 配置地圖操作狀態接收器
      *
-     * @param listener
+     * @param listener 操作狀態接收器
      */
     public void setStateChangeListener(StateChangeListener listener) {
         mStateChangeListener = listener;
@@ -135,6 +137,16 @@ public class TaiwanMapView extends MapView {
         boolean net = mLocationMgr.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
         if (gps || net) {
+            // 先採用最後一次定位的結果，限制 10 分鐘內的定位資訊
+            Location locGps = mLocationMgr.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            Location locNet = mLocationMgr.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            Location locLast = (locGps.getTime() > locNet.getTime()) ? locGps : locNet;
+            long timeDiff = System.currentTimeMillis() - locLast.getTime();
+            if (timeDiff < 600000) {
+                mLocListener.onLocationChanged(locLast);
+            }
+
+            // 再使用精確定位
             mLocationMgr.requestSingleUpdate(LocationManager.GPS_PROVIDER, mLocListener, null);
             Log.e(TAG, "GPS 取座標");
             mLocationMgr.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, mLocListener, null);
@@ -168,7 +180,7 @@ public class TaiwanMapView extends MapView {
             .putFloat("cLat", (float)mState.cLat)
             .putFloat("cLng", (float)mState.cLng)
             .putInt("zoom", mState.zoom)
-            .commit();
+            .apply();
 
         mSensorMgr.unregisterListener(mAzimuthListener);
         disableGps();
@@ -283,21 +295,25 @@ public class TaiwanMapView extends MapView {
     protected void onDraw(Canvas androidCanvas) {
         super.onDraw(androidCanvas);
 
-        // control rate of triggerStateChange()
-        long fps = 50;
-        long currOnDraw = System.currentTimeMillis();
-        if (currOnDraw-mPrevOnDraw>=1000/fps) {
-            double lat  = getModel().mapViewPosition.getCenter().latitude;
-            double lng  = getModel().mapViewPosition.getCenter().longitude;
-            byte   zoom = getModel().mapViewPosition.getZoomLevel();
+        if (isInEditMode()) {
+            // TODO: 顯示預設地圖
+        } else {
+            // control rate of triggerStateChange()
+            long fps = 50;
+            long currOnDraw = System.currentTimeMillis();
+            if (currOnDraw-mPrevOnDraw>=1000/fps) {
+                double lat  = getModel().mapViewPosition.getCenter().latitude;
+                double lng  = getModel().mapViewPosition.getCenter().longitude;
+                byte   zoom = getModel().mapViewPosition.getZoomLevel();
 
-            if (lat!=mState.cLat || lng!=mState.cLng || zoom!=mState.zoom) {
-                mState.cLat = lat;
-                mState.cLng = lng;
-                mState.zoom = zoom;
-                mPrevOnDraw = currOnDraw;
-                mInfoView.setVisibility(View.INVISIBLE);
-                triggerStateChange();
+                if (lat!=mState.cLat || lng!=mState.cLng || zoom!=mState.zoom) {
+                    mState.cLat = lat;
+                    mState.cLng = lng;
+                    mState.zoom = zoom;
+                    mPrevOnDraw = currOnDraw;
+                    mInfoView.setVisibility(View.INVISIBLE);
+                    triggerStateChange();
+                }
             }
         }
     }
