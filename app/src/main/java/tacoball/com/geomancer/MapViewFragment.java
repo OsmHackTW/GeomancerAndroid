@@ -46,6 +46,7 @@ public class MapViewFragment extends Fragment {
     private Button        mBtPosition;     // 定位按鈕
     private Button        mBtMeasure;      // 測量風水按鈕
     private CircleButton  mBtMore;         // 展開/收合按鈕
+    private CircleButton  mBtSettings;     // 設定按鈕
     private CircleButton  mBtContributors; // 貢獻者按鈕
     private CircleButton  mBtLicense;      // 授權按鈕
     private RotateView    mRotateView;     // 旋轉元件
@@ -73,6 +74,7 @@ public class MapViewFragment extends Fragment {
         mBtPosition = (Button)mFragLayout.findViewById(R.id.btPosition);
         mBtMeasure  = (Button)mFragLayout.findViewById(R.id.btMeasure);
         mBtMore = (CircleButton) mFragLayout.findViewById(R.id.btnMore);
+        mBtSettings = (CircleButton) mFragLayout.findViewById(R.id.btnSettings);
         mBtContributors = (CircleButton) mFragLayout.findViewById(R.id.btnContributors);
         mBtLicense = (CircleButton)mFragLayout.findViewById(R.id.btnLicense);
 
@@ -94,6 +96,7 @@ public class MapViewFragment extends Fragment {
         mBtPosition.setOnClickListener(mClickListener);
         mBtMeasure.setOnClickListener(mClickListener);
         mBtContributors.setOnClickListener(mClickListener);
+        mBtSettings.setOnClickListener(mClickListener);
         mBtMore.setOnClickListener(mClickListener);
         mBtLicense.setOnClickListener(mClickListener);
         mMapView.setStateChangeListener(mMapStateListener);
@@ -144,24 +147,33 @@ public class MapViewFragment extends Fragment {
                 }
             }
 
+            // 展開/收合按鈕
             if (v==mBtMore) {
                 Log.d(TAG, "Click More");
-                if (mBtContributors.getVisibility()==View.VISIBLE) {
+                if (mBtSettings.getVisibility()==View.VISIBLE) {
+                    mBtSettings.setVisibility(View.INVISIBLE);
                     mBtContributors.setVisibility(View.INVISIBLE);
                     mBtLicense.setVisibility(View.INVISIBLE);
                 } else {
+                    mBtSettings.setVisibility(View.VISIBLE);
                     mBtContributors.setVisibility(View.VISIBLE);
                     mBtLicense.setVisibility(View.VISIBLE);
                 }
             }
 
-            //
+            // 切換到設定頁
+            if (v==mBtSettings) {
+                Log.d(TAG, "Click Settings");
+                getActivity().sendBroadcast(MainUtils.buildFragmentSwitchIntent("SETTINGS"));
+            }
+
+            // 切換到貢獻者頁
             if (v==mBtContributors) {
                 Log.d(TAG, "Click Contributors");
                 getActivity().sendBroadcast(MainUtils.buildFragmentSwitchIntent("CONTRIBUTORS"));
             }
 
-            //
+            // 切換到授權頁
             if (v==mBtLicense) {
                 Log.d(TAG, "Click License");
                 getActivity().sendBroadcast(MainUtils.buildFragmentSwitchIntent("LICENSE"));

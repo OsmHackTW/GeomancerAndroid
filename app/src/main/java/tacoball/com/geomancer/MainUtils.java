@@ -296,6 +296,7 @@ public class MainUtils {
         filter.addCategory(INTENT_CATEGORY);
         filter.addAction("MAIN");
         filter.addAction("UPDATE");
+        filter.addAction("SETTINGS");
         filter.addAction("CONTRIBUTORS");
         filter.addAction("LICENSE");
         return filter;

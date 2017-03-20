@@ -8,6 +8,7 @@
     <string name="prompt_cannot_access_network">需要網路連線更新地圖，請打開網路後重試</string>
     <string name="prompt_cannot_access_storage">無法存取檔案，是否儲存空間已用盡？</string>
     <string name="prompt_validated">檔案確認完成，稍候進入鄉民風水師</string>
+    <string name="prompt_rotate_by_azimuth">讓地圖與眼前景物一致，也就是指向目前的方位角，停用時則會將地圖指向北方。</string>
 
     <!-- 組合句型 -->
     <string name="pattern_confirm_update_long">有新版地圖與人文地理資料，需要傳輸 %.2f MB，想現在更新嗎？</string>
@@ -35,7 +36,7 @@
     <string name="term_license_apache_20"><a href="https://www.apache.org/licenses/LICENSE-2.0">Apache 2.0</a></string>
     <string name="term_license_lgpl_30"><a href="https://www.gnu.org/licenses/lgpl-3.0.en.html">LGPL 3.0</a></string>
     <string name="term_license_odbl_10"><a href="http://opendatacommons.org/licenses/odbl/">ODbL 1.0</a></string>
-    <string name="term_map">地圖檔</string>
+    <string name="term_map">地圖</string>
     <string name="term_measure">掐指一算</string>
     <string name="term_mirror_hosting">資料主機</string>
     <string name="term_mock_azimuth">30.0</string>
@@ -56,6 +57,7 @@
     <string name="term_preparing">準備下載</string>
     <string name="term_promoted_by">專案促成</string>
     <string name="term_repairing">正在修復</string>
+    <string name="term_rotate_by_azimuth">自動旋轉地圖</string>
     <string name="term_summary">摘要</string>
     <string name="term_taichung">台中市</string>
     <string name="term_tainan">台南市</string>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="@string/term_map" android:key="map">
+
+        <CheckBoxPreference
+            android:key="rotate_by_azimuth"
+            android:summary="@string/prompt_rotate_by_azimuth"
+            android:title="@string/term_rotate_by_azimuth"
+            android:defaultValue="true" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

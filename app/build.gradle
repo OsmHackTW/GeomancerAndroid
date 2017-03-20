@@ -29,8 +29,14 @@ dependencies {
         transitive = false
     }
 
-    compile 'commons-io:commons-io:2.5'
+    // Android support library
+    // https://developer.android.com/topic/libraries/support-library/packages.html
     compile 'com.android.support:appcompat-v7:25.2.0'
+    compile 'com.android.support:preference-v7:25.2.0'
+    // compile 'com.takisoft.fix:preference-v7:25.2.0.0'
+
+    // Others
+    compile 'commons-io:commons-io:2.5'
     compile 'com.google.code.gson:gson:2.8.0'
 
     // Crashlytics

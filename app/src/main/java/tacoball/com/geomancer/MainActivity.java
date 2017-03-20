@@ -129,8 +129,13 @@ public class MainActivity extends AppCompatActivity {
                 changeFragment(new UpdateToolFragment());
             }
 
+            if (intent.getAction().equals("SETTINGS")) {
+                Log.e(TAG, "開啟設定畫面");
+                Fragment f = new SettingsFragment();
+                changeFragment(f);
+            }
+
             if (intent.getAction().equals("CONTRIBUTORS")) {
-                // W/MapWorkerPool: Shutdown workers executor failed (MapWorkerPool.java:125)
                 Fragment f = new SimpleFragment();
                 Bundle args = new Bundle();
                 args.putInt("LAYOUT_ID", R.layout.fragment_contributors);
@@ -139,7 +144,6 @@ public class MainActivity extends AppCompatActivity {
             }
 
             if (intent.getAction().equals("LICENSE")) {
-                // W/MapWorkerPool: Shutdown workers executor failed (MapWorkerPool.java:125)
                 Fragment f = new SimpleFragment();
                 Bundle args = new Bundle();
                 args.putInt("LAYOUT_ID", R.layout.fragment_license);
