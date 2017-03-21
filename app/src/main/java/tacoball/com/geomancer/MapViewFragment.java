@@ -1,9 +1,11 @@
 package tacoball.com.geomancer;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
@@ -55,6 +57,9 @@ public class MapViewFragment extends Fragment {
     private SQLiteDatabase mUnluckyHouseDB;
     private SQLiteDatabase mUnluckyLaborDB;
 
+    // 設定值
+    private boolean isRotateByAzimuth;
+
     /**
      * 準備動作
      */
@@ -101,6 +106,9 @@ public class MapViewFragment extends Fragment {
         mBtLicense.setOnClickListener(mClickListener);
         mMapView.setStateChangeListener(mMapStateListener);
 
+        // 載入設定值
+        reloadSettings();
+
         // 資料庫配置
         try {
             Context ctx = getActivity();
@@ -118,7 +126,6 @@ public class MapViewFragment extends Fragment {
      */
     @Override
     public void onDestroyView() {
-        Log.w(TAG, "消滅 MapViewFragment");
         mMapView.destroyAll();
 
         if (mUnluckyHouseDB != null) {
@@ -130,6 +137,14 @@ public class MapViewFragment extends Fragment {
         }
 
         super.onDestroyView();
+    }
+
+    public void reloadSettings() {
+        // 自動旋轉設定
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        isRotateByAzimuth = pref.getBoolean("rotate_by_azimuth", false);
+        String msg = String.format("旋轉方位角功能: %s", isRotateByAzimuth);
+        Log.e(TAG, msg);
     }
 
     /**
@@ -327,7 +342,11 @@ public class MapViewFragment extends Fragment {
             // TODO: 最佳化旋轉功能
             // * 啟用/停用
             // * 角度 72 等份防抖動
-            mRotateView.setHeading((float)-state.myAzimuth);
+            if (isRotateByAzimuth) {
+                mRotateView.setHeading((float)-state.myAzimuth);
+            } else {
+                mRotateView.setHeading(0);
+            }
 
             if (state.zoom>=ZOOM_LIMIT) {
                 mTxvHint.setVisibility(View.INVISIBLE);

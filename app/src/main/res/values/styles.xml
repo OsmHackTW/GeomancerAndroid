@@ -2,8 +2,12 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- Customize your theme here. -->
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
+        <item name="preferenceTheme">@style/GeomancerThemeOverlay</item>
+    </style>
+
+    <!-- Style for settings fragment. -->
+    <style name="GeomancerThemeOverlay" parent="PreferenceThemeOverlay">
+        <item name="android:background">@android:color/white</item>
     </style>
 
 </resources>

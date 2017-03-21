@@ -6,7 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
@@ -15,7 +15,6 @@ import com.crashlytics.android.Crashlytics;
 
 import org.mapsforge.map.android.graphics.AndroidGraphicFactory;
 
-import java.util.List;
 import java.util.Locale;
 
 import io.fabric.sdk.android.Fabric;
@@ -31,6 +30,9 @@ public class MainActivity extends AppCompatActivity {
 
     private static final boolean SIMULATE_OLD_MTIME = false;
 
+    private MapViewFragment mMapFragment = new MapViewFragment();
+    private Fragment mUpdateFragment = new UpdateToolFragment();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,7 +41,6 @@ public class MainActivity extends AppCompatActivity {
         // 配置 Android 繪圖資源，必須在 inflate 之前完成
         AndroidGraphicFactory.createInstance(getApplication());
         setContentView(R.layout.activity_main);
-        Log.d(TAG, "啟動");
 
         // 配置廣播接收器
         this.registerReceiver(receiver, MainUtils.buildFragmentSwitchIntentFilter());
@@ -47,6 +48,10 @@ public class MainActivity extends AppCompatActivity {
         // 清理儲存空間
         MainUtils.cleanStorage(this);
 
+        // 檢查是否殘留除錯設定，釋出前使用
+        checkDebugParameters();
+
+        // 先進入更新介面
         changeFragment(new UpdateToolFragment());
     }
 
@@ -54,6 +59,18 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(receiver);
+    }
+
+    @Override
+    public void onBackPressed() {
+        // 從設定頁返回主畫面要重新載入設定值
+        // TODO: 目前的寫法會導致貢獻者頁面和授權頁面返回也重新載入
+        FragmentManager fm = getSupportFragmentManager();
+        if (fm.getBackStackEntryCount() > 0) {
+            mMapFragment.reloadSettings();
+        }
+
+        super.onBackPressed();
     }
 
     // 地毯式檢查用到的除錯參數
@@ -94,21 +111,22 @@ public class MainActivity extends AppCompatActivity {
 
     // 切換 Fragment
     private void changeFragment(Fragment nextFrag) {
-        Log.d(TAG, nextFrag.getClass().getSimpleName());
+        FragmentManager fm = getSupportFragmentManager();
 
-        List<Fragment> frags = getSupportFragmentManager().getFragments();
-        if (frags != null) {
-            for (Fragment prevFrag : frags) {
-                if (prevFrag != null && prevFrag.getClass() == nextFrag.getClass()) {
-                    Log.d(TAG, "Exists this fragment, skip replacement.");
-                    return;
-                }
-            }
+        if (nextFrag == mMapFragment || nextFrag == mUpdateFragment) {
+            // 放在堆疊底層
+            fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            fm.beginTransaction()
+                .replace(R.id.frag_container, nextFrag)
+                .commit();
+        } else {
+            // 疊在 mMapFragment 上面
+            fm.beginTransaction()
+                .add(R.id.frag_container, nextFrag)
+                .attach(nextFrag)
+                .addToBackStack("detail")
+                .commit();
         }
-
-        FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
-        trans.replace(R.id.frag_container, nextFrag);
-        trans.commit();
     }
 
     // 廣播接收器，處理使用者更新要求用
@@ -121,16 +139,15 @@ public class MainActivity extends AppCompatActivity {
 
             if (intent.getAction().equals("MAIN")) {
                 MainUtils.clearUpdateRequest(MainActivity.this);
-                changeFragment(new MapViewFragment());
+                changeFragment(mMapFragment);
             }
 
             if (intent.getAction().equals("UPDATE")) {
                 MainUtils.clearUpdateRequest(MainActivity.this);
-                changeFragment(new UpdateToolFragment());
+                changeFragment(mUpdateFragment);
             }
 
             if (intent.getAction().equals("SETTINGS")) {
-                Log.e(TAG, "開啟設定畫面");
                 Fragment f = new SettingsFragment();
                 changeFragment(f);
             }

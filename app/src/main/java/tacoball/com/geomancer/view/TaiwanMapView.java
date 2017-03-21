@@ -45,7 +45,7 @@ import tacoball.com.geomancer.MainUtils;
  */
 public class TaiwanMapView extends MapView {
 
-    private static final String TAG = "TacoMapView";
+    private static final String TAG = "TaiwanMapView";
 
     public static final boolean SEE_DEBUGGING_POINT = false;
 
@@ -170,7 +170,6 @@ public class TaiwanMapView extends MapView {
 
     @Override
     public void destroy() {
-        Log.w(TAG, "消滅 TaiwanMapView");
         // TODO: Release map resources
         //mMapFile.close();
 
