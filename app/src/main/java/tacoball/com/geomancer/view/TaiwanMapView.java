@@ -138,12 +138,24 @@ public class TaiwanMapView extends MapView {
 
         if (gps || net) {
             // 先採用最後一次定位的結果，限制 10 分鐘內的定位資訊
+            // TODO: 這部份移到 MainUtils
             Location locGps = mLocationMgr.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             Location locNet = mLocationMgr.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-            Location locLast = (locGps.getTime() > locNet.getTime()) ? locGps : locNet;
-            long timeDiff = System.currentTimeMillis() - locLast.getTime();
-            if (timeDiff < 600000) {
-                mLocListener.onLocationChanged(locLast);
+            if (locGps != null || locNet != null) {
+                Location locLast;
+                if (locGps != null && locNet != null) {
+                    locLast = (locGps.getTime() > locNet.getTime()) ? locGps : locNet;
+                } else {
+                    if (locGps == null) {
+                        locLast = locNet;
+                    } else {
+                        locLast = locGps;
+                    }
+                }
+                long timeDiff = System.currentTimeMillis() - locLast.getTime();
+                if (timeDiff < 600000) {
+                    mLocListener.onLocationChanged(locLast);
+                }
             }
 
             // 再使用精確定位
