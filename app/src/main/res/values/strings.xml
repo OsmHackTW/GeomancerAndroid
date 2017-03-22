@@ -53,7 +53,8 @@
     <string name="term_peace">平安無事</string>
     <string name="term_pkg_androidsvg">androidsvg 1.2.2</string>
     <string name="term_pkg_commonsio">commons-io 2.5</string>
-    <string name="term_pkg_mapsforge">mapsforge 0.6.1</string>
+    <string name="term_pkg_gson">gson 2.8.0</string>
+    <string name="term_pkg_mapsforge">mapsforge 0.8.0-rc1</string>
     <string name="term_preparing">準備下載</string>
     <string name="term_promoted_by">專案促成</string>
     <string name="term_repairing">正在修復</string>

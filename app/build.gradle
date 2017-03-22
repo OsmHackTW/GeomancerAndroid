@@ -8,8 +8,8 @@ android {
     defaultConfig {
         // 名稱與版本
         applicationId "tacoball.com.geomancer"
-        versionCode 101
-        versionName "0.1.1"
+        versionCode 102
+        versionName "0.1.2"
 
         // Android 4.4
         minSdkVersion 19

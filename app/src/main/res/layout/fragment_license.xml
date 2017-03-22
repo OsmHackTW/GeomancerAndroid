@@ -75,6 +75,19 @@
                 android:padding="5dp" />
 
             <TextView
+                android:text="@string/term_pkg_gson"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:padding="5dp" />
+
+            <tacoball.com.geomancer.view.LinkView
+                android:text="@string/term_license_apache_20"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp" />
+
+            <TextView
                 android:text="@string/term_odl"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
