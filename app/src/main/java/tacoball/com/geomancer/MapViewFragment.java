@@ -336,7 +336,7 @@ public class MapViewFragment extends Fragment {
             String txtZoom = String.format(Locale.getDefault(), "%s", state.zoom);
             mTxvZoom.setText(txtZoom);
 
-            String txtAzimuth = String.format(Locale.getDefault(), "%.2f", state.myAzimuth);
+            String txtAzimuth = String.format(Locale.getDefault(), "%d", (int)state.myAzimuth);
             mTxvAzimuth.setText(txtAzimuth);
 
             // TODO: 最佳化旋轉功能

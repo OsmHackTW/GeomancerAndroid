@@ -48,21 +48,14 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/statusBar"
         android:orientation="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
         android:layout_alignBottom="@id/rotateView"
-        android:layout_marginEnd="5dp"
-        android:id="@+id/statusBar"
-        android:layout_marginBottom="50dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/term_mock_location"
-            android:id="@+id/txvLocation"
-            android:layout_marginEnd="10dp" />
+        android:layout_marginStart="10dp"
+        android:layout_marginBottom="10dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -92,14 +85,23 @@
     </LinearLayout>
 
     <TextView
+        android:id="@+id/txvLocation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/statusBar"
+        android:layout_above="@+id/statusBar"
+        android:layout_marginBottom="5dp"
+        android:text="@string/term_mock_location" />
+
+    <TextView
+        android:id="@+id/txvHint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/txvLocation"
+        android:layout_above="@+id/txvLocation"
+        android:layout_marginBottom="5dp"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="@string/term_zoom_in_z15"
-        android:id="@+id/txvHint"
-        android:layout_above="@+id/statusBar"
-        android:layout_alignEnd="@+id/statusBar"
-        android:layout_marginBottom="5dp"
         android:textColor="#003090" />
 
     <GridLayout
