@@ -159,8 +159,7 @@ public class UpdateToolFragment extends Fragment {
     @Override
     public void onDestroy() {
         // 取消線上更新，並且不理會後續事件，避免 Activity 結束後閃退
-        // TODO
-
+        mHandler.removeCallbacksAndMessages(null);
         super.onDestroy();
     }
 
@@ -206,10 +205,11 @@ public class UpdateToolFragment extends Fragment {
             @Override
             public void run() {
                 // #58 這個時機可能 App 已經被關閉，需要迴避 NPE 發生。
+                // TODO: 暫時解開這個觀察一下是否會閃退，如果沒問題就移除判斷式
                 Activity activity = getActivity();
-                if (activity != null) {
-                    getActivity().sendBroadcast(MainUtils.buildFragmentSwitchIntent("MAIN"));
-                }
+                // if (activity != null) {
+                activity.sendBroadcast(MainUtils.buildFragmentSwitchIntent("MAIN"));
+                //}
             }
         }, RESTART_DELAY);
     }
