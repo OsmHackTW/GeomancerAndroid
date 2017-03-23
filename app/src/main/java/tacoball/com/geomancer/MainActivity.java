@@ -73,12 +73,6 @@ public class MainActivity extends AppCompatActivity {
         super.onBackPressed();
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        // 解決 Issue #65 的賤招
-        // http://stackoverflow.com/questions/7469082/getting-exception-illegalstateexception-can-not-perform-this-action-after-onsa
-    }
-
     // 地毯式檢查用到的除錯參數
     private void checkDebugParameters() {
         int cnt = 0;
@@ -117,11 +111,16 @@ public class MainActivity extends AppCompatActivity {
 
     // 切換 Fragment
     private void changeFragment(Fragment nextFrag) {
+        // Issue #65 處理方式
+        if (isFinishing() || isDestroyed()) {
+            Log.w(TAG, "應用程式即將關閉，取消畫面切換");
+            return;
+        }
+
         FragmentManager fm = getSupportFragmentManager();
 
         if (nextFrag == mMapFragment || nextFrag == mUpdateFragment) {
             // 放在堆疊底層
-            // TODO: java.lang.IllegalStateException: Can not perform this action after onSaveInstanceState
             fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
             fm.beginTransaction()
                 .replace(R.id.frag_container, nextFrag)
