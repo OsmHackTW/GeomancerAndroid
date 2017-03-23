@@ -4,23 +4,27 @@
     <string name="app_name">鄉民風水師</string>
 
     <!-- UI 提示訊息 -->
+    <string name="prompt_at_least_one_poi">至少要選一項</string>
     <string name="prompt_cannot_access_location">定位功能沒開啟，請先打開吧</string>
     <string name="prompt_cannot_access_network">需要網路連線更新地圖，請打開網路後重試</string>
     <string name="prompt_cannot_access_storage">無法存取檔案，是否儲存空間已用盡？</string>
     <string name="prompt_validated">檔案確認完成，稍候進入鄉民風水師</string>
     <string name="prompt_rotate_by_azimuth">讓地圖與眼前景物一致，也就是指向目前的方位角，停用時則會將地圖指向北方。</string>
+    <string name="prompt_unluckyhouse">啟用凶宅資料庫</string>
+    <string name="prompt_unluckylabor">啟用違反勞基法事業資料庫</string>
 
     <!-- 組合句型 -->
-    <string name="pattern_confirm_update_long">有新版地圖與人文地理資料，需要傳輸 %.2f MB，想現在更新嗎？</string>
+    <string name="pattern_confirm_update_long">有 %.2f MB 資料可更新，想現在更新嗎？</string>
     <string name="pattern_confirm_update_short">有 %.2f MB 資料可更新。</string>
     <string name="pattern_enable_debugging">啟用了 %d 個除錯參數</string>
     <string name="pattern_measure_result" formatted="false">凶宅 %d 間、血汗工廠 %d 間</string>
     <string name="pattern_update_error">%s階段發生錯誤</string>
     <string name="pattern_unluckyhouse_subject">凶宅 (%s)</string>
-    <string name="pattern_unluckylabor_subject">血汗工廠 (%s)</string>
+    <string name="pattern_unluckylabor_subject">屎缺 (%s)</string>
 
     <!-- 一般用語 -->
     <string name="term_azimuth_is">方位角=</string>
+    <string name="term_care_about">關心什麼？</string>
     <string name="term_check_connectivity">檢查網路連線</string>
     <string name="term_coastline">海岸線圖資</string>
     <string name="term_contributors">貢獻者/貢獻單位</string>
@@ -64,9 +68,9 @@
     <string name="term_tainan">台南市</string>
     <string name="term_taipei">臺北市</string>
     <string name="term_taoyuan">桃園市</string>
-    <string name="term_unluckyhouse">凶宅資訊</string>
+    <string name="term_unluckyhouse">凶宅</string>
     <string name="term_unluckyhouse_db">凶宅資料庫</string>
-    <string name="term_unluckylabor">違反勞基法事業</string>
+    <string name="term_unluckylabor">屎缺</string>
     <string name="term_unluckylabor_integration">違反勞基法事業\n格式化資料</string>
     <string name="term_unluckylabor_db">血汗勞工資料庫</string>
     <string name="term_unluckylabor_rawdata">違反勞基法事業\n法定資料</string>

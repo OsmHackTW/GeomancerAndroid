@@ -141,6 +141,7 @@ public class MapViewFragment extends Fragment {
 
     public void reloadSettings() {
         // 自動旋轉設定
+        // TODO: NPE https://fabric.io/taco-studio/android/apps/tacoball.com.geomancer/issues/58d383d00aeb16625bbc4b8b?time=last-seven-days
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
         isRotateByAzimuth = pref.getBoolean("rotate_by_azimuth", false);
         String msg = String.format("旋轉方位角功能: %s", isRotateByAzimuth);

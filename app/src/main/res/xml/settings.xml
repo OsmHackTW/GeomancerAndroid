@@ -11,4 +11,20 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/term_care_about" android:key="map">
+
+        <CheckBoxPreference
+            android:key="search_unluckyhouse"
+            android:summary="@string/prompt_unluckyhouse"
+            android:title="@string/term_unluckyhouse"
+            android:defaultValue="true" />
+
+        <CheckBoxPreference
+            android:key="search_unluckylabor"
+            android:summary="@string/prompt_unluckylabor"
+            android:title="@string/term_unluckylabor"
+            android:defaultValue="false" />
+
+    </PreferenceCategory>
+
 </PreferenceScreen>
