@@ -1,4 +1,4 @@
-package tacoball.com.geomancer.view;
+package tacoball.com.geomancer.map;
 
 import android.content.Context;
 import android.graphics.Canvas;

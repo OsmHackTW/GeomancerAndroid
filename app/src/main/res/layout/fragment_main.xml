@@ -9,7 +9,7 @@
         android:layout_alignParentTop="true"
         android:layout_above="@+id/buttonsBar">
 
-        <tacoball.com.geomancer.view.TaiwanMapView
+        <tacoball.com.geomancer.map.TaiwanMapView
             android:id="@+id/mapView"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />

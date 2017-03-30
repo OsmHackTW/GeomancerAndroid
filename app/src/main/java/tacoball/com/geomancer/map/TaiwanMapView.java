@@ -1,13 +1,8 @@
-package tacoball.com.geomancer.view;
+package tacoball.com.geomancer.map;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Matrix;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -18,10 +13,9 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
+import org.mapsforge.core.graphics.Bitmap;
+import org.mapsforge.core.graphics.Matrix;
 import org.mapsforge.core.model.BoundingBox;
 import org.mapsforge.core.model.LatLong;
 import org.mapsforge.map.android.graphics.AndroidGraphicFactory;
@@ -36,9 +30,12 @@ import org.mapsforge.map.layer.overlay.Marker;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Locale;
 
 import tacoball.com.geomancer.MainUtils;
+
+// import android.graphics.Canvas;
 
 /**
  * 台灣地圖前端
@@ -54,10 +51,9 @@ public class TaiwanMapView extends MapView {
     private Context         mContext;
     private SensorManager   mSensorMgr;
     private LocationManager mLocationMgr;
-    private int             mMyLocationImage;
-    private Marker          mMyLocationMarker;
-    private PointGroup      mPointGroup;
-    private ViewGroup       mInfoView;
+    private Bitmap          mLocationBitmapSrc;
+    private Marker          mLocationMarker;
+    private org.mapsforge.core.graphics.Canvas mMarkerCanvas;
 
     private State mState = new State();
     private StateChangeListener mStateChangeListener;
@@ -108,28 +104,6 @@ public class TaiwanMapView extends MapView {
     }
 
     /**
-     * 設定所在位置圖標
-     *
-     * @param resId 圖標資源 ID
-     */
-    public void setMyLocationImage(int resId) {
-        // API 21
-        //Drawable d = mContext.getDrawable(resId);
-        Drawable d = mContext.getResources().getDrawable(resId);
-
-        if (d!=null) {
-            mMyLocationImage = resId;
-            if (mMyLocationMarker!=null) {
-                getLayerManager().getLayers().remove(mMyLocationMarker);
-            }
-
-            org.mapsforge.core.graphics.Bitmap markerBitmap = AndroidGraphicFactory.convertToBitmap(d);
-            mMyLocationMarker = new Marker(new LatLong(0.0f, 0.0f), markerBitmap, 0, 0);
-            getLayerManager().getLayers().add(mMyLocationMarker);
-        }
-    }
-
-    /**
      * 移動到目前位置
      */
     public boolean gotoMyPosition() {
@@ -167,17 +141,6 @@ public class TaiwanMapView extends MapView {
         } else {
             return false;
         }
-    }
-
-    public void showPoints(PointInfo[] info) {
-        mPointGroup.setPoints(info);
-    }
-
-    public void setInfoView(ViewGroup layout, TextView descView, TextView urlView) {
-        mInfoView = layout;
-        mPointGroup.setInfoContainer(layout);
-        mPointGroup.setDescriptionView(descView);
-        mPointGroup.setURLView(urlView);
     }
 
     @Override
@@ -230,6 +193,16 @@ public class TaiwanMapView extends MapView {
         // add Layer to mapView
         getLayerManager().getLayers().add(loadThemeLayer("Taiwan", false));
 
+        // Use hard coded SVG as location marker.
+        Bitmap rotatedBitmap = AndroidGraphicFactory.INSTANCE.createBitmap(127, 127, true);
+        InputStream in = getContext().getAssets().open("icons/arrow.svg");
+        mLocationBitmapSrc = AndroidGraphicFactory.INSTANCE.renderSvg(in, 1.0f, 127, 127, 100, 1);
+        mMarkerCanvas = AndroidGraphicFactory.INSTANCE.createCanvas();
+        mMarkerCanvas.setBitmap(rotatedBitmap);
+        mMarkerCanvas.drawBitmap(mLocationBitmapSrc, 0, 0);
+        mLocationMarker = new Marker(new LatLong(90.0f, 0.0f), rotatedBitmap, 0, 0);
+        getLayerManager().getLayers().add(mLocationMarker);
+
         // set UI of mapView
         setClickable(true);
         setCenter(new LatLong(mState.cLat, mState.cLng));
@@ -240,9 +213,6 @@ public class TaiwanMapView extends MapView {
         //getFpsCounter().setVisible(true);
         getMapZoomControls().show();
         getModel().mapViewPosition.setMapLimit(bbox);
-
-        // Build pin_unluckyhouse points
-        mPointGroup = new PointGroup(getContext(), getLayerManager().getLayers(), 1000);
     }
 
     /**
@@ -322,7 +292,6 @@ public class TaiwanMapView extends MapView {
                     mState.cLng = lng;
                     mState.zoom = zoom;
                     mPrevOnDraw = currOnDraw;
-                    mInfoView.setVisibility(View.INVISIBLE);
                     triggerStateChange();
                 }
             }
@@ -353,18 +322,14 @@ public class TaiwanMapView extends MapView {
                     prevAzimuth = currAzimuth;
                     mState.myAzimuth = currAzimuth;
 
-                    if (mMyLocationMarker!=null) {
-                        Matrix matrix = new Matrix();
-                        matrix.postRotate((int)-mState.myAzimuth);
-
-                        Bitmap src = BitmapFactory.decodeResource(mContext.getResources(), mMyLocationImage);
-                        Bitmap dst = Bitmap.createBitmap(src, 0, 0, src.getWidth(), src.getHeight(), matrix, true);
-                        Drawable d = new BitmapDrawable(mContext.getResources(), dst);
-
-                        org.mapsforge.core.graphics.Bitmap markerBitmap = AndroidGraphicFactory.convertToBitmap(d);
-                        mMyLocationMarker.setBitmap(markerBitmap);
-                        mMyLocationMarker.requestRedraw();
-                    }
+                    // Change marker angle.
+                    Matrix m = AndroidGraphicFactory.INSTANCE.createMatrix();
+                    m.translate(64, 64);
+                    m.rotate((float)Math.toRadians(-currAzimuth));
+                    m.translate(-64, -64);
+                    mMarkerCanvas.fillColor(0x00000000);
+                    mMarkerCanvas.drawBitmap(mLocationBitmapSrc, m);
+                    mLocationMarker.requestRedraw();
 
                     triggerStateChange();
                 }
@@ -392,9 +357,8 @@ public class TaiwanMapView extends MapView {
             Log.i(TAG, msg);
 
             // 所在位置顯示圖標
-            if (mMyLocationMarker!=null) {
-                mMyLocationMarker.setLatLong(newLoc);
-            }
+            mLocationMarker.setLatLong(newLoc);
+            mLocationMarker.requestRedraw();
 
             // 移動地圖到所在位置
             getModel().mapViewPosition.setCenter(newLoc);
