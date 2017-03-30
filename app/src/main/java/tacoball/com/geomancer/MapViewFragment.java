@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.text.Html;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
@@ -23,6 +24,8 @@ import org.mapsforge.map.android.graphics.AndroidGraphicFactory;
 import org.mapsforge.map.android.rotation.RotateView;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -51,6 +54,11 @@ public class MapViewFragment extends Fragment {
     private CircleButton  mBtSettings;     // 設定按鈕
     private CircleButton  mBtContributors; // 貢獻者按鈕
     private CircleButton  mBtLicense;      // 授權按鈕
+
+    // 介面元件 (詳細資訊)
+    private ViewGroup mVgDetail;
+    private TextView  mTxvSummary;
+    private TextView  mTxvLink;
 
     // 地圖元件
     private RotateView    mRotateView;    // 旋轉元件
@@ -89,10 +97,10 @@ public class MapViewFragment extends Fragment {
         mBtLicense = (CircleButton)mFragLayout.findViewById(R.id.btnLicense);
 
         // POI 詳細資訊
-        ViewGroup vgInfoContainer   = (ViewGroup)mFragLayout.findViewById(R.id.glyPointInfo);
-        TextView  txvSummaryContent = (TextView)mFragLayout.findViewById(R.id.txvSummaryContent);
-        TextView  txvURLContent     = (TextView)mFragLayout.findViewById(R.id.txvURLContent);
-        txvURLContent.setMovementMethod(LinkMovementMethod.getInstance());
+        mVgDetail   = (ViewGroup)mFragLayout.findViewById(R.id.glyPointInfo);
+        mTxvSummary = (TextView)mFragLayout.findViewById(R.id.txvSummaryContent);
+        mTxvLink    = (TextView)mFragLayout.findViewById(R.id.txvURLContent);
+        mTxvLink.setMovementMethod(LinkMovementMethod.getInstance());
 
         // 地圖
         mMapView = (TaiwanMapView)mFragLayout.findViewById(R.id.mapView);
@@ -162,6 +170,9 @@ public class MapViewFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
+            // 不管做什麼事都關閉詳細資訊
+            hideDetail();
+
             // 定位
             if (v==mBtPosition) {
                 if (!mMapView.gotoMyPosition()) {
@@ -208,8 +219,8 @@ public class MapViewFragment extends Fragment {
                 BoundingBox bbox =  mMapView.getBoundingBox();
                 String[] bboxString = {
                     Double.toString(bbox.minLatitude),
-                    Double.toString(bbox.maxLatitude),
                     Double.toString(bbox.minLongitude),
+                    Double.toString(bbox.maxLatitude),
                     Double.toString(bbox.maxLongitude)
                 };
 
@@ -249,9 +260,9 @@ public class MapViewFragment extends Fragment {
 
     // 查凶宅
     private void searchUnluckyHouse(String[] bbox) {
-        String sql = "SELECT id,approach,lat,lng FROM unluckyhouse " +
-                "WHERE state>1 AND lat>=? AND lat<=? AND lng>=? AND lng<=?";
-        Cursor cur = mUnluckyHouseDB.rawQuery(sql, bbox);
+        String[] cols = {"id", "approach", "lat", "lng"};
+        String   cond = "lat>=? AND lng>=? AND lat<=? AND lng<=?";
+        Cursor   cur  = mUnluckyHouseDB.query("unluckyhouse", cols, cond, bbox, "", "", "");
 
         if (cur.getCount() > 0) {
             while (cur.moveToNext()) {
@@ -268,9 +279,9 @@ public class MapViewFragment extends Fragment {
 
     // 查屎缺
     private void searchUnluckyLabor(String[] bbox) {
-        String sql = "SELECT id,corp,lat,lng FROM unluckylabor " +
-                "WHERE lat>=? AND lat<=? AND lng>=? AND lng<=?";
-        Cursor cur = mUnluckyLaborDB.rawQuery(sql, bbox);
+        String[] cols = {"id", "corp", "lat", "lng"};
+        String   cond = "lat>=? AND lng>=? AND lat<=? AND lng<=?";
+        Cursor   cur  = mUnluckyLaborDB.query("unluckylabor", cols, cond, bbox, "", "", "");
 
         if (cur.getCount()>0) {
             while (cur.moveToNext()) {
@@ -281,51 +292,67 @@ public class MapViewFragment extends Fragment {
                 String pat  = getString(R.string.pattern_unluckylabor_subject);
                 String subject = String.format(Locale.getDefault(), pat, corp);
                 mUnluckyLabors.add(new LatLong(lat, lng), subject, id);
-
-                /*
-                StringBuilder law_desc = new StringBuilder();
-                String[] rules = law.split(";");
-                for (String rule : rules) {
-                    if (law_desc.length() > 0) {
-                        law_desc.append('\n');
-                    }
-                    law_desc.append(rule.replaceFirst("(\\d+)", "勞動基準法第$1條").replaceFirst("\\-(\\d+)", "第$1項"));
-                }
-                */
-
-                /*
-                try {
-                    if (gov.equals("臺北市")) {
-                        ds = "臺北市政府勞動局";
-                        url = "http://web2.bola.taipei/bolasearch/chhtml/page/20?q47=" + URLEncoder.encode(corp, "UTF-8");
-                    }
-                    if (gov.equals("新北市")) {
-                        ds = "新北市政府勞工局";
-                        url = "http://ilabor.ntpc.gov.tw/cloud/Violate/filter?name1=" + URLEncoder.encode(corp, "UTF-8");
-                    }
-                    if (gov.equals("桃園市")) {
-                        ds = "桃園市政府勞工局";
-                        url = "http://lhrb.tycg.gov.tw/home.jsp?id=373&parentpath=0%2C14%2C372&mcustomize=onemessages_view.jsp&dataserno=201509090001&aplistdn=ou=data,ou=lhrb4,ou=chlhr,ou=ap_root,o=tycg,c=tw&toolsflag=Y";
-                    }
-                    if (gov.equals("台中市")) {
-                        ds = "台中市政府勞工局";
-                        url = "http://www.labor.taichung.gov.tw/ct.asp?xItem=55333&ctNode=23053&mp=117010";
-                    }
-                    if (gov.equals("台南市")) {
-                        ds = "台南市政府勞工局";
-                        url = "http://www.tainan.gov.tw/labor/page.asp?nsub=M2A400";
-                    }
-                    if (gov.equals("高雄市")) {
-                        ds = "高雄市政府勞工局";
-                        url = "http://labor.kcg.gov.tw/IllegalList.aspx?appname=IllegalList";
-                    }
-                } catch (UnsupportedEncodingException ex) {
-                    // TODO
-                }
-                */
             }
         }
         cur.close();
+    }
+
+    private void showDetail(String summary, String linkURL, String linkText) {
+        String linkHtml = String.format(Locale.getDefault(), "<a href=\"%s\">%s</a>", linkURL, linkText);
+        mTxvSummary.setText(summary);
+        mTxvLink.setText(Html.fromHtml(linkHtml));
+        mVgDetail.setVisibility(View.VISIBLE);
+    }
+
+    private void hideDetail() {
+        mVgDetail.setVisibility(View.INVISIBLE);
+    }
+
+    private String toLawText(String law) {
+        StringBuffer buf = new StringBuffer();
+        String[] rules = law.split(";");
+        for (String rule : rules) {
+            if (buf.length() > 0) {
+                buf.append('\n');
+            }
+            buf.append(rule.replaceFirst("(\\d+)", "勞動基準法第$1條").replaceFirst("\\-(\\d+)", "第$1項"));
+        }
+        return buf.toString();
+    }
+
+    private String toGovURL(String gov, String corp) {
+        try {
+            if (gov.equals("臺北市")) {
+                return "http://web2.bola.taipei/bolasearch/chhtml/page/20?q47=" + URLEncoder.encode(corp, "UTF-8");
+            }
+            if (gov.equals("新北市")) {
+                return "http://ilabor.ntpc.gov.tw/cloud/Violate/filter?name1=" + URLEncoder.encode(corp, "UTF-8");
+            }
+            if (gov.equals("桃園市")) {
+                return "http://lhrb.tycg.gov.tw/home.jsp?id=373&parentpath=0%2C14%2C372&mcustomize=onemessages_view.jsp&dataserno=201509090001&aplistdn=ou=data,ou=lhrb4,ou=chlhr,ou=ap_root,o=tycg,c=tw&toolsflag=Y";
+            }
+            if (gov.equals("台中市")) {
+                return "http://www.labor.taichung.gov.tw/ct.asp?xItem=55333&ctNode=23053&mp=117010";
+            }
+            if (gov.equals("台南市")) {
+                return "http://www.tainan.gov.tw/labor/page.asp?nsub=M2A400";
+            }
+            if (gov.equals("高雄市")) {
+                return "http://labor.kcg.gov.tw/IllegalList.aspx?appname=IllegalList";
+            }
+        } catch(UnsupportedEncodingException ex) {
+            // 不會發生
+        }
+
+        return "";
+    }
+
+    private String toDepartment(String gov) {
+        if (gov.equals("臺北市")) {
+            return gov + "勞動局";
+        } else {
+            return gov + "勞工局";
+        }
     }
 
     /**
@@ -381,15 +408,27 @@ public class MapViewFragment extends Fragment {
 
         @Override
         public void OnSelectPin(String category, String id) {
-            String msg = String.format(Locale.getDefault(), "%s #%s", category, id);
-            Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
-
             if (category.equals("凶")) {
-                // TODO
+                String[] cols = {"address", "news"};
+                String[] args = {id};
+                Cursor cur = mUnluckyHouseDB.query("unluckyhouse", cols, "id=?", args, "", "", "");
+                cur.moveToNext();
+                String addr = cur.getString(0);
+                String news = cur.getString(1);
+                showDetail(addr, news, "台灣凶宅網");
+                cur.close();
             }
 
             if (category.equals("勞")) {
-                // TODO
+                String[] cols = {"law", "gov", "corp"};
+                String[] args = {id};
+                Cursor cur = mUnluckyLaborDB.query("unluckylabor", cols, "id=?", args, "", "", "");
+                cur.moveToNext();
+                String law  = cur.getString(0);
+                String gov  = cur.getString(1);
+                String corp = cur.getString(2);
+                showDetail(toLawText(law), toGovURL(gov, corp), toDepartment(gov));
+                cur.close();
             }
         }
 
