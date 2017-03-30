@@ -19,7 +19,7 @@ import java.util.Locale;
 
 import io.fabric.sdk.android.Fabric;
 import tacoball.com.geomancer.checkupdate.NetworkReceiver;
-import tacoball.com.geomancer.view.TaiwanMapView;
+import tacoball.com.geomancer.map.TaiwanMapView;
 
 /**
  * 前端程式進入點

@@ -15,7 +15,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     // private static final String TAG = "SettingsFragment";
 
     // POI 項目 (可擴充)
-    private final String[] POI_KEYS = {"search_unluckyhouse", "search_unluckylabor"};
+    private final String[] POI_KEYS = {"search_unlucky_house", "search_unlucky_labor"};
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {

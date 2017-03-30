@@ -76,7 +76,7 @@ public class MainUtils {
      *
      * @param context Activity 或 Service
      * @return DB 路徑
-     * @throws IOException
+     * @throws IOException ...
      */
     public static File getDbPath(Context context) throws IOException {
         File[] dirs = context.getExternalFilesDirs("db");
@@ -91,7 +91,7 @@ public class MainUtils {
      *
      * @param context Activity 或 Service
      * @return 紀錄檔路徑
-     * @throws IOException
+     * @throws IOException ...
      */
     public static File getLogPath(Context context) throws IOException {
         File[] dirs = context.getExternalFilesDirs("log");
