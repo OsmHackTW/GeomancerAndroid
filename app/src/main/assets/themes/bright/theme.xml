@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<rendertheme version="4" map-background="#f8f8f8" map-background-outside="#707070">
-
+<rendertheme version="5" map-background="#f8f8f8" map-background-outside="#707070"
+	xmlns="http://mapsforge.org/renderTheme" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://mapsforge.org/renderTheme https://raw.githubusercontent.com/mapsforge/mapsforge/master/resources/renderTheme-v6.xsd">
+    
     <!--
     See https://wiki.openstreetmap.org/wiki/Zh-hant:Map_Features
     -->
-
+	
     <!-- 分離海水與陸地 -->
     <rule e="way" k="natural" v="sea" zoom-min="0">
         <area fill="#90b0c0" />
@@ -26,7 +29,7 @@
         <rule e="way" k="*" v="*" zoom-min="13" zoom-max="15">
             <line stroke="#90b0c0" stroke-width="1.2"/>
         </rule>
-        <rule e="way" k="*" v="*" zoom-min="16" zoom-max="18">
+        <rule e="way" k="*" v="*" zoom-min="16" zoom-max="21">
             <line stroke="#90b0c0" stroke-width="1.5"/>
         </rule>
         <pathText k="name" font-size="10" stroke="#ffffff" stroke-width="2.0" />
@@ -62,8 +65,9 @@
         <area fill="#e7f0e7" />
     </rule>
     <rule e="way" k="landuse" v="forest" zoom-min="8">
-        <!-- area fill="#e7f0e7" / -->
-        <area src="jar:patterns/wood-coniferous.png" />
+        <area fill="#e7f0e7" />
+        <!-- 需要 org.mapsforge:mapsforge-themes:0.8.0 -->
+        <!-- <area src="jar:/assets/patterns/wood-coniferous.png" />  -->
     </rule>
 
     <!-- 自然地貌 -->
@@ -149,7 +153,7 @@
             <line stroke="#d0d0d0" stroke-width="10" stroke-linecap="square" />
             <line stroke="#e7e7e7" stroke-width="0.7" stroke-linecap="square" stroke-dasharray="30,36" />
         </rule>
-        <rule e="way" k="aeroway" v="runway" zoom-min="17" zoom-max="17">
+        <rule e="way" k="aeroway" v="runway" zoom-min="17" zoom-max="21">
             <line stroke="#d0d0d0" stroke-width="12" stroke-linecap="square" />
             <line stroke="#e7e7e7" stroke-width="0.8" stroke-linecap="square" stroke-dasharray="40,50" />
         </rule>
@@ -174,7 +178,7 @@
                 <line stroke="#707070" stroke-width="0.6" />
                 <line stroke="#f0f0f0" stroke-width="0.5" />
             </rule>
-            <rule e="way" k="*" v="*" zoom-min="17" zoom-max="17">
+            <rule e="way" k="*" v="*" zoom-min="17" zoom-max="21">
                 <line stroke="#707070" stroke-width="0.7" />
                 <line stroke="#f0f0f0" stroke-width="0.6" />
             </rule>
@@ -182,7 +186,7 @@
 
         <!-- 自行車道 15+ -->
         <rule e="way" k="highway" v="cycleway">
-            <rule e="way" k="*" v="*" zoom-min="16" zoom-max="17">
+            <rule e="way" k="*" v="*" zoom-min="16" zoom-max="21">
                 <pathText k="name" font-size="10" stroke="#ffffff" stroke-width="2.0" />
             </rule>
             <rule e="way" k="*" v="*" zoom-min="15" zoom-max="15">
@@ -193,7 +197,7 @@
                 <line stroke="#707070" stroke-width="0.6" />
                 <line stroke="#aaffff" stroke-width="0.5" />
             </rule>
-            <rule e="way" k="*" v="*" zoom-min="17" zoom-max="17">
+            <rule e="way" k="*" v="*" zoom-min="17" zoom-max="21">
                 <line stroke="#707070" stroke-width="0.7" />
                 <line stroke="#aaffff" stroke-width="0.6" />
             </rule>
@@ -201,7 +205,7 @@
 
         <!-- 小街道 14+ -->
         <rule e="way" k="highway" v="service|unclassified|residential">
-            <rule e="way" k="*" v="*" zoom-min="16" zoom-max="17">
+            <rule e="way" k="*" v="*" zoom-min="16" zoom-max="21">
                 <pathText k="name" font-size="10" stroke="#ffffff" stroke-width="2.0" />
             </rule>
             <rule e="way" k="*" v="*" zoom-min="14" zoom-max="14">
@@ -215,7 +219,7 @@
                 <line stroke="#707070" stroke-width="0.7" />
                 <line stroke="#ffffff" stroke-width="0.6" />
             </rule>
-            <rule e="way" k="*" v="*" zoom-min="17" zoom-max="17">
+            <rule e="way" k="*" v="*" zoom-min="17" zoom-max="21">
                 <line stroke="#707070" stroke-width="0.8" />
                 <line stroke="#ffffff" stroke-width="0.7" />
             </rule>
@@ -236,7 +240,7 @@
                     <line stroke="#707070" stroke-width="0.9" />
                     <line stroke="#f0f0a0" stroke-width="0.7" />
                 </rule>
-                <rule e="way" k="*" v="*" zoom-min="17" zoom-max="17">
+                <rule e="way" k="*" v="*" zoom-min="17" zoom-max="21">
                     <line stroke="#707070" stroke-width="1.0" />
                     <line stroke="#f0f0a0" stroke-width="0.8" />
                 </rule>
@@ -258,7 +262,7 @@
                 <rule e="way" k="*" v="*" zoom-min="16" zoom-max="16">
                     <line stroke="#f0f0a0" stroke-width="0.8" stroke-dasharray="10,10" stroke-linecap="square" />
                 </rule>
-                <rule e="way" k="*" v="*" zoom-min="17" zoom-max="17">
+                <rule e="way" k="*" v="*" zoom-min="17" zoom-max="21">
                     <line stroke="#f0f0a0" stroke-width="0.7" stroke-dasharray="12,12" stroke-linecap="square" />
                 </rule>
             </rule>
@@ -272,7 +276,7 @@
 
         <!-- 省道 -->
         <rule e="way" k="highway" v="primary|primary_link">
-            <rule e="way" k="*" v="*" zoom-min="8" zoom-max="17">
+            <rule e="way" k="*" v="*" zoom-min="8" zoom-max="21">
                 <pathText k="name" fill="#000000" font-size="10" stroke="#ffffff" stroke-width="2.0" />
             </rule>
             <!-- 非隧道段 -->
@@ -291,7 +295,7 @@
                     <line stroke="#707070" stroke-width="0.9" />
                     <line stroke="#70d0ff" stroke-width="0.7" />
                 </rule>
-                <rule e="way" k="*" v="*" zoom-min="17" zoom-max="17">
+                <rule e="way" k="*" v="*" zoom-min="17" zoom-max="21">
                     <line stroke="#707070" stroke-width="1.0" />
                     <line stroke="#70d0ff" stroke-width="0.8" />
                 </rule>
@@ -316,7 +320,7 @@
                 <rule e="way" k="*" v="*" zoom-min="16" zoom-max="16">
                     <line stroke="#70d0ff" stroke-width="0.8" stroke-dasharray="10,10" stroke-linecap="square" />
                 </rule>
-                <rule e="way" k="*" v="*" zoom-min="17" zoom-max="17">
+                <rule e="way" k="*" v="*" zoom-min="17" zoom-max="21">
                     <line stroke="#70d0ff" stroke-width="0.7" stroke-dasharray="12,12" stroke-linecap="square" />
                 </rule>
             </rule>
@@ -785,7 +789,7 @@
         <!-- 快速道路 -->
         <rule e="way" k="highway" v="trunk|trunk_link">
             <!-- 除錯用 -->
-            <rule e="way" k="*" v="*" zoom-min="8" zoom-max="18">
+            <rule e="way" k="*" v="*" zoom-min="8" zoom-max="21">
                 <pathText k="name" fill="#000000" font-size="10" stroke="#ffffff" stroke-width="2.0" />
             </rule>
             <!-- 非隧道段 -->
@@ -804,7 +808,7 @@
                     <line stroke="#707070" stroke-width="0.9" />
                     <line stroke="#f0b0b0" stroke-width="0.7" />
                 </rule>
-                <rule e="way" k="*" v="*" zoom-min="17" zoom-max="17">
+                <rule e="way" k="*" v="*" zoom-min="17" zoom-max="21">
                     <line stroke="#707070" stroke-width="1.0" />
                     <line stroke="#f0b0b0" stroke-width="0.8" />
                 </rule>
@@ -829,7 +833,7 @@
                 <rule e="way" k="*" v="*" zoom-min="16" zoom-max="16">
                     <line stroke="#f0b0b0" stroke-width="0.8" stroke-dasharray="10,10" stroke-linecap="square" />
                 </rule>
-                <rule e="way" k="*" v="*" zoom-min="17" zoom-max="17">
+                <rule e="way" k="*" v="*" zoom-min="17" zoom-max="21">
                     <line stroke="#f0b0b0" stroke-width="0.7" stroke-dasharray="12,12" stroke-linecap="square" />
                 </rule>
             </rule>
@@ -888,7 +892,7 @@
         <!-- 高速公路 -->
         <rule e="way" k="highway" v="motorway|motorway_link">
             <!-- 除錯用 -->
-            <rule e="way" k="*" v="*" zoom-min="8" zoom-max="18">
+            <rule e="way" k="*" v="*" zoom-min="8" zoom-max="21">
                 <pathText k="name" fill="#000000" font-size="10" stroke="#ffffff" stroke-width="2.0" />
             </rule>
             <!-- 非隧道段 -->
@@ -907,7 +911,7 @@
                     <line stroke="#707070" stroke-width="0.9" />
                     <line stroke="#a0c0a0" stroke-width="0.7" />
                 </rule>
-                <rule e="way" k="*" v="*" zoom-min="17" zoom-max="17">
+                <rule e="way" k="*" v="*" zoom-min="17" zoom-max="21">
                     <line stroke="#707070" stroke-width="1.0" />
                     <line stroke="#a0c0a0" stroke-width="0.8" />
                 </rule>
@@ -932,7 +936,7 @@
                 <rule e="way" k="*" v="*" zoom-min="16" zoom-max="16">
                     <line stroke="#a0c0a0" stroke-width="0.8" stroke-dasharray="10,10" stroke-linecap="square" />
                 </rule>
-                <rule e="way" k="*" v="*" zoom-min="17" zoom-max="17">
+                <rule e="way" k="*" v="*" zoom-min="17" zoom-max="21">
                     <line stroke="#a0c0a0" stroke-width="0.7" stroke-dasharray="12,12" stroke-linecap="square" />
                 </rule>
             </rule>
@@ -978,11 +982,11 @@
                         symbol-percent="85" rotate="false" align-center="true" repeat="false" />
                 </rule>
                 <rule e="way" k="ref" v="2甲">
-                    <lineSymbol src="assets:shields/motorway/2A.svg"
+                    <lineSymbol src="assets:shields/motorway/branches/2A.svg"
                         symbol-percent="85" rotate="false" align-center="true" repeat="false" />
                 </rule>
                 <rule e="way" k="ref" v="3甲">
-                    <lineSymbol src="assets:shields/motorway/3A.svg"
+                    <lineSymbol src="assets:shields/motorway/branches/3A.svg"
                         symbol-percent="85" rotate="false" align-center="true" repeat="false" />
                 </rule>
             </rule>
@@ -1010,7 +1014,7 @@
                     <line stroke="#909090" stroke-width="0.6" stroke-linecap="square" />
                     <line stroke="#ffffff" stroke-width="0.5" stroke-dasharray="15,15" stroke-linecap="square" />
                 </rule>
-                <rule e="way" k="*" v="*" zoom-min="17" zoom-max="17">
+                <rule e="way" k="*" v="*" zoom-min="17" zoom-max="21">
                     <line stroke="#909090" stroke-width="0.6" stroke-linecap="square" />
                     <line stroke="#ffffff" stroke-width="0.5" stroke-dasharray="20,20" stroke-linecap="square" />
                 </rule>
@@ -1033,7 +1037,7 @@
                     <line stroke="#ff9000" stroke-width="0.6" stroke-linecap="square" />
                     <line stroke="#ffffff" stroke-width="0.5" stroke-dasharray="15,15" stroke-linecap="square" />
                 </rule>
-                <rule e="way" k="*" v="*" zoom-min="17" zoom-max="17">
+                <rule e="way" k="*" v="*" zoom-min="17" zoom-max="21">
                     <line stroke="#ff9000" stroke-width="0.6" stroke-linecap="square" />
                     <line stroke="#ffffff" stroke-width="0.5" stroke-dasharray="20,20" stroke-linecap="square" />
                 </rule>
@@ -1049,14 +1053,15 @@
                 <line stroke="#50a0f0" stroke-width="0.6" stroke-linecap="square" />
                 <line stroke="#ffffff" stroke-width="0.5" stroke-dasharray="15,15" stroke-linecap="square" />
             </rule>
-            <rule e="way" k="*" v="*" zoom-min="17" zoom-max="17">
+            <rule e="way" k="*" v="*" zoom-min="17" zoom-max="21">
                 <line stroke="#50a0f0" stroke-width="0.6" stroke-linecap="square" />
                 <line stroke="#ffffff" stroke-width="0.5" stroke-dasharray="20,20" stroke-linecap="square" />
             </rule>
         </rule>
     </rule>
 
-<!-- 重要車站 -->
+
+	<!-- 重要車站 -->
     <rule e="node" k="railway" v="station">
         <!--
         PostgreSQL:
@@ -1108,7 +1113,7 @@
             </rule>
             <rule e="node" k="*" v="*" zoom-min="12" zoom-max="12">
                 <caption k="name" font-size="14" font-style="bold" fill="#505050" stroke="#e0e0e0" stroke-width="1.5" />
-            </rule>`
+            </rule>
             <rule e="node" k="*" v="*" zoom-min="13" zoom-max="13">
                 <caption k="name" font-size="16" font-style="bold" fill="#505050" stroke="#e0e0e0" stroke-width="2.0" />
             </rule>

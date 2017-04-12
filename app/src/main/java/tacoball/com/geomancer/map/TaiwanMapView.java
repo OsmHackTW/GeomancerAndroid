@@ -191,7 +191,7 @@ public class TaiwanMapView extends MapView {
         map.close();
 
         // add Layer to mapView
-        getLayerManager().getLayers().add(loadThemeLayer("Taiwan", false));
+        getLayerManager().getLayers().add(loadThemeLayer("classic", false));
 
         // Use hard coded SVG as location marker.
         Bitmap rotatedBitmap = AndroidGraphicFactory.INSTANCE.createBitmap(127, 127, true);
@@ -219,8 +219,7 @@ public class TaiwanMapView extends MapView {
      * 圖層載入程式
      */
     private TileLayer loadThemeLayer(String themeName, boolean isTransparent) throws IOException {
-        String themeFileName  = String.format("%sTheme.xml", themeName);
-        final String cacheName = String.format("%sCache", themeName);
+        final String cacheName = String.format("%s-cache", themeName);
 
         final TileCache cache;
         final int cacheSize = 64; // 64 x 256 x 256 x 4 (about 16MB)
@@ -251,7 +250,7 @@ public class TaiwanMapView extends MapView {
             cache,
             getModel().mapViewPosition,
             MainUtils.openMapData(mContext),
-            new AssetsRenderTheme(mContext, "themes/", themeFileName),
+            new AssetsRenderTheme(mContext, "themes/" + themeName + "/", "theme.xml"),
             isTransparent,
             true,
             true

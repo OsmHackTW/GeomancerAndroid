@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!--
+  精簡型高速公路標誌
+  這是直接編輯 SVG 原始碼做出的梅花標誌，可以輕鬆修改配色與文字，也不佔用太多空間
+
+  @author 小璋丸 <virus.warnning@gmail.com>
+  @license CC-BY 4.0
+-->
+<svg version="1.1" width="256" height="256"
+  xmlns="http://www.w3.org/2000/svg"
+  xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <!-- 在這裡修改高速公路編號與字體 -->
+    <text id="ref"
+      x="127" y="180"
+      fill="#606060" text-anchor="middle"
+      font-family="Helvetica" font-size="120" font-weight="bold">3</text>
+    <!-- 在這裡改梅花配色 -->
+    <g id="pie">
+      <path fill="#d9d0bc"
+        stroke="#d9d0bc" stroke-width="1"
+        d="M -62 0 L 19 58 L 19 -58 Z" />
+      <path fill="#d9d0bc"
+        stroke="#606060" stroke-width="17" stroke-linecap="round"
+        d="M 19 58 A 62 62 0 0 0 19 -58" />
+    </g>
+  </defs>
+  <!-- #pie x5 拼成一個梅花 -->
+  <use xlink:href="#pie" transform="translate(128, 72) rotate(-90)" />
+  <use xlink:href="#pie" transform="translate(186, 115) rotate(-18)" />
+  <use xlink:href="#pie" transform="translate(164, 184) rotate(54)" />
+  <use xlink:href="#pie" transform="translate(92, 184) rotate(126)" />
+  <use xlink:href="#pie" transform="translate(70, 115) rotate(198)" />
+  <!-- 編號疊在梅花上面 -->
+  <use xlink:href="#ref" />
+</svg>

@@ -1,0 +1,870 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rendertheme xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" map-background="#707070"
+    map-background-outside="#dddddd" version="5" xmlns="http://mapsforge.org/renderTheme"
+    xsi:schemaLocation="http://mapsforge.org/renderTheme https://raw.githubusercontent.com/mapsforge/mapsforge/master/resources/renderTheme-v6.xsd">
+
+	<!--
+	  假掰文青風地圖樣式
+	  
+	  [配色]
+	    *    底色: #d9d0bc
+	    *    森林: #c9c0ac (底色偏深)
+	    *    海洋: #808080
+	    * 河川湖泊: #808780 (底色偏綠)
+	    * 次要道路: #d3cab0 (底色偏深)
+	    * 主要道路: #c7c0b0 (底色偏深)
+	    * 快速道路: #c5b0b0 (底色偏綠)
+	    * 高速公路: #b0bab0 (底色偏紅)
+	
+	  [技術問題]
+	    * 覆蓋隧道問題，預設的 theme 也會發生，需要用 z-order 作弊方式改良。
+	-->
+
+	<!-- 海洋 -->
+	<rule e="way" k="natural" v="sea" zoom-min="0">
+        <area fill="#808080" />
+    </rule>
+
+	<!-- 陸地 (牛皮紙) -->
+    <rule e="way" k="natural" v="nosea" zoom-min="0">
+        <area src="assets:patterns/kraft.png" />
+    </rule>
+    
+    <!-- 未開發區域 -->
+    <rule e="way" k="natural|landuse" v="wood|forest" zoom-min="8">
+    	<area fill="#c9c0ac" />
+    </rule>
+
+	<!-- 小面積自然景觀 -->
+	<rule e="way" k="natural" v="*" zoom-min="13">
+		<!-- 海灘 -->
+		<rule e="way" k="natural" v="beach">
+			<area fill="#e0e0d0" />
+		</rule>
+		<!-- 溼地 -->
+		<rule e="way" k="natural" v="wetland">
+			<area fill="#c9c0ac" />
+		</rule>
+		<!-- 矮樹 -->
+		<rule e="way" k="natural" v="scrub">
+			<area fill="#b0d0b0" />
+		</rule>
+		<!-- 名稱 -->
+		<rule e="way" k="natural" v="beach|wetland|scrub">
+			<caption fill="#333333" stroke="#dddddd" stroke-width="3.0" font-size="10" k="name" />
+		</rule>
+	</rule>
+
+    <!-- 土地規劃 -->
+    <rule e="way" k="landuse" v="*" zoom-min="15">
+    	<!-- 除錯用 -->
+    	<!-- area fill="#333333" stroke="#999999" stroke-width="0.1" / -->
+    	<!-- 人工草皮 (圓環、高速公路交流道附近) -->
+    	<rule e="way" k="landuse" v="grass">
+            <area fill="#c7d0c7" stroke="#70a070" stroke-width="0.1" />
+        </rule>
+        <!-- 住宅 -->
+        <rule e="way" k="landuse" v="residential">
+            <area fill="#d0d0c0" stroke="#a0a0a0" stroke-width="0.1" />
+        </rule>
+        <!-- 農地 (大度路周邊) -->
+        <rule e="way" k="landuse" v="farm|farmland">
+            <area fill="#b7c0b7" stroke="#a0a0a0" stroke-width="0.1" />
+        </rule>
+        <!-- 工業區 (內湖科技園區) -->
+        <rule e="way" k="landuse" v="industrial">
+            <area fill="#c7c7b7" stroke="#a0a0a0" stroke-width="0.1" />
+        </rule>
+        <!-- 商業區 (信義計畫區) -->
+        <rule e="way" k="landuse" v="commercial">
+            <area fill="#d0d0c0" stroke="#a0a0a0" stroke-width="0.1" />
+        </rule>
+        <!-- 工地 (舊內湖花市) -->
+        <rule e="way" k="landuse" v="construction">
+            <area fill="#d0d0c0" stroke="#a0a0a0" stroke-width="0.1" />
+        </rule>
+        <!-- 重劃區 -->
+        <rule e="way" k="landuse" v="brownfield">
+            <area fill="#a9a090" stroke="#a0a0a0" stroke-width="0.1" />
+        </rule>
+        <!-- 墓仔坡 (六張犁) -->
+        <rule e="way" k="landuse" v="cemetery">
+        	<!-- 先用內建圖庫頂著，以後再改 -->
+            <area src="jar:/assets/patterns/cemetery.png" />
+        </rule>
+        <!-- 基地 -->
+        <rule e="way" k="landuse" v="military">
+            <area fill="#d7c0c0" stroke="#a07070" stroke-width="0.1" />
+        </rule>
+        <!-- 名稱 (公共性質) -->
+    	<rule e="way" k="landuse" v="industrial|commercial">
+   			<caption fill="#666666" stroke="#f0e7d0" stroke-width="3.0" font-size="11" font-style="bold" k="name" />
+   		</rule>
+   		<!-- 名稱 (私人性質) -->
+    	<rule e="way" k="landuse" v="residential|brownfield">
+   			<caption fill="#888888" stroke="#e7e0d0" stroke-width="3.0" font-size="10" k="name" />
+   		</rule>
+    </rule>
+    
+    <!-- 生活機能 (必須排在 building 前面，不然會蓋掉建築物) -->
+    <rule e="way" k="amenity" v="*" zoom-min="15">
+    	<area fill="#c7c7b7" stroke="#999999" stroke-width="0.1" />
+    	<!-- 名稱 -->
+    	<rule e="way" k="*" v="*" zoom-min="16">
+   			<caption fill="#888888" stroke="#e7e0d0" stroke-width="3.0" font-size="10" k="name" />
+   		</rule>
+    </rule>
+
+    <!-- 休閒設施 -->
+    <rule e="way" k="leisure" v="*" zoom-min="15">
+    	<!-- 測試用 -->
+    	<!--
+        <area fill="#000000" stroke="#999999" stroke-width="0.1" />
+        -->
+        <!-- 公園、花園 (有些會跟 landuse=grass 重複) -->
+        <rule e="way" k="leisure" v="park|garden">
+            <area fill="#a0c7d0c7" stroke="#70a070" stroke-width="0.05" />
+        </rule>
+        <!-- 球場 -->
+        <rule e="way" k="leisure" v="pitch">
+            <area fill="#c0c7c0" stroke="#609060" stroke-width="0.05" />
+        </rule>
+        <!-- 操場跑道 -->
+        <rule e="way" k="leisure" v="track">
+            <area fill="#d0c0c0" stroke="#807070" stroke-width="0.05" />
+        </rule>
+        <!-- 游泳池 -->
+        <rule e="way" k="leisure" v="swimming_pool">
+            <area fill="#70a0d0" stroke="#306090" stroke-width="0.05" />
+        </rule>
+        <!-- 名稱 -->
+    	<rule e="way" k="*" v="*" zoom-min="17">
+   			<caption fill="#888888" stroke="#e7e0d0" stroke-width="3.0" font-size="10" k="name" />
+   		</rule>
+    </rule>
+    
+    <!-- 標準河流、湖泊 (必須排在 leisure 後面，否則會被公園蓋掉) -->
+    <rule e="way" k="natural" v="water" zoom-min="10">
+        <area fill="#808780" />
+        <rule e="way" k="*" v="*" zoom-min="17">
+        	<!-- 主要用意是要顯示湖泊，不過因為無法區分湖泊和河流，所以會有重複顯示河流的副作用 -->
+        	<caption fill="#333333" stroke="#dddddd" stroke-width="4.0" font-size="11" k="name" />
+   		</rule>
+    </rule>
+    
+    <!-- 線條河流 -->
+    <rule e="way" k="waterway" v="river" zoom-min="10">
+    	<rule e="way" k="*" v="*" zoom-min="13" zoom-max="21">
+    		<pathText k="name" font-size="11" fill="#333333" stroke="#dddddd" stroke-width="3.0" />
+    	</rule>
+        <rule e="way" k="*" v="*" zoom-min="10" zoom-max="12">
+            <line stroke="#808780" stroke-width="0.9"/>
+        </rule>
+        <rule e="way" k="*" v="*" zoom-min="13" zoom-max="15">
+            <line stroke="#808780" stroke-width="1.2"/>
+        </rule>
+        <rule e="way" k="*" v="*" zoom-min="16" zoom-max="21">
+            <line stroke="#808780" stroke-width="1.5"/>
+        </rule>
+    </rule>
+    
+    <!-- 建築物 -->
+    <rule e="way" k="building" v="*" zoom-min="15">
+    	<!-- 遺漏項目 -->
+    	<rule e="way" k="building" v="*">
+    		<area fill="#b0b0b0" stroke="#777777" stroke-width="0.05" />
+    	</rule>
+    	<!-- 未定義 -->
+    	<rule e="way" k="building" v="yes|true">
+    		<area fill="#d0d0c0" stroke="#999999" stroke-width="0.05" />
+    	</rule>
+    	<!-- 商業類：商業大樓、辦公室 -->
+    	<rule e="way" k="building" v="commercial|office|retail">
+    		<area fill="#e0e0c0" stroke="#999999" stroke-width="0.05" />
+    	</rule>
+    	<!-- 工業類：廠房 (五股凌雲路) -->
+    	<rule e="way" k="building" v="industrial">
+    		<area fill="#d0d0d0" stroke="#999999" stroke-width="0.05" />
+    	</rule>
+    	<!-- 文教類：學校、教會 -->
+    	<rule e="way" k="building" v="school|university|church">
+    		<area fill="#c0e0c0" stroke="#999999" stroke-width="0.05" />
+    	</rule>
+    	<!-- 住宅類：住宅、公寓 -->
+    	<rule e="way" k="building" v="residential|apartments|greenhouse">
+    		<area fill="#d0d0c0" stroke="#999999" stroke-width="0.05" />
+    		<caption fill="#888888" stroke="#e7e0d0" stroke-width="3.0" font-size="10" k="name" />
+    	</rule>
+    	<!-- 廉價建物：鐵皮屋 -->
+    	<rule e="way" k="building" v="roof|shed">
+    		<area fill="#a0c0a0" stroke="#999999" stroke-width="0.05" />
+    	</rule>
+    	<!-- 名稱 -->
+    	<rule e="way" k="*" v="*" zoom-min="17">
+   			<caption fill="#888888" stroke="#e7e0d0" stroke-width="3.0" font-size="10" k="name" />
+   		</rule>
+    </rule>
+    
+    <!-- 行政區 -->
+    <!-- TODO: 行政區的名稱主要寫在 node 上 -->
+    <rule e="way" k="boundary" v="administrative">
+        <!-- 中華民國 -->
+        <!--
+        <rule e="way" k="admin_level" v="2" zoom-min="7" zoom-max="7">
+            <line stroke="#606060" stroke-width="1.0" stroke-dasharray="5,5" />
+        </rule>
+		-->
+        <!-- 省、直轄市 | 縣、省轄市-->
+        <!--
+        <rule e="way" k="admin_level" v="4|6" zoom-min="8" zoom-max="11">
+        	<rule e="way" k="*" v="*" zoom-max="9">
+        		<line stroke="#606060" stroke-width="0.5" />
+        	</rule>
+        	<rule e="way" k="*" v="*" zoom-min="10">
+        		<line stroke="#404040" stroke-width="1.0" stroke-dasharray="8,8" />
+        	</rule>
+            <caption fill="#888888" stroke="#e7e0d0" stroke-width="3.0" font-size="10" k="name" />
+        </rule>
+        -->
+        <!-- 直轄市所屬區 | 省轄市所屬區 | 鄉、鎮 -->
+        <!--
+        <rule e="way" k="admin_level" v="5|7|8" zoom-min="12" zoom-max="14">
+            <line stroke="#909090" stroke-width="0.5" stroke-dasharray="3,2" />
+        </rule>
+        -->
+    </rule>
+    
+    <!-- 各類道路 -->
+    <!-- TODO: 隧道虛線間隔需要最佳化 -->
+    <rule e="way" k="highway" v="*">
+    
+    	<!-- ############################# -->
+        <!-- 步道、單車道 (細線 15+, 粗線 18+) -->
+        <!-- ############################# -->
+        
+        <!-- 細線 -->
+		<rule e="way" k="highway" v="cycleway|footway|pedestrian" zoom-min="15" zoom-max="16">
+			<rule e="way" k="highway" v="cycleway|pedestrian">
+				<line stroke="#003040" stroke-width="0.1" stroke-dasharray="5,5"/>
+			</rule>
+			<rule e="way" k="highway" v="footway">
+				<line stroke="#c0c0c0" stroke-width="0.1" stroke-dasharray="5,5"/>
+			</rule>
+		</rule>
+		
+		<!-- 粗線外圍 -->
+		<rule e="way" k="highway" v="cycleway|footway|pedestrian" zoom-min="17">
+			<rule e="way" k="tunnel" v="~|no|false">
+        		<line stroke="#999999" stroke-width="0.4" stroke-linecap="butt" />
+        	</rule>
+        	<rule e="way" k="tunnel" v="yes|true">
+        		<line stroke="#999999" stroke-width="0.4" stroke-dasharray="10,10" stroke-linecap="butt" />
+        	</rule>
+		</rule>
+		
+		<!-- 粗線內部 -->
+		<rule e="way" k="highway" v="cycleway|footway|pedestrian" zoom-min="17">
+			<rule e="way" k="tunnel" v="~|no|false">
+        		<line stroke="#b7c7d0" stroke-width="0.3" stroke-linecap="butt" />
+        	</rule>
+        	<rule e="way" k="tunnel" v="yes|true">
+        		<line stroke="#b7c7d0" stroke-width="0.3" stroke-dasharray="10,10" stroke-linecap="butt" />
+        	</rule>
+		</rule>
+		
+		<!-- 路名 -->
+		<rule e="way" k="highway" v="cycleway|footway|pedestrian" zoom-min="15">
+			<!-- 汽機車不能走的橋樑 (新月橋) -->
+			<rule e="way" k="bridge" v="yes|true">
+				<pathText k="name" font-size="9" fill="#333333" stroke="#e7e0d0" stroke-width="3.0" />
+			</rule>
+			<!-- 非橋樑路段 -->
+			<rule e="way" k="bridge" v="~|no|false" zoom-min="17">
+				<pathText k="name" font-size="9" fill="#333333" stroke="#e7e0d0" stroke-width="3.0" />
+			</rule>
+		</rule>
+
+		<!-- ############################ -->
+        <!-- 次要道路 (細線: 13+, 粗線: 16+) -->
+        <!-- ############################ -->
+
+		<!-- 細線 -->
+		<rule e="way" k="highway" v="service|unclassified|residential" zoom-min="13" zoom-max="15">
+			<line stroke="#777777" stroke-width="0.1" />
+		</rule>
+		
+		<!-- 粗線外圍 -->
+		<rule e="way" k="highway" v="service|unclassified|residential" zoom-min="16" zoom-max="21">
+			<rule e="way" k="tunnel" v="~|no|false">
+        		<line stroke="#777777" stroke-width="0.8" stroke-linecap="butt" />
+        	</rule>
+        	<rule e="way" k="tunnel" v="yes|true">
+        		<line stroke="#777777" stroke-width="0.8" stroke-dasharray="10,10" stroke-linecap="butt" />
+        	</rule>
+		</rule>
+		
+		<!-- 粗線內部 (配色) -->
+		<rule e="way" k="highway" v="service|unclassified|residential" zoom-min="16" zoom-max="21">
+			<rule e="way" k="tunnel" v="~|no|false">
+        		<line stroke="#d3cab0" stroke-width="0.7" stroke-linecap="butt" />
+        	</rule>
+        	<rule e="way" k="tunnel" v="yes|true">
+        		<line stroke="#d3cab0" stroke-width="0.7" stroke-dasharray="10,10" stroke-linecap="butt" />
+        	</rule>
+		</rule>
+		
+		<!-- 路名 -->
+		<rule e="way" k="highway" v="service|unclassified|residential" zoom-min="16" zoom-max="21">
+			<pathText k="name" font-size="10" fill="#333333" stroke="#e7e0d0" stroke-width="3.0" />
+		</rule>
+        
+        <!-- ########################################### -->
+        <!-- 省道、主要道路 (細線: 10+, 粗線: 13+, 路名: 15+) -->
+        <!-- ########################################### -->
+        
+        <!-- 細線 -->
+        <rule e="way" k="highway" v="primary|primary_link|secondary|secondary_link|tertiary|tertiary_link">
+        	<rule e="way" k="tunnel" v="~|no|false" zoom-min="10" zoom-max="12">
+        		<line stroke="#777777" stroke-width="0.3" />
+        	</rule>
+        	<rule e="way" k="tunnel" v="yes|true" zoom-min="13" zoom-max="14">
+        		<line stroke="#777777" stroke-width="0.3" stroke-dasharray="6,3" />
+        	</rule>
+        </rule>
+        
+        <!-- 粗線外圍 -->
+        <rule e="way" k="highway" v="primary|primary_link|secondary|secondary_link|tertiary|tertiary_link" zoom-min="13" zoom-max="21">
+        	<rule e="way" k="tunnel" v="~|no|false">
+        		<line stroke="#777777" stroke-width="1.4" stroke-linecap="butt" />
+        	</rule>
+        	<rule e="way" k="tunnel" v="yes|true">
+        		<rule e="way" k="*" v="*" zoom-min="15" zoom-max="15">
+        			<line stroke="#777777" stroke-width="0.8" stroke-dasharray="8,4" stroke-linecap="butt" />
+        		</rule>
+        		<rule e="way" k="*" v="*" zoom-min="16" zoom-max="16">
+        			<line stroke="#777777" stroke-width="1.0" stroke-dasharray="12,6" stroke-linecap="butt" />
+        		</rule>
+        		<rule e="way" k="*" v="*" zoom-min="17" zoom-max="17">
+        			<line stroke="#777777" stroke-width="1.2" stroke-dasharray="20,10" stroke-linecap="butt" />
+        		</rule>
+        		<rule e="way" k="*" v="*" zoom-min="18" zoom-max="18">
+        			<line stroke="#777777" stroke-width="1.2" stroke-dasharray="36,18" stroke-linecap="butt" />
+        		</rule>
+        		<rule e="way" k="*" v="*" zoom-min="19" zoom-max="19">
+        			<line stroke="#777777" stroke-width="1.2" stroke-dasharray="48,24" stroke-linecap="butt" />
+        		</rule>
+        	</rule>
+        </rule>
+        
+        <!-- 粗線內部 (配色) -->
+        <rule e="way" k="highway" v="primary|primary_link|secondary|secondary_link|tertiary|tertiary_link" zoom-min="13" zoom-max="21">
+        	<rule e="way" k="tunnel" v="~|no|false">
+        		<line stroke="#c7c0b0" stroke-width="1.2" stroke-linecap="butt" />
+        	</rule>
+        	<rule e="way" k="tunnel" v="yes|true">
+        		<rule e="way" k="*" v="*" zoom-min="15" zoom-max="15">
+        			<line stroke="#c7c0b0" stroke-width="0.6" stroke-dasharray="8,4" stroke-linecap="butt" />
+        		</rule>
+        		<rule e="way" k="*" v="*" zoom-min="16" zoom-max="16">
+        			<line stroke="#c7c0b0" stroke-width="0.8" stroke-dasharray="12,6" stroke-linecap="butt" />
+        		</rule>
+        		<rule e="way" k="*" v="*" zoom-min="17" zoom-max="17">
+        			<line stroke="#c7c0b0" stroke-width="1.0" stroke-dasharray="20,10" stroke-linecap="butt" />
+        		</rule>
+        		<rule e="way" k="*" v="*" zoom-min="18" zoom-max="18">
+        			<line stroke="#c7c0b0" stroke-width="1.0" stroke-dasharray="36,18" stroke-linecap="butt" />
+        		</rule>
+        		<rule e="way" k="*" v="*" zoom-min="19" zoom-max="19">
+        			<line stroke="#c7c0b0" stroke-width="1.0" stroke-dasharray="48,24" stroke-linecap="butt" />
+        		</rule>
+        	</rule>
+        </rule>
+        
+        <!-- 路名與路標 -->
+        <rule e="way" k="highway" v="primary|secondary|tertiary" zoom-min="15" zoom-max="21">
+        	<pathText k="name" font-size="10" fill="#333333" stroke="#e7e0d0" stroke-width="3.0" />
+            <rule e="way" k="ref" v="1">
+                <lineSymbol src="assets:shields/primary/1.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="2">
+                <lineSymbol src="assets:shields/primary/2.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="3">
+                <lineSymbol src="assets:shields/primary/3.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="4">
+                <lineSymbol src="assets:shields/primary/4.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="5">
+                <lineSymbol src="assets:shields/primary/5.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="6">
+                <lineSymbol src="assets:shields/primary/6.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="7">
+                <lineSymbol src="assets:shields/primary/7.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="8">
+                <lineSymbol src="assets:shields/primary/8.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="9">
+                <lineSymbol src="assets:shields/primary/9.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="10">
+                <lineSymbol src="assets:shields/primary/10.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="11">
+                <lineSymbol src="assets:shields/primary/11.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="12">
+                <lineSymbol src="assets:shields/primary/12.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="13">
+                <lineSymbol src="assets:shields/primary/13.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="14">
+                <lineSymbol src="assets:shields/primary/14.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="15">
+                <lineSymbol src="assets:shields/primary/15.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="16">
+                <lineSymbol src="assets:shields/primary/16.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="17">
+                <lineSymbol src="assets:shields/primary/17.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="18">
+                <lineSymbol src="assets:shields/primary/18.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="19">
+                <lineSymbol src="assets:shields/primary/19.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="20">
+                <lineSymbol src="assets:shields/primary/20.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="21">
+                <lineSymbol src="assets:shields/primary/21.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="22">
+                <lineSymbol src="assets:shields/primary/22.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="23">
+                <lineSymbol src="assets:shields/primary/23.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="24">
+                <lineSymbol src="assets:shields/primary/24.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="25">
+                <lineSymbol src="assets:shields/primary/25.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="26">
+                <lineSymbol src="assets:shields/primary/26.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="27">
+                <lineSymbol src="assets:shields/primary/27.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="28">
+                <lineSymbol src="assets:shields/primary/28.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="29">
+                <lineSymbol src="assets:shields/primary/29.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="30">
+                <lineSymbol src="assets:shields/primary/30.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="31">
+                <lineSymbol src="assets:shields/primary/31.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="35">
+                <lineSymbol src="assets:shields/primary/35.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="37">
+                <lineSymbol src="assets:shields/primary/37.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="39">
+                <lineSymbol src="assets:shields/primary/39.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="63">
+                <lineSymbol src="assets:shields/primary/63.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="1甲">
+                <lineSymbol src="assets:shields/primary/branches/1A.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="1乙">
+                <lineSymbol src="assets:shields/primary/branches/1B.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="1丙">
+                <lineSymbol src="assets:shields/primary/branches/1C.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="1丁">
+                <lineSymbol src="assets:shields/primary/branches/1D.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="1戊">
+                <lineSymbol src="assets:shields/primary/branches/1E.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="1己">
+                <lineSymbol src="assets:shields/primary/branches/1F.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="2甲">
+                <lineSymbol src="assets:shields/primary/branches/2A.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="2乙">
+                <lineSymbol src="assets:shields/primary/branches/2B.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="2丙">
+                <lineSymbol src="assets:shields/primary/branches/2C.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="2丁">
+                <lineSymbol src="assets:shields/primary/branches/2D.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="2戊">
+                <lineSymbol src="assets:shields/primary/branches/2E.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="2己">
+                <lineSymbol src="assets:shields/primary/branches/2F.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="2庚">
+                <lineSymbol src="assets:shields/primary/branches/2G.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="3甲">
+                <lineSymbol src="assets:shields/primary/branches/3A.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="3乙">
+                <lineSymbol src="assets:shields/primary/branches/3B.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="3丙">
+                <lineSymbol src="assets:shields/primary/branches/3C.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="5甲">
+                <lineSymbol src="assets:shields/primary/branches/5A.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="5乙">
+                <lineSymbol src="assets:shields/primary/branches/5B.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="7甲">
+                <lineSymbol src="assets:shields/primary/branches/7A.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="7乙">
+                <lineSymbol src="assets:shields/primary/branches/7B.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="7丙">
+                <lineSymbol src="assets:shields/primary/branches/7C.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="7丁">
+                <lineSymbol src="assets:shields/primary/branches/7D.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="8甲">
+                <lineSymbol src="assets:shields/primary/branches/8A.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="9甲">
+                <lineSymbol src="assets:shields/primary/branches/9A.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="9乙">
+                <lineSymbol src="assets:shields/primary/branches/9B.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="9丙">
+                <lineSymbol src="assets:shields/primary/branches/9C.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="10乙">
+                <lineSymbol src="assets:shields/primary/branches/10B.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="11甲">
+                <lineSymbol src="assets:shields/primary/branches/11A.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="11乙">
+                <lineSymbol src="assets:shields/primary/branches/11B.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="11丙">
+                <lineSymbol src="assets:shields/primary/branches/11C.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="13甲">
+                <lineSymbol src="assets:shields/primary/branches/11A.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="14甲">
+                <lineSymbol src="assets:shields/primary/branches/14A.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="14乙">
+                <lineSymbol src="assets:shields/primary/branches/14B.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="14丙">
+                <lineSymbol src="assets:shields/primary/branches/14C.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="14丁">
+                <lineSymbol src="assets:shields/primary/branches/14D.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="15甲">
+                <lineSymbol src="assets:shields/primary/branches/15A.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="17甲">
+                <lineSymbol src="assets:shields/primary/branches/17A.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="17乙">
+                <lineSymbol src="assets:shields/primary/branches/17B.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="19甲">
+                <lineSymbol src="assets:shields/primary/branches/19A.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="20甲">
+                <lineSymbol src="assets:shields/primary/branches/20A.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="20乙">
+                <lineSymbol src="assets:shields/primary/branches/20B.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="21甲">
+                <lineSymbol src="assets:shields/primary/branches/21A.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="27甲">
+                <lineSymbol src="assets:shields/primary/branches/27A.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="63甲">
+                <lineSymbol src="assets:shields/primary/branches/63A.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="68甲">
+                <lineSymbol src="assets:shields/primary/branches/68A.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+            <rule e="way" k="ref" v="74甲">
+                <lineSymbol src="assets:shields/primary/branches/74A.svg" rotate="false" align-center="true" repeat="false" />
+            </rule>
+        </rule>
+        <!-- 路名與路標(結尾) -->
+            
+        <!-- ############################################# -->
+        <!-- 高速公路、快速道路 (細線: 8+, 粗線: 11+, 路名: 13+) -->
+        <!-- ############################################# -->
+        
+        <!-- 細線 -->
+        <rule e="way" k="highway" v="motorway|motorway_link|trunk|trunk_link" zoom-min="8" zoom-max="10">
+        	<rule e="way" k="*" v="*" zoom-min="8" zoom-max="10">
+            	<line stroke="#777777" stroke-width="0.5" />
+            </rule>
+        </rule>
+        
+        <!-- 粗線外圍 -->
+        <rule e="way" k="highway" v="motorway|motorway_link|trunk|trunk_link" zoom-min="11" zoom-max="21">
+        	<!-- 平面 -->
+        	<rule e="way" k="tunnel" v="~|no|false">
+            	<line stroke="#777777" stroke-width="1.4" stroke-linecap="butt" />
+            </rule>
+        	<!-- 隧道 -->
+        	<rule e="way" k="tunnel" v="yes|true">
+        		<line stroke="#777777" stroke-width="1.4" stroke-dasharray="10,10" stroke-linecap="butt" />
+        	</rule>
+        </rule>
+        
+        <!-- 粗線內部 (高速公路配色) -->
+        <rule e="way" k="highway" v="motorway|motorway_link" zoom-min="11" zoom-max="21">
+        	<!-- 平面 -->
+        	<rule e="way" k="tunnel" v="~|no|false">
+            	<line stroke="#b0bab0" stroke-width="1.2" stroke-linecap="butt" />
+            </rule>
+        	<!-- 隧道 -->
+        	<rule e="way" k="tunnel" v="yes|true">
+        		<line stroke="#b0bab0" stroke-width="1.2" stroke-dasharray="10,10" stroke-linecap="butt" />
+        	</rule>
+        </rule>
+        
+        <!-- 粗線內部 (快速道路配色) -->
+        <rule e="way" k="highway" v="trunk|trunk_link" zoom-min="11" zoom-max="21">
+        	<!-- 平面 -->
+        	<rule e="way" k="tunnel" v="~|no|false">
+            	<line stroke="#c5b0b0" stroke-width="1.2" stroke-linecap="butt" />
+            </rule>
+        	<!-- 隧道 -->
+        	<rule e="way" k="tunnel" v="yes|true">
+        		<line stroke="#c5b0b0" stroke-width="1.2" stroke-dasharray="10,10" stroke-linecap="butt" />
+        	</rule>
+        </rule>
+        
+        <!-- 路名 -->
+        <rule e="way" k="highway" v="motorway|trunk" zoom-min="13" zoom-max="21">
+            <pathText k="name" font-size="10" fill="#333333" stroke="#e7e0d0" stroke-width="3.0" />
+        </rule>
+        
+        <!-- 路標 (高速公路) -->
+        <!-- 參見 https://zh.wikipedia.org/wiki/%E4%B8%AD%E8%8F%AF%E6%B0%91%E5%9C%8B%E5%9C%8B%E9%81%93 -->
+        <rule e="way" k="highway" v="motorway" zoom-min="13" zoom-max="21">
+            <rule e="way" k="ref" v="1">
+	            <lineSymbol src="assets:shields/motorway/1.svg"
+	                symbol-percent="110" rotate="false" align-center="true" repeat="false" />
+	        </rule>
+	        <rule e="way" k="ref" v="2">
+	            <lineSymbol src="assets:shields/motorway/2.svg"
+	                symbol-percent="110" rotate="false" align-center="true" repeat="false" />
+	        </rule>
+	        <rule e="way" k="ref" v="3">
+	            <lineSymbol src="assets:shields/motorway/3.svg"
+	                symbol-percent="110" rotate="false" align-center="true" repeat="false" />
+	        </rule>
+	        <rule e="way" k="ref" v="4">
+	            <lineSymbol src="assets:shields/motorway/4.svg"
+	                symbol-percent="110" rotate="false" align-center="true" repeat="false" />
+	        </rule>
+	        <rule e="way" k="ref" v="5">
+	            <lineSymbol src="assets:shields/motorway/5.svg"
+	                symbol-percent="110" rotate="false" align-center="true" repeat="false" />
+	        </rule>
+	        <rule e="way" k="ref" v="6">
+	            <lineSymbol src="assets:shields/motorway/6.svg"
+	                symbol-percent="110" rotate="false" align-center="true" repeat="false" />
+	        </rule>
+	        <rule e="way" k="ref" v="8">
+	            <lineSymbol src="assets:shields/motorway/8.svg"
+	                symbol-percent="110" rotate="false" align-center="true" repeat="false" />
+	        </rule>
+	        <rule e="way" k="ref" v="10">
+	            <lineSymbol src="assets:shields/motorway/10.svg"
+	                symbol-percent="110" rotate="false" align-center="true" repeat="false" />
+	        </rule>
+	        <rule e="way" k="ref" v="3甲">
+	            <lineSymbol src="assets:shields/motorway/branches/3A.svg"
+	                symbol-percent="110" rotate="false" align-center="true" repeat="false" />
+	        </rule>
+	    </rule>
+	    
+	    <!-- 路標 (快速道路) -->
+	    <rule e="way" k="highway" v="trunk" zoom-min="13" zoom-max="21">
+	        <rule e="way" k="ref" v="61">
+	            <lineSymbol src="assets:shields/trunk/61.svg" rotate="false" align-center="true" repeat="false" />
+	        </rule>
+	        <rule e="way" k="ref" v="62">
+	            <lineSymbol src="assets:shields/trunk/62.svg" rotate="false" align-center="true" repeat="false" />
+	        </rule>
+	        <rule e="way" k="ref" v="64">
+	            <lineSymbol src="assets:shields/trunk/64.svg" rotate="false" align-center="true" repeat="false" />
+	        </rule>
+	        <rule e="way" k="ref" v="65">
+	            <lineSymbol src="assets:shields/trunk/65.svg" rotate="false" align-center="true" repeat="false" />
+	        </rule>
+	        <rule e="way" k="ref" v="66">
+	            <lineSymbol src="assets:shields/trunk/66.svg" rotate="false" align-center="true" repeat="false" />
+	        </rule>
+	        <rule e="way" k="ref" v="68">
+	            <lineSymbol src="assets:shields/trunk/68.svg" rotate="false" align-center="true" repeat="false" />
+	        </rule>
+	        <rule e="way" k="ref" v="72">
+	            <lineSymbol src="assets:shields/trunk/72.svg" rotate="false" align-center="true" repeat="false" />
+	        </rule>
+	        <rule e="way" k="ref" v="74">
+	            <lineSymbol src="assets:shields/trunk/74.svg" rotate="false" align-center="true" repeat="false" />
+	        </rule>
+	        <rule e="way" k="ref" v="76">
+	            <lineSymbol src="assets:shields/trunk/76.svg" rotate="false" align-center="true" repeat="false" />
+	        </rule>
+	        <rule e="way" k="ref" v="78">
+	            <lineSymbol src="assets:shields/trunk/78.svg" rotate="false" align-center="true" repeat="false" />
+	        </rule>
+	        <rule e="way" k="ref" v="82">
+	            <lineSymbol src="assets:shields/trunk/82.svg" rotate="false" align-center="true" repeat="false" />
+	        </rule>
+	        <rule e="way" k="ref" v="84">
+	            <lineSymbol src="assets:shields/trunk/84.svg" rotate="false" align-center="true" repeat="false" />
+	        </rule>
+	        <rule e="way" k="ref" v="86">
+	            <lineSymbol src="assets:shields/trunk/86.svg" rotate="false" align-center="true" repeat="false" />
+	        </rule>
+	        <rule e="way" k="ref" v="88">
+	            <lineSymbol src="assets:shields/trunk/88.svg" rotate="false" align-center="true" repeat="false" />
+	        </rule>
+	        <rule e="way" k="ref" v="61甲">
+	            <lineSymbol src="assets:shields/trunk/branches/61A.svg" rotate="false" align-center="true" repeat="false" />
+	        </rule>
+	        <rule e="way" k="ref" v="61乙">
+	            <lineSymbol src="assets:shields/trunk/branches/61B.svg" rotate="false" align-center="true" repeat="false" />
+	        </rule>
+        </rule>
+        <!-- 路名與路標(結尾) -->
+
+    </rule>
+    <!-- 各類道路 (結尾) -->
+    
+    <!-- 軌道運輸 (地下部分會被蓋掉) -->
+    <rule e="way" k="railway" v="*">
+    	<rule e="way" k="tunnel" v="~|no">
+	        <rule e="way" k="railway" v="rail">
+	            <!-- 台鐵 -->
+	            <rule e="way" k="operator" v="~|*">
+	                <rule e="way" k="*" v="*" zoom-min="8" zoom-max="9">
+	                    <line stroke="#909090" stroke-width="0.6" stroke-linecap="butt" />
+	                    <line stroke="#d0d0d0" stroke-width="0.4" stroke-dasharray="6,6" stroke-linecap="butt" />
+	                </rule>
+	                <rule e="way" k="*" v="*" zoom-min="10" zoom-max="12">
+	                    <line stroke="#909090" stroke-width="0.8" stroke-linecap="butt" />
+	                    <line stroke="#d0d0d0" stroke-width="0.6" stroke-dasharray="8,8" stroke-linecap="butt" />
+	                </rule>
+	                <rule e="way" k="*" v="*" zoom-min="13" zoom-max="15">
+	                    <line stroke="#909090" stroke-width="1.0" stroke-linecap="butt" />
+	                    <line stroke="#d0d0d0" stroke-width="0.8" stroke-dasharray="10,10" stroke-linecap="butt" />
+	                </rule>
+	                <rule e="way" k="*" v="*" zoom-min="16" zoom-max="16">
+	                    <line stroke="#909090" stroke-width="0.6" stroke-linecap="butt" />
+	                    <line stroke="#d0d0d0" stroke-width="0.5" stroke-dasharray="15,15" stroke-linecap="butt" />
+	                </rule>
+	                <rule e="way" k="*" v="*" zoom-min="17" zoom-max="21">
+	                    <line stroke="#909090" stroke-width="0.6" stroke-linecap="butt" />
+	                    <line stroke="#d0d0d0" stroke-width="0.5" stroke-dasharray="20,20" stroke-linecap="butt" />
+	                </rule>
+	            </rule>
+	            <!-- 高鐵 -->
+	            <rule e="way" k="operator" v="台灣高速鐵路股份有限公司">
+	                <rule e="way" k="*" v="*" zoom-min="8" zoom-max="9">
+	                    <line stroke="#d0a060" stroke-width="0.6" stroke-linecap="butt" />
+	                    <line stroke="#d0d0d0" stroke-width="0.4" stroke-dasharray="6,6" stroke-linecap="butt" />
+	                </rule>
+	                <rule e="way" k="*" v="*" zoom-min="10" zoom-max="12">
+	                    <line stroke="#d0a060" stroke-width="0.8" stroke-linecap="butt" />
+	                    <line stroke="#d0d0d0" stroke-width="0.6" stroke-dasharray="8,8" stroke-linecap="butt" />
+	                </rule>
+	                <rule e="way" k="*" v="*" zoom-min="13" zoom-max="15">
+	                    <line stroke="#d0a060" stroke-width="1.0" stroke-linecap="butt" />
+	                    <line stroke="#d0d0d0" stroke-width="0.8" stroke-dasharray="10,10" stroke-linecap="butt" />
+	                </rule>
+	                <rule e="way" k="*" v="*" zoom-min="16" zoom-max="16">
+	                    <line stroke="#d0a060" stroke-width="0.6" stroke-linecap="butt" />
+	                    <line stroke="#d0d0d0" stroke-width="0.5" stroke-dasharray="15,15" stroke-linecap="butt" />
+	                </rule>
+	                <rule e="way" k="*" v="*" zoom-min="17" zoom-max="21">
+	                    <line stroke="#d0a060" stroke-width="0.6" stroke-linecap="butt" />
+	                    <line stroke="#d0d0d0" stroke-width="0.5" stroke-dasharray="20,20" stroke-linecap="butt" />
+	                </rule>
+	            </rule>
+	        </rule>
+	        <!-- 捷運 -->
+	        <rule e="way" k="railway" v="subway">
+	            <rule e="way" k="*" v="*" zoom-min="15" zoom-max="15">
+	                <line stroke="#70b0d0" stroke-width="1.0" stroke-linecap="butt" />
+	                <line stroke="#d0d0d0" stroke-width="0.8" stroke-dasharray="10,10" stroke-linecap="butt" />
+	            </rule>
+	            <rule e="way" k="*" v="*" zoom-min="16" zoom-max="16">
+	                <line stroke="#70b0d0" stroke-width="0.6" stroke-linecap="butt" />
+	                <line stroke="#d0d0d0" stroke-width="0.5" stroke-dasharray="15,15" stroke-linecap="butt" />
+	            </rule>
+	            <rule e="way" k="*" v="*" zoom-min="17" zoom-max="21">
+	                <line stroke="#70b0d0" stroke-width="0.6" stroke-linecap="butt" />
+	                <line stroke="#d0d0d0" stroke-width="0.5" stroke-dasharray="20,20" stroke-linecap="butt" />
+	            </rule>
+	        </rule>
+        </rule>
+    </rule>
+
+	<!-- 重要車站 -->
+    <rule e="node" k="railway" v="station">
+        <rule e="node" k="operator" v="~|臺灣鐵路管理局|交通部臺灣鐵路管理局">
+            <symbol id="tra" src="assets:symbols/tra.svg" symbol-percent="80" />
+            <caption symbol-id="tra" k="name" font-size="11" font-style="bold" fill="#333333" stroke="#e7e0d0" stroke-width="3.0" />
+        </rule>
+        <rule e="node" k="operator" v="臺北大眾捷運股份有限公司">
+            <symbol id="tpe_metro" src="assets:symbols/dorts.svg" symbol-percent="80" />
+            <caption symbol-id="tpe_metro" k="name" font-size="11" font-style="bold" fill="#333333" stroke="#e7e0d0" stroke-width="3.0" />
+        </rule>
+        <rule e="node" k="operator" v="高雄捷運公司">
+            <symbol id="ks_metro" src="assets:symbols/ks_metro.svg" symbol-percent="80" />
+            <caption symbol-id="ks_metro" k="name" font-size="11" font-style="bold" fill="#333333" stroke="#e7e0d0" stroke-width="3.0" />
+        </rule>
+        <rule e="node" k="operator" v="台灣高速鐵路股份有限公司">
+            <symbol id="thsr" src="assets:symbols/thsr.svg" symbol-percent="100" />
+            <caption symbol-id="thsr" k="name" font-size="11" font-style="bold" fill="#333333" stroke="#e7e0d0" stroke-width="3.0" />
+        </rule>
+    </rule>
+    
+</rendertheme>
