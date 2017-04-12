@@ -151,9 +151,12 @@ public class MainUtils {
         ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo ni = cm.getActiveNetworkInfo();
 
-        // TODO: 檢查是否限用 WiFi
-
-        return ni.isConnected();
+        if (ni != null) {
+            // TODO: 檢查是否限用 WiFi
+            return ni.isConnected();
+        } else {
+            return false;
+        }
     }
 
     /**
