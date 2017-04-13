@@ -11,6 +11,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.util.Log;
 
@@ -23,6 +24,7 @@ import org.mapsforge.map.android.rendertheme.AssetsRenderTheme;
 import org.mapsforge.map.android.util.AndroidUtil;
 import org.mapsforge.map.android.view.MapView;
 import org.mapsforge.map.datastore.MapDataStore;
+import org.mapsforge.map.layer.Layer;
 import org.mapsforge.map.layer.TileLayer;
 import org.mapsforge.map.layer.cache.FileSystemTileCache;
 import org.mapsforge.map.layer.cache.TileCache;
@@ -53,6 +55,9 @@ public class TaiwanMapView extends MapView {
     private LocationManager mLocationMgr;
     private Bitmap          mLocationBitmapSrc;
     private Marker          mLocationMarker;
+    private Layer           mTileLayer;
+    private String          mCurrentTheme;
+    private boolean         mReady;
     private org.mapsforge.core.graphics.Canvas mMarkerCanvas;
 
     private State mState = new State();
@@ -87,7 +92,9 @@ public class TaiwanMapView extends MapView {
 
                 Sensor rv = mSensorMgr.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
                 mSensorMgr.registerListener(mAzimuthListener, rv, SensorManager.SENSOR_DELAY_UI);
+
                 initView();
+                mReady = true;
             } catch(IOException ex) {
                 Log.e(TAG, ex.getMessage());
             }
@@ -143,6 +150,20 @@ public class TaiwanMapView extends MapView {
         }
     }
 
+    public void reloadTheme(String newTheme) {
+        if (!newTheme.equals(mCurrentTheme) && mReady) {
+            try {
+                Layer oldLayer = mTileLayer;
+                mTileLayer = loadThemeLayer(newTheme, false);
+                getLayerManager().getLayers().remove(oldLayer);
+                getLayerManager().getLayers().add(0, mTileLayer);
+                mCurrentTheme = newTheme;
+            } catch(IOException ex) {
+                Log.e(TAG, ex.getMessage());
+            }
+        }
+    }
+
     @Override
     public void destroy() {
         // TODO: Release map resources
@@ -191,7 +212,10 @@ public class TaiwanMapView extends MapView {
         map.close();
 
         // add Layer to mapView
-        getLayerManager().getLayers().add(loadThemeLayer("classic", false));
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(mContext);
+        mCurrentTheme = pref.getString("render_theme", "classic");
+        mTileLayer = loadThemeLayer(mCurrentTheme, false);
+        getLayerManager().getLayers().add(mTileLayer);
 
         // Use hard coded SVG as location marker.
         Bitmap rotatedBitmap = AndroidGraphicFactory.INSTANCE.createBitmap(127, 127, true);

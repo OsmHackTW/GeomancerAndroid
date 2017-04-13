@@ -156,11 +156,17 @@ public class MapViewFragment extends Fragment {
 
     public void reloadSettings() {
         // 自動旋轉設定
-        // TODO: NPE https://fabric.io/taco-studio/android/apps/tacoball.com.geomancer/issues/58d383d00aeb16625bbc4b8b?time=last-seven-days
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
         isRotateByAzimuth = pref.getBoolean("rotate_by_azimuth", false);
         String msg = String.format("旋轉方位角功能: %s", isRotateByAzimuth);
-        Log.e(TAG, msg);
+        Log.d(TAG, msg);
+
+        // 地圖風格設定
+        // TODO: 這裡改成 TaiwanMapView 檢查風格是否變更可能比較理想
+        String newTheme = pref.getString("render_theme", "classic");
+        mMapView.reloadTheme(newTheme);
+        msg = String.format("地圖風格: %s", newTheme);
+        Log.d(TAG, msg);
     }
 
     /**

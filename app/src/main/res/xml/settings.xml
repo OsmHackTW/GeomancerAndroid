@@ -9,6 +9,13 @@
             android:title="@string/term_rotate_by_azimuth"
             android:defaultValue="true" />
 
+        <ListPreference
+            android:key="render_theme"
+            android:summary="@string/prompt_map_style"
+            android:title="@string/term_map_style"
+            android:entries="@array/render_theme_names"
+            android:entryValues="@array/render_theme_options" />
+
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/term_care_about" android:key="poi">
