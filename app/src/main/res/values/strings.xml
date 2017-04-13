@@ -27,6 +27,7 @@
     <string name="term_azimuth_is">方位角=</string>
     <string name="term_care_about">關心什麼？</string>
     <string name="term_check_connectivity">檢查網路連線</string>
+    <string name="term_clear">清除</string>
     <string name="term_coastline">海岸線圖資</string>
     <string name="term_contributors">貢獻者/貢獻單位</string>
     <string name="term_data_source">資料來源</string>
@@ -43,13 +44,13 @@
     <string name="term_license_odbl_10"><a href="http://opendatacommons.org/licenses/odbl/">ODbL 1.0</a></string>
     <string name="term_map">地圖</string>
     <string name="term_map_style">地圖風格</string>
-    <string name="term_measure">掐指一算</string>
+    <string name="term_measure">神算</string>
     <string name="term_mirror_hosting">資料主機</string>
     <string name="term_mock_azimuth">30.0</string>
     <string name="term_mock_location">(25.0000, 121.0000)</string>
     <string name="term_mock_something">Something</string>
     <string name="term_mock_zoom">15</string>
-    <string name="term_my_position">我的位置</string>
+    <string name="term_my_position">定位</string>
     <string name="term_newtaipei">新北市</string>
     <string name="term_no">鼻要</string>
     <string name="term_odl">開放資料授權</string>
