@@ -420,8 +420,10 @@ public class MapViewFragment extends Fragment {
                 Cursor cur = mUnluckyHouseDB.query("unluckyhouse", cols, "id=?", args, "", "", "");
                 cur.moveToNext();
                 String addr = cur.getString(0);
-                String news = cur.getString(1);
-                showDetail(addr, news, "台灣凶宅網");
+                // 保留直接取新聞連結設計，以防某天台灣凶宅網倒站
+                // String news = cur.getString(1);
+                String url  = String.format(Locale.getDefault(), "https://unluckyhouse.com/showthread.php?t=%s", id);
+                showDetail(addr, url, "台灣凶宅網");
                 cur.close();
             }
 
