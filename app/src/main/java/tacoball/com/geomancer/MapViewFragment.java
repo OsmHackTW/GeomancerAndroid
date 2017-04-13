@@ -50,6 +50,7 @@ public class MapViewFragment extends Fragment {
     private TextView      mTxvHint;        // 地圖放大提示訊息
     private Button        mBtPosition;     // 定位按鈕
     private Button        mBtMeasure;      // 測量風水按鈕
+    private Button        mBtClear;      // 測量風水按鈕
     private CircleButton  mBtMore;         // 展開/收合按鈕
     private CircleButton  mBtSettings;     // 設定按鈕
     private CircleButton  mBtContributors; // 貢獻者按鈕
@@ -91,6 +92,7 @@ public class MapViewFragment extends Fragment {
         // 按鈕列
         mBtPosition = (Button)mFragLayout.findViewById(R.id.btPosition);
         mBtMeasure  = (Button)mFragLayout.findViewById(R.id.btMeasure);
+        mBtClear    = (Button)mFragLayout.findViewById(R.id.btClear);
         mBtMore = (CircleButton) mFragLayout.findViewById(R.id.btnMore);
         mBtSettings = (CircleButton) mFragLayout.findViewById(R.id.btnSettings);
         mBtContributors = (CircleButton) mFragLayout.findViewById(R.id.btnContributors);
@@ -113,6 +115,7 @@ public class MapViewFragment extends Fragment {
         // 事件配置
         mBtPosition.setOnClickListener(mClickListener);
         mBtMeasure.setOnClickListener(mClickListener);
+        mBtClear.setOnClickListener(mClickListener);
         mBtContributors.setOnClickListener(mClickListener);
         mBtSettings.setOnClickListener(mClickListener);
         mBtMore.setOnClickListener(mClickListener);
@@ -259,6 +262,11 @@ public class MapViewFragment extends Fragment {
                 } else {
                     Toast.makeText(getActivity(), R.string.term_peace, Toast.LENGTH_SHORT).show();
                 }
+            }
+
+            if (v==mBtClear) {
+                mUnluckyHouses.clear();
+                mUnluckyLabors.clear();
             }
         }
 
