@@ -158,18 +158,21 @@ public class MapViewFragment extends Fragment {
     }
 
     public void reloadSettings() {
-        // 自動旋轉設定
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        isRotateByAzimuth = pref.getBoolean("rotate_by_azimuth", false);
-        String msg = String.format("旋轉方位角功能: %s", isRotateByAzimuth);
-        Log.d(TAG, msg);
+        // 自動旋轉、地圖風格變更設定
+        // getActivity() 為 null 時會爆掉，有檢查才不會發生 NPE
+        Context context = getActivity();
+        if (context != null) {
+            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            isRotateByAzimuth = pref.getBoolean("rotate_by_azimuth", false);
+            String msg = String.format("旋轉方位角功能: %s", isRotateByAzimuth);
+            Log.d(TAG, msg);
 
-        // 地圖風格設定
-        // TODO: 這裡改成 TaiwanMapView 檢查風格是否變更可能比較理想
-        String newTheme = pref.getString("render_theme", "classic");
-        mMapView.reloadTheme(newTheme);
-        msg = String.format("地圖風格: %s", newTheme);
-        Log.d(TAG, msg);
+            // 地圖風格設定
+            String newTheme = pref.getString("render_theme", "classic");
+            mMapView.reloadTheme(newTheme);
+            msg = String.format("地圖風格: %s", newTheme);
+            Log.d(TAG, msg);
+        }
     }
 
     /**
@@ -233,8 +236,9 @@ public class MapViewFragment extends Fragment {
                     Double.toString(bbox.maxLongitude)
                 };
 
+                // 預設只查凶宅
                 SharedPreferences pf = PreferenceManager.getDefaultSharedPreferences(getActivity());
-                boolean needUnluckyHouse = pf.getBoolean("search_unlucky_house", false);
+                boolean needUnluckyHouse = pf.getBoolean("search_unlucky_house", true);
                 boolean needUnluckyLabor = pf.getBoolean("search_unlucky_labor", false);
 
                 List<String> summaries = new ArrayList<>();
