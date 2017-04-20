@@ -8,8 +8,8 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="141.26927"
-   height="76.609901"
+   width="150"
+   height="100"
    id="svg2212"
    sodipodi:version="0.32"
    inkscape:version="0.45"
@@ -54,11 +54,12 @@
       </cc:Work>
     </rdf:RDF>
   </metadata>
+  <rect x="2" y="2" width="146" height="96" rx="20" ry="20" fill="#ffffff" stroke="#777777" stroke-width="4.0" />
   <g
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-304.36537,-494.05723)">
+     transform="translate(-299,-483)">
     <path
        style="fill:#db5426;overflow:visible"
        d="M 338.16105,547.3911 C 339.18937,545.66845 337.89493,545.50536 337.11319,545.45605 C 323.55118,545.12108 312.30411,553.31786 304.54386,560.06396 C 304.1337,560.41649 304.50089,560.89696 304.93595,560.60692 C 313.80704,554.54247 320.50772,553.25927 331.31681,552.02001 C 334.14786,551.68505 337.08683,549.18603 338.16105,547.3911"

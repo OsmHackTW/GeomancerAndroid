@@ -433,10 +433,13 @@ public class MapViewFragment extends Fragment {
                     prevReducedAzimuth = reducedAzimuth;
                 }
             } else {
-                mRotateView.setHeading(0);
-                mUnluckyHouses.setAngle(0);
-                mUnluckyLabors.setAngle(0);
-                prevReducedAzimuth = 0;
+                if (prevReducedAzimuth != 0) {
+                    mRotateView.setHeading(0);
+                    mUnluckyHouses.setAngle(0);
+                    mUnluckyLabors.setAngle(0);
+                    mImCompass.setRotation(0);
+                    prevReducedAzimuth = 0;
+                }
             }
 
             if (state.zoom>=ZOOM_LIMIT) {

@@ -4,7 +4,7 @@
     xsi:schemaLocation="http://mapsforge.org/renderTheme https://raw.githubusercontent.com/mapsforge/mapsforge/master/resources/renderTheme-v6.xsd">
 
 	<!--
-	  預設樣式，以文青風為基礎變更部分配色
+	  預設地圖樣式
 	-->
 
 	<!-- 海洋 -->
@@ -196,6 +196,22 @@
     		<pathText k="name" font-size="11" fill="#333333" stroke="#dddddd" stroke-width="3.0" />
     	</rule>
     </rule>
+
+    <!-- 支流、工業排水 -->
+    <rule e="way" k="waterway" v="ditch|drain|stream" zoom-min="14">
+        <rule e="way" k="*" v="*" zoom-min="14" zoom-max="15">
+            <line stroke="#90b0c0" stroke-width="0.4" />
+        </rule>
+        <rule e="way" k="*" v="*" zoom-min="16" zoom-max="17">
+            <line stroke="#90b0c0" stroke-width="0.6" />
+        </rule>
+        <rule e="way" k="*" v="*" zoom-min="18" zoom-max="19">
+            <line stroke="#90b0c0" stroke-width="0.8" />
+        </rule>
+        <rule e="way" k="*" v="*" zoom-min="16" zoom-max="19">
+            <pathText k="name" font-size="11" fill="#333333" stroke="#dddddd" stroke-width="3.0" />
+        </rule>
+    </rule>
     
     <!-- 灌溉用水 (因為農地在 Z15 才出現，配合農地顯示即可) -->
     <rule e="way" k="waterway" v="canal" zoom-min="15">
@@ -208,20 +224,6 @@
             <line stroke="#a0d0d7" stroke-width="1.3" stroke-linecap="butt" />
         </rule>
     </rule>
-    
-    <!-- 工業廢水 (目前和 canal 會混淆，暫不開放) -->
-    <!--
-    <rule e="way" k="waterway" v="drain" zoom-min="12">
-        <rule e="way" k="*" v="*" zoom-min="12" zoom-max="15">
-            <line stroke="#777777" stroke-width="1.2" stroke-linecap="butt" />
-            <line stroke="#b050b0" stroke-width="1.1" stroke-linecap="butt" />
-        </rule>
-        <rule e="way" k="*" v="*" zoom-min="16" zoom-max="21">
-            <line stroke="#777777" stroke-width="1.4" stroke-linecap="butt" />
-            <line stroke="#b050b0" stroke-width="1.3" stroke-linecap="butt" />
-        </rule>
-    </rule>
-    -->
     
     <!-- 建築物 -->
     <rule e="way" k="building" v="*" zoom-min="15">
@@ -867,23 +869,38 @@
     </rule>
 
 	<!-- 重要車站 -->
-    <rule e="node" k="railway" v="station" zoom-min="14">
-        <rule e="node" k="operator" v="~|臺灣鐵路管理局|交通部臺灣鐵路管理局">
-            <symbol id="tra" src="assets:symbols/tra.svg" symbol-percent="100" />
-            <caption symbol-id="tra" k="name" font-size="11" font-style="bold" fill="#333333" stroke="#ffffff" stroke-width="3.0" />
+    <rule e="node" k="railway" v="station|halt" zoom-min="14">
+        <rule e="node" k="operator" v="臺灣鐵路管理局">
+            <symbol id="tra" priority="15" display="always" src="assets:symbols/tra.svg" symbol-percent="120" />
+            <caption symbol-id="tra" priority="14" display="always" k="name" font-size="12" font-style="bold" fill="#333333" stroke="#ffffff" stroke-width="3.0" />
         </rule>
         <rule e="node" k="operator" v="台灣高速鐵路股份有限公司">
-            <symbol id="thsr" src="assets:symbols/thsr.svg" symbol-percent="150" />
-            <caption symbol-id="thsr" k="name" font-size="11" font-style="bold" fill="#333333" stroke="#ffffff" stroke-width="3.0" />
+            <symbol id="hsr" priority="17" display="always" src="assets:symbols/hsr.svg" symbol-percent="125" />
+            <caption symbol-id="hsr" priority="16" display="always" k="name" font-size="12" font-style="bold" fill="#333333" stroke="#ffffff" stroke-width="3.0" />
         </rule>
         <rule e="node" k="operator" v="臺北大眾捷運股份有限公司" zoom-min="15">
-            <symbol id="tpe_metro" src="assets:symbols/metro_tp.svg" symbol-percent="90" />
-            <caption symbol-id="tpe_metro" k="name" font-size="11" font-style="bold" fill="#333333" stroke="#ffffff" stroke-width="3.0" />
+            <symbol id="metro_tp" priority="10" display="always" src="assets:symbols/metro_tp.svg" symbol-percent="120" />
+            <caption symbol-id="metro_tp" priority="9" display="always" k="name" font-size="12" font-style="bold" fill="#333333" stroke="#ffffff" stroke-width="3.0" />
+        </rule>
+        <rule e="node" k="operator" v="桃園大眾捷運股份有限公司" zoom-min="15">
+            <symbol id="metro_ty" priority="10" display="always" src="assets:symbols/metro_ty.svg" symbol-percent="120" />
+            <caption symbol-id="metro_ty" priority="9" display="always" k="name" font-size="12" font-style="bold" fill="#333333" stroke="#ffffff" stroke-width="3.0" />
         </rule>
         <rule e="node" k="operator" v="高雄捷運公司" zoom-min="15">
-            <symbol id="ks_metro" src="assets:symbols/metro_ks.svg" symbol-percent="125" />
-            <caption symbol-id="ks_metro" k="name" font-size="11" font-style="bold" fill="#333333" stroke="#ffffff" stroke-width="3.0" />
+            <symbol id="metro_ks" priority="10" display="always" src="assets:symbols/metro_ks.svg" symbol-percent="125" />
+            <caption symbol-id="metro_ks" priority="9" display="always" k="name" font-size="12" font-style="bold" fill="#333333" stroke="#ffffff" stroke-width="3.0" />
         </rule>
+    </rule>
+    
+    <!-- 捷運出入口 (先擱著不用) -->
+    <rule e="node" k="railway" v="subway_entrance" zoom-min="17">
+    	<rule e="node" k="ref" v="1|2|3|4|5|6|7|8|9">
+    		<!-- 黃旗子 -->
+    		<!-- 
+    		<symbol id="entrance_bg" priority="11" display="always" src="assets:symbols/entrance_bg.svg" symbol-percent="100" />
+    		<caption symbol-id="entrance_bg" priority="12" display="always" k="ref" position="center" font-size="11" font-style="bold" fill="#333333" stroke="#e7e0d0" stroke-width="3.0" />
+    		 -->
+    	</rule>
     </rule>
     
     <!-- 行政區邊界 -->

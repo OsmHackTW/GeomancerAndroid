@@ -50,6 +50,9 @@ public class TaiwanMapView extends MapView {
 
     private static final boolean USE_TWO_LEVEL_CACHE = true;
 
+    private static final byte MIN_ZOOM = 8;
+    private static final byte MAX_ZOOM = 18;
+
     private Context         mContext;
     private SensorManager   mSensorMgr;
     private LocationManager mLocationMgr;
@@ -187,9 +190,6 @@ public class TaiwanMapView extends MapView {
     }
 
     private void initView() throws IOException {
-        final byte MIN_ZOOM = 7;
-        final byte MAX_ZOOM = 17;
-
         AndroidGraphicFactory.clearResourceFileCache();
         AndroidGraphicFactory.clearResourceMemoryCache();
 

@@ -12,7 +12,7 @@
   <defs>
     <!-- 在這裡修改高速公路編號與字體 -->
     <text id="ref"
-      x="127" y="170"
+      x="125" y="170"
       fill="#606060" text-anchor="middle"
       font-family="Helvetica" font-size="90" font-weight="bold">3甲</text>
     <!-- 在這裡改梅花配色 -->

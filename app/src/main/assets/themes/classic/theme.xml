@@ -5,7 +5,7 @@
 
 	<!--
 	  假掰文青風地圖樣式
-	  
+
 	  [配色]
 	    *    底色: #d9d0bc (牛皮紙底圖的基本色)
 	    *    森林: #c9c0ac (底色偏深)
@@ -22,9 +22,6 @@
         * Z09 顯示高速公路、快速道路
         * Z10 顯示台鐵、高鐵、鄉鎮名稱
         * Z11 ...
-	
-	  [技術問題]
-	    * 覆蓋隧道問題，預設的 theme 也會發生，需要用 z-order 作弊方式改良。
 	-->
 
 	<!-- 海洋 -->
@@ -36,7 +33,7 @@
     <rule e="way" k="natural" v="nosea" zoom-min="0">
         <area src="assets:patterns/kraft.png" />
     </rule>
-    
+
     <!-- 未開發區域 (一定要半透明，否則會擋住隧道路段) -->
     <rule e="way" k="natural|landuse" v="wood|forest" zoom-min="8">
     	<area fill="#70a9a08c" />
@@ -61,7 +58,7 @@
 			<caption fill="#333333" stroke="#dddddd" stroke-width="3.0" font-size="10" k="name" />
 		</rule>
 	</rule>
-	
+
 	<!-- 航空設施 (必須要在 landuse 前面，否則會蓋掉空軍基地) -->
 	<!-- TODO: 航廈無法正確配色、還沒顯示機場名稱 -->
     <rule e="way" k="aeroway" v="*" zoom-min="13">
@@ -154,7 +151,7 @@
    			<caption fill="#888888" stroke="#e7e0d0" stroke-width="3.0" font-size="10" k="name" />
    		</rule>
     </rule>
-    
+
     <!-- 生活機能 (必須排在 building 前面，不然會蓋掉建築物) -->
     <rule e="way" k="amenity" v="*" zoom-min="15">
     	<area fill="#c7c7b7" stroke="#999999" stroke-width="0.1" />
@@ -191,7 +188,7 @@
    			<caption fill="#888888" stroke="#e7e0d0" stroke-width="3.0" font-size="10" k="name" />
    		</rule>
     </rule>
-    
+
     <!-- 標準河流、湖泊 (必須排在 leisure 後面，否則會被公園蓋掉) -->
     <rule e="way" k="natural" v="water" zoom-min="10">
         <area fill="#808780" />
@@ -200,7 +197,7 @@
         	<caption fill="#333333" stroke="#dddddd" stroke-width="4.0" font-size="11" k="name" />
    		</rule>
     </rule>
-    
+
     <!-- 線條河流 -->
     <rule e="way" k="waterway" v="river" zoom-min="10">
         <rule e="way" k="*" v="*" zoom-min="10" zoom-max="12">
@@ -209,40 +206,42 @@
         <rule e="way" k="*" v="*" zoom-min="13" zoom-max="15">
             <line stroke="#808780" stroke-width="1.2" />
         </rule>
-        <rule e="way" k="*" v="*" zoom-min="16" zoom-max="21">
+        <rule e="way" k="*" v="*" zoom-min="16" zoom-max="19">
             <line stroke="#808780" stroke-width="1.5" />
         </rule>
         <rule e="way" k="*" v="*" zoom-min="13" zoom-max="21">
     		<pathText k="name" font-size="11" fill="#333333" stroke="#dddddd" stroke-width="3.0" />
     	</rule>
     </rule>
-    
+
+    <!-- 支流、工業排水 -->
+    <rule e="way" k="waterway" v="ditch|drain|stream" zoom-min="14">
+    	<rule e="way" k="*" v="*" zoom-min="14" zoom-max="15">
+            <line stroke="#808780" stroke-width="0.4" />
+        </rule>
+        <rule e="way" k="*" v="*" zoom-min="16" zoom-max="17">
+            <line stroke="#808780" stroke-width="0.6" />
+        </rule>
+        <rule e="way" k="*" v="*" zoom-min="18" zoom-max="19">
+            <line stroke="#808780" stroke-width="0.8" />
+        </rule>
+        <rule e="way" k="*" v="*" zoom-min="16" zoom-max="19">
+    		<pathText k="name" font-size="11" fill="#333333" stroke="#dddddd" stroke-width="3.0" />
+    	</rule>
+    </rule>
+
     <!-- 灌溉用水 (因為農地在 Z15 才出現，配合農地顯示即可) -->
     <rule e="way" k="waterway" v="canal" zoom-min="15">
         <rule e="way" k="*" v="*" zoom-min="15" zoom-max="16">
             <line stroke="#3050c0" stroke-width="1.2" stroke-linecap="butt" />
             <line stroke="#a0d0d7" stroke-width="1.1" stroke-linecap="butt" />
         </rule>
-        <rule e="way" k="*" v="*" zoom-min="17" zoom-max="21">
+        <rule e="way" k="*" v="*" zoom-min="17" zoom-max="19">
             <line stroke="#3050c0" stroke-width="1.4" stroke-linecap="butt" />
             <line stroke="#a0d0d7" stroke-width="1.3" stroke-linecap="butt" />
         </rule>
     </rule>
-    
-    <!-- 工業廢水 (目前和 canal 會混淆，暫不開放) -->
-    <!--
-    <rule e="way" k="waterway" v="drain" zoom-min="12">
-        <rule e="way" k="*" v="*" zoom-min="12" zoom-max="15">
-            <line stroke="#777777" stroke-width="1.2" stroke-linecap="butt" />
-            <line stroke="#b050b0" stroke-width="1.1" stroke-linecap="butt" />
-        </rule>
-        <rule e="way" k="*" v="*" zoom-min="16" zoom-max="21">
-            <line stroke="#777777" stroke-width="1.4" stroke-linecap="butt" />
-            <line stroke="#b050b0" stroke-width="1.3" stroke-linecap="butt" />
-        </rule>
-    </rule>
-    -->
-    
+
     <!-- 建築物 -->
     <rule e="way" k="building" v="*" zoom-min="15">
     	<!-- 遺漏項目 -->
@@ -281,15 +280,15 @@
    			<caption fill="#888888" stroke="#e7e0d0" stroke-width="3.0" font-size="10" k="name" />
    		</rule>
     </rule>
-    
+
     <!-- 各類道路 -->
     <!-- TODO: 隧道虛線間隔需要最佳化 -->
     <rule e="way" k="highway" v="*">
-    
+
     	<!-- ############################# -->
         <!-- 步道、單車道 (細線 15+, 粗線 18+) -->
         <!-- ############################# -->
-        
+
         <!-- 細線 -->
 		<rule e="way" k="highway" v="cycleway|footway|pedestrian" zoom-min="15" zoom-max="16">
 			<rule e="way" k="highway" v="cycleway|pedestrian">
@@ -299,7 +298,7 @@
 				<line stroke="#c0c0c0" stroke-width="0.1" stroke-dasharray="5,5"/>
 			</rule>
 		</rule>
-		
+
 		<!-- 粗線外圍 -->
 		<rule e="way" k="highway" v="cycleway|footway|pedestrian" zoom-min="17">
 			<rule e="way" k="tunnel" v="~|no|false">
@@ -309,7 +308,7 @@
         		<line stroke="#999999" stroke-width="0.4" stroke-dasharray="10,10" stroke-linecap="butt" />
         	</rule>
 		</rule>
-		
+
 		<!-- 粗線內部 -->
 		<rule e="way" k="highway" v="cycleway|footway|pedestrian" zoom-min="17">
 			<rule e="way" k="tunnel" v="~|no|false">
@@ -319,7 +318,7 @@
         		<line stroke="#b7c7d0" stroke-width="0.3" stroke-dasharray="10,10" stroke-linecap="butt" />
         	</rule>
 		</rule>
-		
+
 		<!-- 路名 -->
 		<rule e="way" k="highway" v="cycleway|footway|pedestrian" zoom-min="15">
 			<!-- 汽機車不能走的橋樑 (新月橋) -->
@@ -340,7 +339,7 @@
 		<rule e="way" k="highway" v="service|unclassified|residential" zoom-min="13" zoom-max="15">
 			<line stroke="#777777" stroke-width="0.1" />
 		</rule>
-		
+
 		<!-- 粗線外圍 -->
 		<rule e="way" k="highway" v="service|unclassified|residential" zoom-min="16" zoom-max="21">
 			<rule e="way" k="tunnel" v="~|no|false">
@@ -350,7 +349,7 @@
         		<line stroke="#777777" stroke-width="0.8" stroke-dasharray="10,10" stroke-linecap="butt" />
         	</rule>
 		</rule>
-		
+
 		<!-- 粗線內部 (配色) -->
 		<rule e="way" k="highway" v="service|unclassified|residential" zoom-min="16" zoom-max="21">
 			<rule e="way" k="tunnel" v="~|no|false">
@@ -360,16 +359,16 @@
         		<line stroke="#d3cab0" stroke-width="0.7" stroke-dasharray="10,10" stroke-linecap="butt" />
         	</rule>
 		</rule>
-		
+
 		<!-- 路名 -->
 		<rule e="way" k="highway" v="service|unclassified|residential" zoom-min="16" zoom-max="21">
 			<pathText k="name" font-size="10" fill="#333333" stroke="#e7e0d0" stroke-width="3.0" />
 		</rule>
-        
+
         <!-- ########################################### -->
         <!-- 省道、主要道路 (細線: 10+, 粗線: 13+, 路名: 15+) -->
         <!-- ########################################### -->
-        
+
         <!-- 細線 -->
         <rule e="way" k="highway" v="primary|primary_link|secondary|secondary_link|tertiary|tertiary_link">
         	<rule e="way" k="tunnel" v="~|no|false" zoom-min="10" zoom-max="12">
@@ -379,7 +378,7 @@
         		<line stroke="#777777" stroke-width="0.3" stroke-dasharray="6,3" />
         	</rule>
         </rule>
-        
+
         <!-- 粗線外圍 -->
         <rule e="way" k="highway" v="primary|primary_link|secondary|secondary_link|tertiary|tertiary_link" zoom-min="13" zoom-max="21">
         	<rule e="way" k="tunnel" v="~|no|false">
@@ -403,7 +402,7 @@
         		</rule>
         	</rule>
         </rule>
-        
+
         <!-- 粗線內部 (配色) -->
         <rule e="way" k="highway" v="primary|primary_link|secondary|secondary_link|tertiary|tertiary_link" zoom-min="13" zoom-max="21">
         	<rule e="way" k="tunnel" v="~|no|false">
@@ -427,7 +426,7 @@
         		</rule>
         	</rule>
         </rule>
-        
+
         <!-- 路名與路標 -->
         <rule e="way" k="highway" v="primary|secondary|tertiary" zoom-min="15" zoom-max="21">
         	<pathText k="name" font-size="10" fill="#333333" stroke="#e7e0d0" stroke-width="3.0" />
@@ -676,18 +675,18 @@
             </rule>
         </rule>
         <!-- 路名與路標(結尾) -->
-            
+
         <!-- ############################################# -->
         <!-- 高速公路、快速道路 (細線: 8+, 粗線: 11+, 路名: 13+) -->
         <!-- ############################################# -->
-        
+
         <!-- 細線 -->
         <rule e="way" k="highway" v="motorway|motorway_link|trunk|trunk_link" zoom-min="9" zoom-max="10">
         	<rule e="way" k="*" v="*" zoom-min="8" zoom-max="10">
             	<line stroke="#777777" stroke-width="0.5" />
             </rule>
         </rule>
-        
+
         <!-- 粗線外圍 -->
         <rule e="way" k="highway" v="motorway|motorway_link|trunk|trunk_link" zoom-min="11" zoom-max="21">
         	<!-- 平面 -->
@@ -699,7 +698,7 @@
         		<line stroke="#777777" stroke-width="1.4" stroke-dasharray="10,10" stroke-linecap="butt" />
         	</rule>
         </rule>
-        
+
         <!-- 粗線內部 (高速公路配色) -->
         <rule e="way" k="highway" v="motorway|motorway_link" zoom-min="11" zoom-max="21">
         	<!-- 平面 -->
@@ -711,7 +710,7 @@
         		<line stroke="#b0bab0" stroke-width="1.2" stroke-dasharray="10,10" stroke-linecap="butt" />
         	</rule>
         </rule>
-        
+
         <!-- 粗線內部 (快速道路配色) -->
         <rule e="way" k="highway" v="trunk|trunk_link" zoom-min="11" zoom-max="21">
         	<!-- 平面 -->
@@ -723,12 +722,12 @@
         		<line stroke="#c5b0b0" stroke-width="1.2" stroke-dasharray="10,10" stroke-linecap="butt" />
         	</rule>
         </rule>
-        
+
         <!-- 路名 -->
         <rule e="way" k="highway" v="motorway|trunk" zoom-min="13" zoom-max="21">
             <pathText k="name" font-size="10" fill="#333333" stroke="#e7e0d0" stroke-width="3.0" />
         </rule>
-        
+
         <!-- 路標 (高速公路) -->
         <!-- 參見 https://zh.wikipedia.org/wiki/%E4%B8%AD%E8%8F%AF%E6%B0%91%E5%9C%8B%E5%9C%8B%E9%81%93 -->
         <rule e="way" k="highway" v="motorway" zoom-min="13" zoom-max="21">
@@ -769,7 +768,7 @@
 	                symbol-percent="110" rotate="false" align-center="true" repeat="false" />
 	        </rule>
 	    </rule>
-	    
+
 	    <!-- 路標 (快速道路) -->
 	    <rule e="way" k="highway" v="trunk" zoom-min="13" zoom-max="21">
 	        <rule e="way" k="ref" v="61">
@@ -825,7 +824,7 @@
 
     </rule>
     <!-- 各類道路 (結尾) -->
-    
+
     <!-- 軌道運輸 (地下部分會被蓋掉) -->
     <rule e="way" k="railway" v="*">
     	<rule e="way" k="tunnel" v="~|no">
@@ -887,25 +886,40 @@
     </rule>
 
 	<!-- 重要車站 -->
-    <rule e="node" k="railway" v="station" zoom-min="14">
-        <rule e="node" k="operator" v="~|臺灣鐵路管理局|交通部臺灣鐵路管理局">
-            <symbol id="tra" src="assets:symbols/tra.svg" symbol-percent="100" />
-            <caption symbol-id="tra" k="name" font-size="11" font-style="bold" fill="#333333" stroke="#e7e0d0" stroke-width="3.0" />
+    <rule e="node" k="railway" v="station|halt" zoom-min="14">
+        <rule e="node" k="operator" v="臺灣鐵路管理局">
+            <symbol id="tra" priority="15" display="always" src="assets:symbols/tra.svg" symbol-percent="120" />
+            <caption symbol-id="tra" priority="14" display="always" k="name" font-size="12" font-style="bold" fill="#333333" stroke="#e7e0d0" stroke-width="3.0" />
         </rule>
         <rule e="node" k="operator" v="台灣高速鐵路股份有限公司">
-            <symbol id="thsr" src="assets:symbols/thsr.svg" symbol-percent="150" />
-            <caption symbol-id="thsr" k="name" font-size="11" font-style="bold" fill="#333333" stroke="#e7e0d0" stroke-width="3.0" />
+            <symbol id="hsr" priority="17" display="always" src="assets:symbols/hsr.svg" symbol-percent="125" />
+            <caption symbol-id="hsr" priority="16" display="always" k="name" font-size="12" font-style="bold" fill="#333333" stroke="#e7e0d0" stroke-width="3.0" />
         </rule>
         <rule e="node" k="operator" v="臺北大眾捷運股份有限公司" zoom-min="15">
-            <symbol id="tpe_metro" src="assets:symbols/metro_tp.svg" symbol-percent="90" />
-            <caption symbol-id="tpe_metro" k="name" font-size="11" font-style="bold" fill="#333333" stroke="#e7e0d0" stroke-width="3.0" />
+            <symbol id="metro_tp" priority="10" display="always" src="assets:symbols/metro_tp.svg" symbol-percent="120" />
+            <caption symbol-id="metro_tp" priority="9" display="always" k="name" font-size="12" font-style="bold" fill="#333333" stroke="#e7e0d0" stroke-width="3.0" />
+        </rule>
+        <rule e="node" k="operator" v="桃園大眾捷運股份有限公司" zoom-min="15">
+            <symbol id="metro_ty" priority="10" display="always" src="assets:symbols/metro_ty.svg" symbol-percent="120" />
+            <caption symbol-id="metro_ty" priority="9" display="always" k="name" font-size="12" font-style="bold" fill="#333333" stroke="#e7e0d0" stroke-width="3.0" />
         </rule>
         <rule e="node" k="operator" v="高雄捷運公司" zoom-min="15">
-            <symbol id="ks_metro" src="assets:symbols/metro_ks.svg" symbol-percent="125" />
-            <caption symbol-id="ks_metro" k="name" font-size="11" font-style="bold" fill="#333333" stroke="#e7e0d0" stroke-width="3.0" />
+            <symbol id="metro_ks" priority="10" display="always" src="assets:symbols/metro_ks.svg" symbol-percent="125" />
+            <caption symbol-id="metro_ks" priority="9" display="always" k="name" font-size="12" font-style="bold" fill="#333333" stroke="#e7e0d0" stroke-width="3.0" />
         </rule>
     </rule>
-    
+
+    <!-- 捷運出入口 (先擱著不用) -->
+    <rule e="node" k="railway" v="subway_entrance" zoom-min="17">
+    	<rule e="node" k="ref" v="1|2|3|4|5|6|7|8|9">
+    		<!-- 黃旗子 -->
+    		<!--
+    		<symbol id="entrance_bg" priority="11" display="always" src="assets:symbols/entrance_bg.svg" symbol-percent="100" />
+    		<caption symbol-id="entrance_bg" priority="12" display="always" k="ref" position="center" font-size="11" font-style="bold" fill="#333333" stroke="#e7e0d0" stroke-width="3.0" />
+    		 -->
+    	</rule>
+    </rule>
+
     <!-- 行政區邊界 -->
     <rule e="way" k="boundary" v="administrative" zoom-min="8" zoom-max="12">
         <!-- 省、直轄市 | 縣、省轄市-->
@@ -928,7 +942,7 @@
             <line stroke="#773333" stroke-width="1.0" stroke-dasharray="4,4" />
         </rule>
     </rule>
-    
+
     <!-- 行政區名稱 -->
     <rule e="node" k="place" v="*" zoom-min="8" zoom-max="12">
         <rule e="node" k="place" v="city|county" zoom-min="8" zoom-max="11">
@@ -943,5 +957,5 @@
             </rule>
         </rule>
     </rule>
-    
+
 </rendertheme>
