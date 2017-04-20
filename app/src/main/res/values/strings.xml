@@ -24,7 +24,7 @@
     <string name="pattern_unluckylabor_subject">屎缺 (%s)</string>
 
     <!-- 一般用語 -->
-    <string name="term_azimuth_is">方位角=</string>
+    <string name="term_azimuth_is">方位: </string>
     <string name="term_care_about">關心什麼？</string>
     <string name="term_check_connectivity">檢查網路連線</string>
     <string name="term_clear">清除</string>
@@ -38,16 +38,19 @@
     <string name="term_g0v">零時政府</string>
     <string name="term_illustrator">插圖設計</string>
     <string name="term_kaohsiung">高雄市</string>
+    <string name="term_latitude_is">緯:  </string>
     <string name="term_licenses">授權資訊</string>
     <string name="term_license_apache_20"><a href="https://www.apache.org/licenses/LICENSE-2.0">Apache 2.0</a></string>
     <string name="term_license_lgpl_30"><a href="https://www.gnu.org/licenses/lgpl-3.0.en.html">LGPL 3.0</a></string>
     <string name="term_license_odbl_10"><a href="http://opendatacommons.org/licenses/odbl/">ODbL 1.0</a></string>
+    <string name="term_longitude_is">經:  </string>
     <string name="term_map">地圖</string>
     <string name="term_map_style">地圖風格</string>
     <string name="term_measure">神算</string>
     <string name="term_mirror_hosting">資料主機</string>
     <string name="term_mock_azimuth">30.0</string>
-    <string name="term_mock_location">(25.0000, 121.0000)</string>
+    <string name="term_mock_latitude">25.0000</string>
+    <string name="term_mock_longitude">121.0000</string>
     <string name="term_mock_something">Something</string>
     <string name="term_mock_zoom">15</string>
     <string name="term_my_position">定位</string>
@@ -80,7 +83,7 @@
     <string name="term_update">資料更新</string>
     <string name="term_yes">好喔</string>
     <string name="term_zoom_in_z15">地圖放大到 Z=13 才能算喔</string>
-    <string name="term_zoom_is">縮放等級=</string>
+    <string name="term_zoom_is">縮放: </string>
 
     <!-- 選項值 -->
     <string-array name="render_theme_options">

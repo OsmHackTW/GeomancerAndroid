@@ -228,14 +228,14 @@ public class TaiwanMapView extends MapView {
         getLayerManager().getLayers().add(mLocationMarker);
 
         // set UI of mapView
-        setClickable(true);
         setCenter(new LatLong(mState.cLat, mState.cLng));
         setZoomLevel((byte) mState.zoom);
         setZoomLevelMin(MIN_ZOOM);
         setZoomLevelMax(MAX_ZOOM);
-        //getMapZoomControls().setAutoHide(true);
-        //getFpsCounter().setVisible(true);
-        getMapZoomControls().show();
+
+        // 可觸控縮放、不顯示縮放工具列、限制地圖範圍
+        setClickable(true);
+        getMapZoomControls().setShowMapZoomControls(false);
         getModel().mapViewPosition.setMapLimit(bbox);
     }
 

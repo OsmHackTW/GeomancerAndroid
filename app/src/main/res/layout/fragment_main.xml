@@ -16,6 +16,14 @@
 
     </org.mapsforge.map.android.rotation.RotateView>
 
+    <ImageView
+        android:id="@+id/imCompass"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="60dp" />
+
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
@@ -58,60 +66,117 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/statusBar"
+        android:id="@+id/statusAzimuth"
         android:orientation="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignBottom="@id/rotateView"
+        android:layout_toRightOf="@id/imCompass"
+        android:layout_alignBottom="@id/imCompass"
         android:layout_marginStart="10dp"
         android:layout_marginBottom="10dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/term_zoom_is"
-            android:id="@+id/txvZoomLabel" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/term_mock_zoom"
-            android:id="@+id/txvZoomValue" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:text="@string/term_azimuth_is"
-            android:id="@+id/txvAzimuthLabel"
-            android:layout_marginStart="10dp" />
+            android:textColor="#000000"  />
 
         <TextView
+            android:id="@+id/txvAzimuthValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
             android:text="@string/term_mock_azimuth"
-            android:id="@+id/txvAzimuthValue" />
+            android:textColor="#000000" />
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/txvLocation"
+    <LinearLayout
+        android:id="@+id/statusZoom"
+        android:orientation="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/statusBar"
-        android:layout_above="@+id/statusBar"
-        android:layout_marginBottom="5dp"
-        android:text="@string/term_mock_location" />
+        android:layout_alignLeft="@id/statusAzimuth"
+        android:layout_above="@id/statusAzimuth"
+        android:layout_marginBottom="5dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/term_zoom_is"
+            android:textColor="#000000" />
+
+        <TextView
+            android:id="@+id/txvZoomValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:text="@string/term_mock_zoom"
+            android:textColor="#000000" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/statusLongitude"
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@id/imCompass"
+        android:layout_alignBottom="@id/imCompass"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/term_longitude_is"
+            android:textColor="#000000" />
+
+        <TextView
+            android:id="@+id/txvLongitude"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:text="@string/term_mock_longitude"
+            android:textColor="#000000" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/statusLatitude"
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@id/statusLongitude"
+        android:layout_above="@id/statusLongitude"
+        android:layout_marginBottom="5dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/term_latitude_is"
+            android:textColor="#000000" />
+
+        <TextView
+            android:id="@+id/txvLatitude"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:text="@string/term_mock_latitude"
+            android:textColor="#000000" />
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/txvHint"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/txvLocation"
-        android:layout_above="@+id/txvLocation"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/imCompass"
         android:layout_marginBottom="5dp"
-        android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="@string/term_zoom_in_z15"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:gravity="center_horizontal"
         android:textColor="#003090" />
 
     <GridLayout

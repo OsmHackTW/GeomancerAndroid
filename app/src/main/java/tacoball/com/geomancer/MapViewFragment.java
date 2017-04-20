@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -15,8 +17,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.caverock.androidsvg.SVG;
+import com.caverock.androidsvg.SVGParseException;
 
 import org.mapsforge.core.model.BoundingBox;
 import org.mapsforge.core.model.LatLong;
@@ -44,17 +50,19 @@ public class MapViewFragment extends Fragment {
     private static final byte ZOOM_LIMIT = 13;
 
     // 介面元件
-    private TextView      mTxvLocation;    // 經緯度文字
+    private TextView      mTxvLatitude;    // 緯度文字
+    private TextView      mTxvLongitude;   // 經度文字
     private TextView      mTxvZoom;        // 縮放比文字
     private TextView      mTxvAzimuth;     // 方位角文字
     private TextView      mTxvHint;        // 地圖放大提示訊息
     private Button        mBtPosition;     // 定位按鈕
     private Button        mBtMeasure;      // 測量風水按鈕
-    private Button        mBtClear;      // 測量風水按鈕
+    private Button        mBtClear;        // 清除按鈕
     private CircleButton  mBtMore;         // 展開/收合按鈕
     private CircleButton  mBtSettings;     // 設定按鈕
     private CircleButton  mBtContributors; // 貢獻者按鈕
     private CircleButton  mBtLicense;      // 授權按鈕
+    private ImageView     mImCompass;
 
     // 介面元件 (詳細資訊)
     private ViewGroup mVgDetail;
@@ -83,11 +91,28 @@ public class MapViewFragment extends Fragment {
 
         // 狀態列
         mTxvZoom     = (TextView)mFragLayout.findViewById(R.id.txvZoomValue);
-        mTxvLocation = (TextView)mFragLayout.findViewById(R.id.txvLocation);
+        mTxvLatitude = (TextView)mFragLayout.findViewById(R.id.txvLatitude);
+        mTxvLongitude = (TextView)mFragLayout.findViewById(R.id.txvLongitude);
         mTxvAzimuth  = (TextView)mFragLayout.findViewById(R.id.txvAzimuthValue);
 
         // 地圖放大提示訊息
         mTxvHint = (TextView)mFragLayout.findViewById(R.id.txvHint);
+
+        // 指北針
+        mImCompass = (ImageView)mFragLayout.findViewById(R.id.imCompass);
+        try {
+            SVG svg = SVG.getFromAsset(getActivity().getAssets(), "icons/compass.svg");
+            Bitmap bitmap = Bitmap.createBitmap(256, 256, Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(bitmap);
+            svg.renderToCanvas(canvas);
+            mImCompass.setImageBitmap(bitmap);
+        } catch(SVGParseException ex) {
+            Log.e(TAG, "SVGParseException");
+            Log.e(TAG, ex.getMessage());
+        } catch(IOException ex) {
+            Log.e(TAG, "IOException");
+            Log.e(TAG, ex.getMessage());
+        }
 
         // 按鈕列
         mBtPosition = (Button)mFragLayout.findViewById(R.id.btPosition);
@@ -383,8 +408,10 @@ public class MapViewFragment extends Fragment {
 
         @Override
         public void onStateChanged(TaiwanMapView.State state) {
-            String txtLoc = String.format(Locale.getDefault(), "(%.4f, %.4f)", state.cLat, state.cLng);
-            mTxvLocation.setText(txtLoc);
+            String txtLat = String.format(Locale.getDefault(), "%.4f", state.cLat);
+            mTxvLatitude.setText(txtLat);
+            String txtLng = String.format(Locale.getDefault(), "%.4f", state.cLng);
+            mTxvLongitude.setText(txtLng);
 
             String txtZoom = String.format(Locale.getDefault(), "%s", state.zoom);
             mTxvZoom.setText(txtZoom);
@@ -402,6 +429,7 @@ public class MapViewFragment extends Fragment {
                     mRotateView.setHeading(-reducedAzimuth);
                     mUnluckyHouses.setAngle(-reducedAzimuth);
                     mUnluckyLabors.setAngle(-reducedAzimuth);
+                    mImCompass.setRotation(reducedAzimuth);
                     prevReducedAzimuth = reducedAzimuth;
                 }
             } else {
