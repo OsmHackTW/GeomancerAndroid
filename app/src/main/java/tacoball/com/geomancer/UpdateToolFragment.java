@@ -2,11 +2,13 @@ package tacoball.com.geomancer;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,13 +23,14 @@ import java.util.Locale;
 
 import tacoball.com.geomancer.checkupdate.AutoUpdateAdapter;
 import tacoball.com.geomancer.checkupdate.AutoUpdateManager;
+import tacoball.com.geomancer.checkupdate.CheckUpdateAdapter;
 
 /**
  * 地圖與資料庫更新程式
  */
 public class UpdateToolFragment extends Fragment {
 
-    private static final String TAG = "MapUpdaterFragment";
+    private static final String TAG = "UpdateToolFragment";
 
     // 進入主畫面前的刻意等待時間
     private static final long RESTART_DELAY = 500;
@@ -74,11 +77,6 @@ public class UpdateToolFragment extends Fragment {
     private void update() {
         Context ctx = getActivity();
 
-        // 檢查使用者是否要求更新
-        boolean userRequest = MainUtils.hasUpdateRequest(ctx);
-        // TODO: 需要改成更新完成後才消除記號
-        MainUtils.clearUpdateRequest(ctx);
-
         // 目錄配置
         File dbPath;
         File logPath;
@@ -93,33 +91,85 @@ public class UpdateToolFragment extends Fragment {
         }
 
         // 檢查應用程式是否要求更新
-        AutoUpdateManager aum = new AutoUpdateManager(logPath, dbPath);
+        final AutoUpdateManager aum = new AutoUpdateManager(logPath, dbPath);
         aum.saveTo(MainUtils.MAP_NAME, mapPath);
-        boolean appRequest = !aum.isUseful("0.1.0");
+        boolean dataIsUseful = aum.isUseful("0.1.0");
+
+        // 強制破壞 mtime，測試檢查更新功能再開
+        // aum.damageMtime("unluckyhouse.sqlite");
 
         // 檢查網路連線
         boolean hasNetwork = MainUtils.isNetworkConnected(getActivity());
 
-        // 有必要更新時，執行更新作業
-        if (appRequest || userRequest) {
-            if (hasNetwork) {
-                setMessage(ctx.getString(R.string.prompt_cannot_access_network), false);
-                aum.addListener(updateListener);
-                aum.start(MainUtils.getUpdateSource());
-                if (appRequest) {
-                    Log.e(TAG, "應用程式要求更新");
+        if (hasNetwork) {
+            if (dataIsUseful) {
+                int daysFLU = aum.getDaysFromLastUpdate();
+                String msg = String.format(Locale.getDefault(), "上次更新於 %d 天前", daysFLU);
+                Log.e(TAG, msg);
+
+                if (daysFLU >= 14) {
+                    // 提示檢查更新
+                    msg = ctx.getString(R.string.term_check_update);
+                    setMessage(msg, false);
+
+                    // 有網路 + 資料堪用 => 定期檢查更新 (先暫時做成每次都檢查)
+                    // TODO: 這段 code 要改得衛生一點
+                    CheckUpdateAdapter cua = new CheckUpdateAdapter() {
+                        @Override
+                        public void onCheck(final long totalLength, final String lastModified) {
+                            if (totalLength > 0) {
+                                // 有網路 + 資料堪用 + 可更新 => 交給使用者決定
+                                mHandler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        String pat = getActivity().getString(R.string.pattern_confirm_update);
+                                        String msg = String.format(Locale.getDefault(), pat, getPreetySize(totalLength));
+                                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                                        builder.setMessage(msg).setCancelable(false)
+                                                .setPositiveButton(R.string.term_yes, new DialogInterface.OnClickListener() {
+                                                    public void onClick(DialogInterface dialog, int id) {
+                                                        aum.addListener(updateListener);
+                                                        aum.start(MainUtils.getUpdateSource());
+                                                    }
+                                                })
+                                                .setNegativeButton(R.string.term_no, new DialogInterface.OnClickListener() {
+                                                    public void onClick(DialogInterface dialog, int id) {
+                                                        gotoMap();
+                                                    }
+                                                })
+                                                .show();
+                                    }
+                                });
+                            } else {
+                                // 有網路 + 資料堪用 + 免更新 => 進入應用程式
+                                gotoMap();
+                            }
+                        }
+
+                        @Override
+                        public void onError(String reason) {
+                            super.onError(reason);
+                        }
+                    };
+                    aum.checkUpdate(MainUtils.getUpdateSource(), cua);
                 } else {
-                    Log.e(TAG, "使用者要求更新");
+                    // 有網路 + 資料堪用 + 免更新 => 進入應用程式
+                    gotoMap();
                 }
             } else {
-                setMessage(ctx.getString(R.string.prompt_cannot_access_network), true);
-                Log.e(TAG, "無法更新");
+                // 有網路 + 資料不堪用 => 強制更新
+                aum.addListener(updateListener);
+                aum.start(MainUtils.getUpdateSource());
             }
         } else {
-            // 延遲一小段時間後直接進入主畫面
-            setMessage(ctx.getString(R.string.prompt_validated), false);
-            gotoMap();
-            Log.e(TAG, "不需要更新");
+            if (dataIsUseful) {
+                // 沒網路 + 資料堪用 => 進入應用程式
+                setMessage(ctx.getString(R.string.prompt_validated), false);
+                gotoMap();
+            } else {
+                // 沒網路 + 資料不堪用 => 顯示錯誤訊息
+                setMessage(ctx.getString(R.string.prompt_cannot_access_network), true);
+            }
         }
     }
 
@@ -157,10 +207,10 @@ public class UpdateToolFragment extends Fragment {
      * 善後動作
      */
     @Override
-    public void onDestroy() {
+    public void onDestroyView() {
         // 取消線上更新，並且不理會後續事件，避免 Activity 結束後閃退
         mHandler.removeCallbacksAndMessages(null);
-        super.onDestroy();
+        super.onDestroyView();
     }
 
     /**
@@ -222,5 +272,10 @@ public class UpdateToolFragment extends Fragment {
             update();
         }
     };
+
+    private String getPreetySize(long bytes) {
+        double mega = bytes/1048576.0;
+        return String.format(Locale.getDefault(), "%.2fMB", mega);
+    }
 
 }

@@ -32,14 +32,6 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".checkupdate.NetworkReceiver">
-            <intent-filter>
-                <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-            </intent-filter>
-        </receiver>
-
-        <service android:name=".checkupdate.ConfirmUpdateService" />
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="429ffc1f1fdc628a44125f28c9f0219bdc52b27e" />

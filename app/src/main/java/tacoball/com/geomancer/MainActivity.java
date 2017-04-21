@@ -18,7 +18,6 @@ import org.mapsforge.map.android.graphics.AndroidGraphicFactory;
 import java.util.Locale;
 
 import io.fabric.sdk.android.Fabric;
-import tacoball.com.geomancer.checkupdate.NetworkReceiver;
 import tacoball.com.geomancer.map.TaiwanMapView;
 
 /**
@@ -52,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
         checkDebugParameters();
 
         // 先進入更新介面
-        changeFragment(new UpdateToolFragment());
+        changeFragment(mUpdateFragment);
     }
 
     @Override
@@ -69,23 +68,12 @@ public class MainActivity extends AppCompatActivity {
         if (fm.getBackStackEntryCount() > 0) {
             mMapFragment.reloadSettings();
         }
-
         super.onBackPressed();
     }
 
     // 地毯式檢查用到的除錯參數
     private void checkDebugParameters() {
         int cnt = 0;
-
-        if (!NetworkReceiver.ENABLE_INTERVAL) {
-            Log.w(TAG, getString(R.string.log_disable_interval_limit));
-            cnt++;
-        }
-
-        if (!NetworkReceiver.ENABLE_PROBABILITY) {
-            Log.w(TAG, getString(R.string.log_disable_probability_limit));
-            cnt++;
-        }
 
         if (MainUtils.MIRROR_NUM != 0) {
             Log.w(TAG, getString(R.string.log_use_debugging_mirror));
@@ -118,7 +106,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         FragmentManager fm = getSupportFragmentManager();
-
         if (nextFrag == mMapFragment || nextFrag == mUpdateFragment) {
             // 放在堆疊底層
             fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
@@ -144,12 +131,10 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, msg);
 
             if (intent.getAction().equals("MAIN")) {
-                MainUtils.clearUpdateRequest(MainActivity.this);
                 changeFragment(mMapFragment);
             }
 
             if (intent.getAction().equals("UPDATE")) {
-                MainUtils.clearUpdateRequest(MainActivity.this);
                 changeFragment(mUpdateFragment);
             }
 

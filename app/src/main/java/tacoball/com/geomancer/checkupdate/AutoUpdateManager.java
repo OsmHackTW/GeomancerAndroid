@@ -61,6 +61,7 @@ public class AutoUpdateManager {
 
 	// 執行緒管理
 	private Thread  updateThread;
+	private Thread  checkThread;
 	private boolean userCanceled;
 
 	// 片段設定值
@@ -74,8 +75,7 @@ public class AutoUpdateManager {
 	
 	/**
 	 * 配置檔案更新總管
-	 * 
-	 * @param baseUrl  遠端位置
+	 *
 	 * @param logPath  紀錄檔存放位置
 	 * @param filePath 下載檔預設存放位置
 	 */
@@ -197,6 +197,120 @@ public class AutoUpdateManager {
 	}
 	
 	/**
+	 * 檢查是否需要更新
+	 */
+	public void checkUpdate(String url, final CheckUpdateAdapter adapter) {
+		// URL 防呆處理
+		baseUrl = url;
+		if (!baseUrl.endsWith("/")) {
+			baseUrl = baseUrl + "/";
+		}
+		
+		checkThread = new Thread() {
+			public void run() {
+				try {
+					// 下載更新資訊與轉換檔案清單
+					Set<Entry<String, JsonElement>> fileSet;
+					updateInfo = loadJSON(baseUrl + "/update.json");
+					digest = updateInfo.getAsJsonObject("config").get("digest").getAsString();
+					partLength = updateInfo.getAsJsonObject("config").get("partLength").getAsInt();
+					fileSet = updateInfo.getAsJsonObject("files").entrySet();
+					
+					// 載入先前更新紀錄，沒有則產生一個空結構維持正常運作
+					try {
+						previousUpdateLog = loadJSON(logPath + "/update-log.json");
+					} catch(InterruptedException ex) {
+						// 指定一個無效的檔案規格，避免 NPE 發生
+						JsonObject config = new JsonObject();
+						config.addProperty("spec", "0.0.0");
+						previousUpdateLog = new JsonObject();
+						previousUpdateLog.add("files", new JsonObject());
+						previousUpdateLog.add("config", config);
+					}
+					
+					// 計算需要更新的檔案大小
+					long totalLength = 0;
+					String lastModified = "";
+					JsonObject localFiles = previousUpdateLog.get("files").getAsJsonObject();
+					for (Entry<String, JsonElement> fileElement : fileSet) {
+						// 1. 更新紀錄不存在需要更新              (常規檢查)
+						// 2. 更新紀錄 mtime 異動時需要更新
+						// 3. 檔案不存在需要更新                  (破壞檢查)
+						// 4. 檔案 checksum 與計算結果不符需要更新
+						boolean latest   = false;
+						String  filename = fileElement.getKey();
+						JsonObject rmtFile = fileElement.getValue().getAsJsonObject();
+						
+						if (localFiles.has(filename)) {
+							JsonObject locFile = localFiles.getAsJsonObject(filename);
+							long rmtMtime = rmtFile.get("mtime").getAsLong();
+							long locMtime = locFile.get("mtime").getAsLong();
+							if (rmtMtime <= locMtime) {
+								String locChecksum = locFile.get("checksum").getAsString();
+								File path = movePath.containsKey(filename) ? movePath.get(filename) : filePath;
+								File f = new File(path, filename);
+								if (f.exists()) {
+									int partNumber = (int)((f.length() - 1) / partLength);
+									if (checkPart(f, partNumber, locChecksum)) {
+										latest = true;	
+									}	
+								}
+							}
+						}
+						
+						if (!latest) {
+							totalLength += rmtFile.get("length").getAsLong();
+							String date = rmtFile.get("isoTime").getAsString();
+							if (date.compareTo(lastModified) > 0) {
+								lastModified = date;
+							}
+						}
+					}
+					
+					adapter.onCheck(totalLength, lastModified);
+				} catch(InterruptedException ex) {
+					adapter.onError(ex.getMessage());
+				}
+			}
+		};
+		checkThread.start();
+	}
+	
+	/**
+	 * 回傳上次更新到現在的天數
+	 * 
+	 * @return 上次更新到現在的天數
+	 */
+	public int getDaysFromLastUpdate() {
+		long lastModified = 0;
+		File f = new File(logPath, "update-log.json");
+		if (f.exists()) {
+			lastModified = f.lastModified();
+		}
+		
+		int days = (int)((System.currentTimeMillis() - lastModified) / 86400000);
+		return days;
+	}
+	
+	/**
+	 * 破壞指定檔案的 mtime，用來測試檢查更新效果
+	 * 
+	 * @param filename 要破壞 mtime 的檔案名稱
+	 */
+	public void damageMtime(String filename) {
+		try {
+			JsonObject json = loadJSON(logPath + "/update-log.json");
+			JsonObject fileNode = json.getAsJsonObject("files").getAsJsonObject(filename);
+			long mtime = fileNode.get("mtime").getAsLong();
+			fileNode.remove("mtime");
+			fileNode.addProperty("mtime", mtime-1);
+			saveJSON(logPath + "/update-log.json", json);
+		} catch(InterruptedException ex) {
+			System.err.println(ex.getMessage());
+		}
+	}
+	
+	/**
 	 * 等待更新程式結束，僅供單元測試等待答案用
 	 */
 	public void waitUntilComplete() {
@@ -207,7 +321,17 @@ public class AutoUpdateManager {
 				System.err.println("更新程式中斷");
 			}	
 		} else {
-			trigger.onError("尚未啟動更新，不可執行等待動作");
+			// System.err.println("尚未啟動更新程式");
+		}
+		
+		if (checkThread != null) {
+			try {
+				checkThread.join();
+			} catch(InterruptedException ex) {
+				System.err.println("檢查程式中斷");
+			}
+		} else {
+			// System.err.println("尚未啟動檢查程式");
 		}
 	}
 

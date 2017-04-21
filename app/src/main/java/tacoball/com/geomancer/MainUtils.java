@@ -1,19 +1,13 @@
 package tacoball.com.geomancer;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import org.apache.commons.io.FileUtils;
@@ -24,8 +18,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
 
-import tacoball.com.geomancer.checkupdate.ConfirmUpdateService;
-
 /**
  * 共用程式
  */
@@ -34,11 +26,7 @@ public class MainUtils {
     // 除錯標籤
     private static final String TAG = "MainUtils";
 
-    // 更新通知的 ID
-    private static final int NFID_UPDATE = 233;
-
     // 各偏好設定 KEY 值
-    private static final String PREFKEY_UPDATE_REQUEST   = "UPDATE_REQUEST";     // 使用者要求更新
     private static final String PREFKEY_UPDATE_BY_MOBILE = "UPDATE_FROM_MOBILE"; // 允許行動網路更新
 
     // 地圖檔名
@@ -196,76 +184,6 @@ public class MainUtils {
         }
 
         return msg;
-    }
-
-    /**
-     * 移除資料更新的系統通知
-     */
-    public static void clearUpdateNotification(Context context) {
-        NotificationManager notiMgr = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notiMgr.cancel(TAG, NFID_UPDATE);
-    }
-
-    /**
-     * 產生資料更新的系統通知
-     */
-    public static void buildUpdateNotification(Context context, double mblen) {
-        Intent itYes = new Intent(context, ConfirmUpdateService.class).setAction("Yes");
-        Intent itNo  = new Intent(context, ConfirmUpdateService.class).setAction("No");
-        PendingIntent piYes = PendingIntent.getService(context, 0, itYes, PendingIntent.FLAG_UPDATE_CURRENT);
-        PendingIntent piNo  = PendingIntent.getService(context, 0, itNo, PendingIntent.FLAG_UPDATE_CURRENT);
-        long[] vpat = {0, 100, 100, 100};
-
-        BitmapDrawable sic = (BitmapDrawable)context.getResources().getDrawable(R.mipmap.geomancer);
-        // TODO: Don't know how to kill LINT message.
-        Bitmap lic = sic.getBitmap();
-
-        String longPat = context.getString(R.string.pattern_confirm_update_long);
-        String longMsg = String.format(Locale.getDefault(), longPat, mblen);
-
-        String shortPat = context.getString(R.string.pattern_confirm_update_short);
-        String shortMsg = String.format(Locale.getDefault(), shortPat, mblen);
-
-        NotificationCompat.Style style = new NotificationCompat.BigTextStyle().bigText(longMsg);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
-        Notification nf = builder
-            .setContentTitle(context.getString(R.string.term_update))
-            .setContentText(shortMsg)
-            .setStyle(style)
-            .setSmallIcon(android.R.drawable.ic_menu_info_details)
-            .setLargeIcon(lic)
-            .setVibrate(vpat)
-            .addAction(android.R.drawable.ic_menu_save, context.getString(R.string.term_yes), piYes)
-            .addAction(android.R.drawable.ic_menu_delete, context.getString(R.string.term_no), piNo)
-            .setAutoCancel(false)
-            .build();
-
-        NotificationManager notiMgr = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notiMgr.notify(TAG, NFID_UPDATE, nf);
-    }
-
-    /**
-     * 紀錄使用者更新要求
-     */
-    public static void setUpdateRequest(Context context) {
-        SharedPreferences.Editor pedit = PreferenceManager.getDefaultSharedPreferences(context).edit();
-        pedit.putBoolean(PREFKEY_UPDATE_REQUEST, true).apply();
-    }
-
-    /**
-     * 清除使用者更新要求
-     */
-    public static void clearUpdateRequest(Context context) {
-        SharedPreferences.Editor pedit = PreferenceManager.getDefaultSharedPreferences(context).edit();
-        pedit.putBoolean(PREFKEY_UPDATE_REQUEST, false).apply();
-    }
-
-    /**
-     * 確認使用者是否要求更新
-     */
-    public static boolean hasUpdateRequest(Context context) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        return prefs.getBoolean(PREFKEY_UPDATE_REQUEST, false);
     }
 
     /**

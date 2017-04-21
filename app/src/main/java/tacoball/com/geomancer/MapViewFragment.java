@@ -424,8 +424,8 @@ public class MapViewFragment extends Fragment {
                 // 換算粗略方位角，假如粗略方位角有變化才旋轉畫面
                 int reducedAzimuth = (int)(state.myAzimuth / ANGLE_SCALE) * ANGLE_SCALE;
                 if (reducedAzimuth != prevReducedAzimuth) {
-                    String msg = String.format(Locale.getDefault(), "粗略方位角: %d", reducedAzimuth);
-                    Log.e(TAG, msg);
+                    // String msg = String.format(Locale.getDefault(), "粗略方位角: %d", reducedAzimuth);
+                    // Log.e(TAG, msg);
                     mRotateView.setHeading(-reducedAzimuth);
                     mUnluckyHouses.setAngle(-reducedAzimuth);
                     mUnluckyLabors.setAngle(-reducedAzimuth);
