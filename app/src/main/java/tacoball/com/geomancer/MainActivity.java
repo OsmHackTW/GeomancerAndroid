@@ -11,13 +11,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.crashlytics.android.Crashlytics;
-
 import org.mapsforge.map.android.graphics.AndroidGraphicFactory;
 
 import java.util.Locale;
 
-import io.fabric.sdk.android.Fabric;
 import tacoball.com.geomancer.map.TaiwanMapView;
 
 /**
@@ -35,7 +32,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Fabric.with(this, new Crashlytics());
 
         // 配置 Android 繪圖資源，必須在 inflate 之前完成
         AndroidGraphicFactory.createInstance(getApplication());

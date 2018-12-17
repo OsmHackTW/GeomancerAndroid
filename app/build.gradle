@@ -1,62 +1,50 @@
 apply plugin: 'com.android.application'
-apply plugin: 'io.fabric'
+apply plugin: 'com.google.gms.google-services'
 
 android {
-    // 配合 appcompat-v7 25.2.0
-    compileSdkVersion 25
-    buildToolsVersion '25.0.2'
+    // 配合 appcompat-v7
+    compileSdkVersion 28
+    buildToolsVersion '28.0.3'
     defaultConfig {
         // 名稱與版本
         applicationId "tacoball.com.geomancer"
         versionCode 105
         versionName "0.1.5"
 
-        // Android 4.4
-        minSdkVersion 19
-        targetSdkVersion 21
+        // Android 6.0+
+        minSdkVersion 23
+        targetSdkVersion 28
     }
 }
 
-repositories {
-    maven { url 'https://maven.fabric.io/public' }
+project.ext {
+    supportVersion = "28.0.0"
+    mapsforgeVersion = "0.8.0"
 }
 
 dependencies {
     // mapsforge
-    String MAPSFORGE_VERSION = '0.8.0'
-    compile "org.mapsforge:mapsforge-map-android:${MAPSFORGE_VERSION}"
-    compile "org.mapsforge:mapsforge-themes:${MAPSFORGE_VERSION}"
+    implementation "org.mapsforge:mapsforge-map-android:${project.mapsforgeVersion}"
+    implementation "org.mapsforge:mapsforge-themes:${project.mapsforgeVersion}"
     /*
-    compile("org.mapsforge:mapsforge-map-android-extras:${MAPSFORGE_VERSION}") {
+    compile("org.mapsforge:mapsforge-map-android-extras:${project.mapsforgeVersion}") {
         transitive = false
     }
     */
 
     // Android support library
-    // https://developer.android.com/topic/libraries/support-library/packages.html
-    compile 'com.android.support:appcompat-v7:25.2.0'
-    compile 'com.android.support:preference-v7:25.2.0'
-    // compile 'com.takisoft.fix:preference-v7:25.2.0.0'
+    // See: https://developer.android.com/topic/libraries/support-library/packages.html
+    implementation "com.android.support:support-v4:${project.supportVersion}"
+    implementation "com.android.support:appcompat-v7:${project.supportVersion}"
+    implementation "com.android.support:preference-v7:${project.supportVersion}"
 
     // Others
-    compile 'commons-io:commons-io:2.5'
-    compile 'com.google.code.gson:gson:2.8.0'
+    implementation 'commons-io:commons-io:2.5'
+    implementation 'com.google.code.gson:gson:2.8.2'
 
     // Crashlytics
-    compile('com.crashlytics.sdk.android:crashlytics:2.6.6@aar') {
-        transitive = true;
-    }
+    implementation 'com.google.firebase:firebase-core:16.0.6'
 
     // Unit test
-    testCompile 'junit:junit:4.12'
-}
-
-buildscript {
-    repositories {
-        maven { url 'https://maven.fabric.io/public' }
-    }
-
-    dependencies {
-        classpath 'io.fabric.tools:gradle:1.+'
-    }
+    testImplementation 'junit:junit:4.12'
 }

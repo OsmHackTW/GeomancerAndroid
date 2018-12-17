@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Geomancer.iml" filepath="$PROJECT_DIR$/Geomancer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/GeomancerAndroid.iml" filepath="$PROJECT_DIR$/GeomancerAndroid.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
