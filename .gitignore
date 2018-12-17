@@ -69,3 +69,7 @@ fastlane/readme.md
 
 # Bundle
 app/release/
+
+# Crashlytics
+google-services.json
+
