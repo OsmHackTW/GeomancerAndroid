@@ -48,12 +48,12 @@ public class UpdateToolFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewGroup layout = (ViewGroup)inflater.inflate(R.layout.fragment_updater, container, false);
 
-        mTxvAction = (TextView)layout.findViewById(R.id.txvAction);
+        mTxvAction = layout.findViewById(R.id.txvAction);
 
-        mPgbAction = (ProgressBar)layout.findViewById(R.id.pgbAction);
+        mPgbAction = layout.findViewById(R.id.pgbAction);
         mPgbAction.setProgress(0);
 
-        mBtnRepair = (Button)layout.findViewById(R.id.btnRepair);
+        mBtnRepair = layout.findViewById(R.id.btnRepair);
         mBtnRepair.setVisibility(View.INVISIBLE);
         mBtnRepair.setOnClickListener(repairListener);
 
@@ -62,7 +62,7 @@ public class UpdateToolFragment extends Fragment {
         // 設定版本字串
         try {
             PackageInfo packageInfo = getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0);
-            TextView txvVersion = (TextView)layout.findViewById(R.id.txvVersion);
+            TextView txvVersion = layout.findViewById(R.id.txvVersion);
             txvVersion.setText(packageInfo.versionName);
         } catch (PackageManager.NameNotFoundException e) {
             Log.e(TAG, e.getMessage());
@@ -99,7 +99,7 @@ public class UpdateToolFragment extends Fragment {
         // aum.damageMtime("unluckyhouse.sqlite");
 
         // 檢查網路連線
-        boolean hasNetwork = MainUtils.isNetworkConnected(getActivity());
+        boolean hasNetwork = ctx != null && MainUtils.isNetworkConnected(ctx);
 
         if (hasNetwork) {
             if (dataIsUseful) {
@@ -255,11 +255,10 @@ public class UpdateToolFragment extends Fragment {
             @Override
             public void run() {
                 // #58 這個時機可能 App 已經被關閉，需要迴避 NPE 發生。
-                // TODO: 暫時解開這個觀察一下是否會閃退，如果沒問題就移除判斷式
                 Activity activity = getActivity();
-                // if (activity != null) {
-                activity.sendBroadcast(MainUtils.buildFragmentSwitchIntent("MAIN"));
-                //}
+                if (activity != null) {
+                    activity.sendBroadcast(MainUtils.buildFragmentSwitchIntent("MAIN"));
+                }
             }
         }, RESTART_DELAY);
     }

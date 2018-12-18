@@ -7,9 +7,10 @@ buildscript {
         mavenCentral()
     }
     dependencies {
+        // Gradle build tools
         classpath 'com.android.tools.build:gradle:3.2.1'
 
-        // Crashlytics
+        // Firebase
         classpath 'com.google.gms:google-services:4.2.0'
     }
 }

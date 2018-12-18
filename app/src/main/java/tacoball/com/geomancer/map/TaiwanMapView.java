@@ -1,7 +1,9 @@
 package tacoball.com.geomancer.map;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Canvas;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -12,6 +14,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 
@@ -123,6 +126,11 @@ public class TaiwanMapView extends MapView {
         if (gps || net) {
             // 先採用最後一次定位的結果，限制 10 分鐘內的定位資訊
             // TODO: 這部份移到 MainUtils
+            if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
+                // Permission is not granted
+
+            }
             Location locGps = mLocationMgr.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             Location locNet = mLocationMgr.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
             if (locGps != null || locNet != null) {

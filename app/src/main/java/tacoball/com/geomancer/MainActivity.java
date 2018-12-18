@@ -126,20 +126,25 @@ public class MainActivity extends AppCompatActivity {
             String msg = String.format(Locale.getDefault(), "Got broadcast intent action=%s", intent.getAction());
             Log.d(TAG, msg);
 
-            if (intent.getAction().equals("MAIN")) {
+            String action = intent.getAction();
+            if (action == null) {
+                return;
+            }
+
+            if (action.equals("MAIN")) {
                 changeFragment(mMapFragment);
             }
 
-            if (intent.getAction().equals("UPDATE")) {
+            if (action.equals("UPDATE")) {
                 changeFragment(mUpdateFragment);
             }
 
-            if (intent.getAction().equals("SETTINGS")) {
+            if (action.equals("SETTINGS")) {
                 Fragment f = new SettingsFragment();
                 changeFragment(f);
             }
 
-            if (intent.getAction().equals("CONTRIBUTORS")) {
+            if (action.equals("CONTRIBUTORS")) {
                 Fragment f = new SimpleFragment();
                 Bundle args = new Bundle();
                 args.putInt("LAYOUT_ID", R.layout.fragment_contributors);
@@ -147,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
                 changeFragment(f);
             }
 
-            if (intent.getAction().equals("LICENSE")) {
+            if (action.equals("LICENSE")) {
                 Fragment f = new SimpleFragment();
                 Bundle args = new Bundle();
                 args.putInt("LAYOUT_ID", R.layout.fragment_license);

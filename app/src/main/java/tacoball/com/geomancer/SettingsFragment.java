@@ -1,18 +1,12 @@
 package tacoball.com.geomancer;
 
 import android.os.Bundle;
-import android.support.v7.preference.CheckBoxPreference;
-import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
-import android.support.v7.preference.PreferenceScreen;
-import android.widget.Toast;
 
 /**
  * 設定畫面
  */
 public class SettingsFragment extends PreferenceFragmentCompat {
-
-    // private static final String TAG = "SettingsFragment";
 
     // POI 項目 (可擴充)
     // private final String[] POI_KEYS = {"search_unlucky_house"};

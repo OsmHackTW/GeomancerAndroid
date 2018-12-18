@@ -1,5 +1,6 @@
 package tacoball.com.geomancer;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -8,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.text.Html;
 import android.text.TextUtils;
@@ -30,8 +32,6 @@ import org.mapsforge.map.android.graphics.AndroidGraphicFactory;
 import org.mapsforge.map.android.rotation.RotateView;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -84,7 +84,12 @@ public class MapViewFragment extends Fragment {
      * 準備動作
      */
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Activity activity = getActivity();
+        if (activity == null) {
+            return null;
+        }
+
         ViewGroup mFragLayout = (ViewGroup)inflater.inflate(R.layout.fragment_main, container, false);
 
         // 狀態列
@@ -99,7 +104,7 @@ public class MapViewFragment extends Fragment {
         // 指北針
         mImCompass = mFragLayout.findViewById(R.id.imCompass);
         try {
-            SVG svg = SVG.getFromAsset(getActivity().getAssets(), "icons/compass.svg");
+            SVG svg = SVG.getFromAsset(activity.getAssets(), "icons/compass.svg");
             Bitmap bitmap = Bitmap.createBitmap(256, 256, Bitmap.Config.ARGB_8888);
             Canvas canvas = new Canvas(bitmap);
             svg.renderToCanvas(canvas);
@@ -128,10 +133,10 @@ public class MapViewFragment extends Fragment {
         mTxvLink.setMovementMethod(LinkMovementMethod.getInstance());
 
         // 地圖
-        mMapView = (TaiwanMapView)mFragLayout.findViewById(R.id.mapView);
+        mMapView = mFragLayout.findViewById(R.id.mapView);
         mUnluckyHouses = new PinGroup("凶", AndroidGraphicFactory.INSTANCE, mMapView.getMapViewProjection());
         mMapView.addLayer(mUnluckyHouses);
-        mRotateView = (RotateView)mFragLayout.findViewById(R.id.rotateView);
+        mRotateView = mFragLayout.findViewById(R.id.rotateView);
 
         // 事件配置
         mBtPosition.setOnClickListener(mClickListener);
@@ -149,8 +154,7 @@ public class MapViewFragment extends Fragment {
 
         // 資料庫配置
         try {
-            Context ctx = getActivity();
-            mUnluckyHouseDB = MainUtils.openReadOnlyDB(ctx, MainUtils.UNLUCKY_HOUSE);
+            mUnluckyHouseDB = MainUtils.openReadOnlyDB(activity, MainUtils.UNLUCKY_HOUSE);
         } catch(IOException ex) {
             Log.e(TAG, ex.getMessage());
         }
@@ -197,6 +201,11 @@ public class MapViewFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
+            Activity activity = getActivity();
+            if (activity == null) {
+                return;
+            }
+
             // 不管做什麼事都關閉詳細資訊
             hideDetail();
 
@@ -204,7 +213,7 @@ public class MapViewFragment extends Fragment {
             if (v==mBtPosition) {
                 if (!mMapView.gotoMyPosition()) {
                     // 無法定位，建議使用者啟用定位功能
-                    Toast.makeText(getActivity(), R.string.prompt_cannot_access_location, Toast.LENGTH_LONG).show();
+                    Toast.makeText(activity, R.string.prompt_cannot_access_location, Toast.LENGTH_LONG).show();
                 }
             }
 
@@ -225,19 +234,19 @@ public class MapViewFragment extends Fragment {
             // 切換到設定頁
             if (v==mBtSettings) {
                 Log.d(TAG, "Click Settings");
-                getActivity().sendBroadcast(MainUtils.buildFragmentSwitchIntent("SETTINGS"));
+                activity.sendBroadcast(MainUtils.buildFragmentSwitchIntent("SETTINGS"));
             }
 
             // 切換到貢獻者頁
             if (v==mBtContributors) {
                 Log.d(TAG, "Click Contributors");
-                getActivity().sendBroadcast(MainUtils.buildFragmentSwitchIntent("CONTRIBUTORS"));
+                activity.sendBroadcast(MainUtils.buildFragmentSwitchIntent("CONTRIBUTORS"));
             }
 
             // 切換到授權頁
             if (v==mBtLicense) {
                 Log.d(TAG, "Click License");
-                getActivity().sendBroadcast(MainUtils.buildFragmentSwitchIntent("LICENSE"));
+                activity.sendBroadcast(MainUtils.buildFragmentSwitchIntent("LICENSE"));
             }
 
             // 測量風水
@@ -262,9 +271,9 @@ public class MapViewFragment extends Fragment {
                 // 顯示摘要
                 if (summaries.size() > 0) {
                     String msg = TextUtils.join("、", summaries);
-                    Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(getActivity(), R.string.term_peace, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, R.string.term_peace, Toast.LENGTH_SHORT).show();
                 }
             }
 

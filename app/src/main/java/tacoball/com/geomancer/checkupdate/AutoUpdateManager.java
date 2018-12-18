@@ -288,8 +288,7 @@ public class AutoUpdateManager {
 			lastModified = f.lastModified();
 		}
 		
-		int days = (int)((System.currentTimeMillis() - lastModified) / 86400000);
-		return days;
+		return (int)((System.currentTimeMillis() - lastModified) / 86400000);
 	}
 	
 	/**
@@ -697,46 +696,48 @@ public class AutoUpdateManager {
 
     	try {
         	md = MessageDigest.getInstance(digest);
+
+			try {
+				FileInputStream   fis = new FileInputStream(file);
+				DigestInputStream dis = new DigestInputStream(fis, md);
+
+				long off = partLength * partNumber;
+				if (dis.skip(off) < off) {
+					dis.close();
+					fis.close();
+					throw new IOException("Cannot move to offset position.");
+				}
+
+				int readlen = 1;
+				int total   = 0;
+				while (readlen > 0 && total < partLength) {
+					readlen = dis.read(BUFFER);
+					total += readlen;
+				}
+
+				dis.close();
+				fis.close();
+			} catch(IOException ex) {
+				String reason = String.format(Locale.getDefault(), "計算 %s 摘要失敗 (%s)", digest, ex.getMessage());
+				interruptUpdate(reason, true);
+			}
+
+			StringBuilder sb = new StringBuilder();
+			for (byte hash : md.digest()) {
+				String bytestr = String.format("%02x", (hash&0xff));
+				sb.append(bytestr);
+			}
+
+			String actual = sb.toString();
+			sb.delete(0, sb.length());
+
+			return actual.equals(expected);
         } catch(NoSuchAlgorithmException ex) {
         	String reason = String.format(Locale.getDefault(), "無法使用 %s 演算法", digest);
         	interruptUpdate(reason, true);
         }
 
-    	try {
-	        FileInputStream   fis = new FileInputStream(file);
-	        DigestInputStream dis = new DigestInputStream(fis, md);
-	        
-	        long off = partLength * partNumber;
-	        if (dis.skip(off) < off) {
-	            dis.close();
-	            fis.close();
-	            throw new IOException("Cannot move to offset position.");
-	        }
-	
-	        int readlen = 1;
-	        int total   = 0;
-	        while (readlen > 0 && total < partLength) {
-	            readlen = dis.read(BUFFER);
-	            total += readlen;
-	        }
-
-	        dis.close();
-	        fis.close();
-    	} catch(IOException ex) {
-    		String reason = String.format(Locale.getDefault(), "計算 %s 摘要失敗 (%s)", digest, ex.getMessage());
-        	interruptUpdate(reason, true);
-    	}
-
-        StringBuilder sb = new StringBuilder();
-        for (byte hash : md.digest()) {
-            String bytestr = String.format("%02x", (hash&0xff));
-            sb.append(bytestr);
-        }
-
-        String actual = sb.toString();
-        sb.delete(0, sb.length());
-
-        return actual.equals(expected);
+    	return false;
     }
 
 	// 計算進度值，需要防止 overflow 產生負數
