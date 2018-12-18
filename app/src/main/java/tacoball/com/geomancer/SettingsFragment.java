@@ -15,20 +15,23 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     // private static final String TAG = "SettingsFragment";
 
     // POI 項目 (可擴充)
-    private final String[] POI_KEYS = {"search_unlucky_house", "search_unlucky_labor"};
+    // private final String[] POI_KEYS = {"search_unlucky_house"};
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.settings, rootKey);
 
         // 驗證設定
+        /*
         PreferenceScreen ps = getPreferenceScreen();
         for (String k : POI_KEYS) {
             ps.findPreference(k).setOnPreferenceChangeListener(mPoiValidator);
         }
+        */
     }
 
     // POI 至少要選一項的檢查程式
+    /*
     Preference.OnPreferenceChangeListener mPoiValidator = new Preference.OnPreferenceChangeListener() {
 
         @Override
@@ -57,5 +60,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         }
 
     };
+    */
 
 }

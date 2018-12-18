@@ -18,6 +18,8 @@
 
     </PreferenceCategory>
 
+    <!-- 等以後增加其他選項再恢復使用 -->
+    <!--
     <PreferenceCategory android:title="@string/term_care_about" android:key="poi">
 
         <CheckBoxPreference
@@ -26,12 +28,7 @@
             android:title="@string/term_unluckyhouse"
             android:defaultValue="false" />
 
-        <CheckBoxPreference
-            android:key="search_unlucky_labor"
-            android:summary="@string/prompt_unluckylabor"
-            android:title="@string/term_unluckylabor"
-            android:defaultValue="false" />
-
     </PreferenceCategory>
+    -->
 
 </PreferenceScreen>

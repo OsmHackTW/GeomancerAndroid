@@ -34,7 +34,6 @@ public class MainUtils {
 
     // 資料庫檔名
     public static final String UNLUCKY_HOUSE = "unluckyhouse.sqlite";
-    public static final String UNLUCKY_LABOR = "unluckylabor.sqlite";
 
     // 前端狀態事件的分類名稱
     private static final String INTENT_CATEGORY = "tacoball.com.geomancer.FrontEndState";

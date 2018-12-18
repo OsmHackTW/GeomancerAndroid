@@ -73,11 +73,9 @@ public class MapViewFragment extends Fragment {
     private RotateView    mRotateView;    // 旋轉元件
     private TaiwanMapView mMapView;       // 地圖
     private PinGroup      mUnluckyHouses; // 凶宅地標
-    private PinGroup      mUnluckyLabors; // 屎缺地標
 
     // 資源元件
     private SQLiteDatabase mUnluckyHouseDB;
-    private SQLiteDatabase mUnluckyLaborDB;
 
     // 設定值
     private boolean isRotateByAzimuth;
@@ -90,16 +88,16 @@ public class MapViewFragment extends Fragment {
         ViewGroup mFragLayout = (ViewGroup)inflater.inflate(R.layout.fragment_main, container, false);
 
         // 狀態列
-        mTxvZoom     = (TextView)mFragLayout.findViewById(R.id.txvZoomValue);
-        mTxvLatitude = (TextView)mFragLayout.findViewById(R.id.txvLatitude);
-        mTxvLongitude = (TextView)mFragLayout.findViewById(R.id.txvLongitude);
-        mTxvAzimuth  = (TextView)mFragLayout.findViewById(R.id.txvAzimuthValue);
+        mTxvZoom     = mFragLayout.findViewById(R.id.txvZoomValue);
+        mTxvLatitude = mFragLayout.findViewById(R.id.txvLatitude);
+        mTxvLongitude = mFragLayout.findViewById(R.id.txvLongitude);
+        mTxvAzimuth  = mFragLayout.findViewById(R.id.txvAzimuthValue);
 
         // 地圖放大提示訊息
-        mTxvHint = (TextView)mFragLayout.findViewById(R.id.txvHint);
+        mTxvHint = mFragLayout.findViewById(R.id.txvHint);
 
         // 指北針
-        mImCompass = (ImageView)mFragLayout.findViewById(R.id.imCompass);
+        mImCompass = mFragLayout.findViewById(R.id.imCompass);
         try {
             SVG svg = SVG.getFromAsset(getActivity().getAssets(), "icons/compass.svg");
             Bitmap bitmap = Bitmap.createBitmap(256, 256, Bitmap.Config.ARGB_8888);
@@ -115,26 +113,24 @@ public class MapViewFragment extends Fragment {
         }
 
         // 按鈕列
-        mBtPosition = (Button)mFragLayout.findViewById(R.id.btPosition);
-        mBtMeasure  = (Button)mFragLayout.findViewById(R.id.btMeasure);
-        mBtClear    = (Button)mFragLayout.findViewById(R.id.btClear);
-        mBtMore = (CircleButton) mFragLayout.findViewById(R.id.btnMore);
-        mBtSettings = (CircleButton) mFragLayout.findViewById(R.id.btnSettings);
-        mBtContributors = (CircleButton) mFragLayout.findViewById(R.id.btnContributors);
-        mBtLicense = (CircleButton)mFragLayout.findViewById(R.id.btnLicense);
+        mBtPosition = mFragLayout.findViewById(R.id.btPosition);
+        mBtMeasure  = mFragLayout.findViewById(R.id.btMeasure);
+        mBtClear    = mFragLayout.findViewById(R.id.btClear);
+        mBtMore = mFragLayout.findViewById(R.id.btnMore);
+        mBtSettings = mFragLayout.findViewById(R.id.btnSettings);
+        mBtContributors = mFragLayout.findViewById(R.id.btnContributors);
+        mBtLicense = mFragLayout.findViewById(R.id.btnLicense);
 
         // POI 詳細資訊
-        mVgDetail   = (ViewGroup)mFragLayout.findViewById(R.id.glyPointInfo);
-        mTxvSummary = (TextView)mFragLayout.findViewById(R.id.txvSummaryContent);
-        mTxvLink    = (TextView)mFragLayout.findViewById(R.id.txvURLContent);
+        mVgDetail   = mFragLayout.findViewById(R.id.glyPointInfo);
+        mTxvSummary = mFragLayout.findViewById(R.id.txvSummaryContent);
+        mTxvLink    = mFragLayout.findViewById(R.id.txvURLContent);
         mTxvLink.setMovementMethod(LinkMovementMethod.getInstance());
 
         // 地圖
         mMapView = (TaiwanMapView)mFragLayout.findViewById(R.id.mapView);
         mUnluckyHouses = new PinGroup("凶", AndroidGraphicFactory.INSTANCE, mMapView.getMapViewProjection());
-        mUnluckyLabors = new PinGroup("勞", AndroidGraphicFactory.INSTANCE, mMapView.getMapViewProjection());
         mMapView.addLayer(mUnluckyHouses);
-        mMapView.addLayer(mUnluckyLabors);
         mRotateView = (RotateView)mFragLayout.findViewById(R.id.rotateView);
 
         // 事件配置
@@ -147,7 +143,6 @@ public class MapViewFragment extends Fragment {
         mBtLicense.setOnClickListener(mClickListener);
         mMapView.setStateChangeListener(mMapStateListener);
         mUnluckyHouses.setOnSelectListener(mOnSelectPin);
-        mUnluckyLabors.setOnSelectListener(mOnSelectPin);
 
         // 載入設定值
         reloadSettings();
@@ -156,7 +151,6 @@ public class MapViewFragment extends Fragment {
         try {
             Context ctx = getActivity();
             mUnluckyHouseDB = MainUtils.openReadOnlyDB(ctx, MainUtils.UNLUCKY_HOUSE);
-            mUnluckyLaborDB = MainUtils.openReadOnlyDB(ctx, MainUtils.UNLUCKY_LABOR);
         } catch(IOException ex) {
             Log.e(TAG, ex.getMessage());
         }
@@ -173,10 +167,6 @@ public class MapViewFragment extends Fragment {
 
         if (mUnluckyHouseDB != null) {
             mUnluckyHouseDB.close();
-        }
-
-        if (mUnluckyLaborDB != null) {
-            mUnluckyLaborDB.close();
         }
 
         super.onDestroyView();
@@ -261,30 +251,15 @@ public class MapViewFragment extends Fragment {
                     Double.toString(bbox.maxLongitude)
                 };
 
-                // 預設只查凶宅
-                SharedPreferences pf = PreferenceManager.getDefaultSharedPreferences(getActivity());
-                boolean needUnluckyHouse = pf.getBoolean("search_unlucky_house", true);
-                boolean needUnluckyLabor = pf.getBoolean("search_unlucky_labor", false);
-
+                // 查凶宅
                 List<String> summaries = new ArrayList<>();
-
                 mUnluckyHouses.clear();
-                mUnluckyLabors.clear();
-
-                if (needUnluckyHouse) {
-                    searchUnluckyHouse(bboxString);
-                    if (mUnluckyHouses.size() > 0) {
-                        summaries.add(String.format(Locale.getDefault(), "凶宅 x%d", mUnluckyHouses.size()));
-                    }
+                searchUnluckyHouse(bboxString);
+                if (mUnluckyHouses.size() > 0) {
+                    summaries.add(String.format(Locale.getDefault(), "凶宅 x%d", mUnluckyHouses.size()));
                 }
 
-                if (needUnluckyLabor) {
-                    searchUnluckyLabor(bboxString);
-                    if (mUnluckyLabors.size() > 0) {
-                        summaries.add(String.format(Locale.getDefault(), "屎缺 x%d", mUnluckyLabors.size()));
-                    }
-                }
-
+                // 顯示摘要
                 if (summaries.size() > 0) {
                     String msg = TextUtils.join("、", summaries);
                     Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
@@ -295,7 +270,6 @@ public class MapViewFragment extends Fragment {
 
             if (v==mBtClear) {
                 mUnluckyHouses.clear();
-                mUnluckyLabors.clear();
             }
         }
 
@@ -320,26 +294,7 @@ public class MapViewFragment extends Fragment {
         cur.close();
     }
 
-    // 查屎缺
-    private void searchUnluckyLabor(String[] bbox) {
-        String[] cols = {"id", "corp", "lat", "lng"};
-        String   cond = "lat>=? AND lng>=? AND lat<=? AND lng<=?";
-        Cursor   cur  = mUnluckyLaborDB.query("unluckylabor", cols, cond, bbox, "", "", "");
-
-        if (cur.getCount()>0) {
-            while (cur.moveToNext()) {
-                String id   = cur.getString(0);
-                String corp = cur.getString(cur.getColumnIndex("corp"));
-                double lat  = cur.getDouble(cur.getColumnIndex("lat"));
-                double lng  = cur.getDouble(cur.getColumnIndex("lng"));
-                String pat  = getString(R.string.pattern_unluckylabor_subject);
-                String subject = String.format(Locale.getDefault(), pat, corp);
-                mUnluckyLabors.add(new LatLong(lat, lng), subject, id);
-            }
-        }
-        cur.close();
-    }
-
+    // 顯示詳細資訊
     private void showDetail(String summary, String linkURL, String linkText) {
         String linkHtml = String.format(Locale.getDefault(), "<a href=\"%s\">%s</a>", linkURL, linkText);
         mTxvSummary.setText(summary);
@@ -347,55 +302,9 @@ public class MapViewFragment extends Fragment {
         mVgDetail.setVisibility(View.VISIBLE);
     }
 
+    // 隱藏詳細資訊
     private void hideDetail() {
         mVgDetail.setVisibility(View.INVISIBLE);
-    }
-
-    private String toLawText(String law) {
-        StringBuffer buf = new StringBuffer();
-        String[] rules = law.split(";");
-        for (String rule : rules) {
-            if (buf.length() > 0) {
-                buf.append('\n');
-            }
-            buf.append(rule.replaceFirst("(\\d+)", "勞動基準法第$1條").replaceFirst("\\-(\\d+)", "第$1項"));
-        }
-        return buf.toString();
-    }
-
-    private String toGovURL(String gov, String corp) {
-        try {
-            if (gov.equals("臺北市")) {
-                return "http://web2.bola.taipei/bolasearch/chhtml/page/20?q47=" + URLEncoder.encode(corp, "UTF-8");
-            }
-            if (gov.equals("新北市")) {
-                return "http://ilabor.ntpc.gov.tw/cloud/Violate/filter?name1=" + URLEncoder.encode(corp, "UTF-8");
-            }
-            if (gov.equals("桃園市")) {
-                return "http://lhrb.tycg.gov.tw/home.jsp?id=373&parentpath=0%2C14%2C372&mcustomize=onemessages_view.jsp&dataserno=201509090001&aplistdn=ou=data,ou=lhrb4,ou=chlhr,ou=ap_root,o=tycg,c=tw&toolsflag=Y";
-            }
-            if (gov.equals("台中市")) {
-                return "http://www.labor.taichung.gov.tw/ct.asp?xItem=55333&ctNode=23053&mp=117010";
-            }
-            if (gov.equals("台南市")) {
-                return "http://www.tainan.gov.tw/labor/page.asp?nsub=M2A400";
-            }
-            if (gov.equals("高雄市")) {
-                return "http://labor.kcg.gov.tw/IllegalList.aspx?appname=IllegalList";
-            }
-        } catch(UnsupportedEncodingException ex) {
-            // 不會發生
-        }
-
-        return "";
-    }
-
-    private String toDepartment(String gov) {
-        if (gov.equals("臺北市")) {
-            return gov + "勞動局";
-        } else {
-            return gov + "勞工局";
-        }
     }
 
     /**
@@ -428,7 +337,6 @@ public class MapViewFragment extends Fragment {
                     // Log.e(TAG, msg);
                     mRotateView.setHeading(-reducedAzimuth);
                     mUnluckyHouses.setAngle(-reducedAzimuth);
-                    mUnluckyLabors.setAngle(-reducedAzimuth);
                     mImCompass.setRotation(reducedAzimuth);
                     prevReducedAzimuth = reducedAzimuth;
                 }
@@ -436,7 +344,6 @@ public class MapViewFragment extends Fragment {
                 if (prevReducedAzimuth != 0) {
                     mRotateView.setHeading(0);
                     mUnluckyHouses.setAngle(0);
-                    mUnluckyLabors.setAngle(0);
                     mImCompass.setRotation(0);
                     prevReducedAzimuth = 0;
                 }
@@ -467,18 +374,6 @@ public class MapViewFragment extends Fragment {
                 // String news = cur.getString(1);
                 String url  = String.format(Locale.getDefault(), "https://unluckyhouse.com/showthread.php?t=%s", id);
                 showDetail(addr, url, "台灣凶宅網");
-                cur.close();
-            }
-
-            if (category.equals("勞")) {
-                String[] cols = {"law", "gov", "corp"};
-                String[] args = {id};
-                Cursor cur = mUnluckyLaborDB.query("unluckylabor", cols, "id=?", args, "", "", "");
-                cur.moveToNext();
-                String law  = cur.getString(0);
-                String gov  = cur.getString(1);
-                String corp = cur.getString(2);
-                showDetail(toLawText(law), toGovURL(gov, corp), toDepartment(gov));
                 cur.close();
             }
         }
