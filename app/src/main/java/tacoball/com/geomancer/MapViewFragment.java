@@ -62,7 +62,7 @@ public class MapViewFragment extends Fragment {
     private CircleButton  mBtSettings;     // 設定按鈕
     private CircleButton  mBtContributors; // 貢獻者按鈕
     private CircleButton  mBtLicense;      // 授權按鈕
-    private ImageView     mImCompass;
+    private ImageView     mImCompass;      // 羅盤
 
     // 介面元件 (詳細資訊)
     private ViewGroup mVgDetail;
@@ -75,10 +75,10 @@ public class MapViewFragment extends Fragment {
     private PinGroup      mUnluckyHouses; // 凶宅地標
 
     // 資源元件
-    private SQLiteDatabase mUnluckyHouseDB;
+    private SQLiteDatabase mUnluckyHouseDB; // 凶宅資料庫
 
     // 設定值
-    private boolean isRotateByAzimuth;
+    private boolean isRotateByAzimuth; // 自動旋轉
 
     /**
      * 準備動作
@@ -211,10 +211,11 @@ public class MapViewFragment extends Fragment {
 
             // 定位
             if (v==mBtPosition) {
-                if (!mMapView.gotoMyPosition()) {
+                mMapView.gotoMyPosition();
+                // if (!mMapView.gotoMyPosition()) {
                     // 無法定位，建議使用者啟用定位功能
-                    Toast.makeText(activity, R.string.prompt_cannot_access_location, Toast.LENGTH_LONG).show();
-                }
+                    // Toast.makeText(activity, R.string.prompt_cannot_access_location, Toast.LENGTH_LONG).show();
+                // }
             }
 
             // 展開/收合按鈕

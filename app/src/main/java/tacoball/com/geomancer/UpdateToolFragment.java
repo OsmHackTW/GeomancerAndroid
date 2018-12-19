@@ -7,7 +7,9 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -45,7 +47,12 @@ public class UpdateToolFragment extends Fragment {
      * 準備動作
      */
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        FragmentActivity activity = getActivity();
+        if (activity == null) {
+            return null;
+        }
+
         ViewGroup layout = (ViewGroup)inflater.inflate(R.layout.fragment_updater, container, false);
 
         mTxvAction = layout.findViewById(R.id.txvAction);
@@ -75,18 +82,21 @@ public class UpdateToolFragment extends Fragment {
     }
 
     private void update() {
-        Context ctx = getActivity();
+        Context activity = getActivity();
+        if (activity == null) {
+            return;
+        }
 
         // 目錄配置
         File dbPath;
         File logPath;
         File mapPath;
         try {
-            dbPath  = MainUtils.getDbPath(ctx);
-            mapPath = MainUtils.getMapPath(ctx);
-            logPath = MainUtils.getLogPath(ctx);
+            dbPath  = MainUtils.getDbPath(activity);
+            mapPath = MainUtils.getMapPath(activity);
+            logPath = MainUtils.getLogPath(activity);
         } catch(IOException ex) {
-            setMessage(ctx.getString(R.string.prompt_cannot_access_storage), true);
+            setMessage(activity.getString(R.string.prompt_cannot_access_storage), true);
             return;
         }
 
@@ -99,7 +109,7 @@ public class UpdateToolFragment extends Fragment {
         // aum.damageMtime("unluckyhouse.sqlite");
 
         // 檢查網路連線
-        boolean hasNetwork = ctx != null && MainUtils.isNetworkConnected(ctx);
+        boolean hasNetwork = MainUtils.isNetworkConnected(activity);
 
         if (hasNetwork) {
             if (dataIsUseful) {
@@ -109,7 +119,7 @@ public class UpdateToolFragment extends Fragment {
 
                 if (daysFLU >= 14) {
                     // 提示檢查更新
-                    msg = ctx.getString(R.string.term_check_update);
+                    msg = activity.getString(R.string.term_check_update);
                     setMessage(msg, false);
 
                     // 有網路 + 資料堪用 => 定期檢查更新 (先暫時做成每次都檢查)
@@ -164,11 +174,11 @@ public class UpdateToolFragment extends Fragment {
         } else {
             if (dataIsUseful) {
                 // 沒網路 + 資料堪用 => 進入應用程式
-                setMessage(ctx.getString(R.string.prompt_validated), false);
+                setMessage(activity.getString(R.string.prompt_validated), false);
                 gotoMap();
             } else {
                 // 沒網路 + 資料不堪用 => 顯示錯誤訊息
-                setMessage(ctx.getString(R.string.prompt_cannot_access_network), true);
+                setMessage(activity.getString(R.string.prompt_cannot_access_network), true);
             }
         }
     }

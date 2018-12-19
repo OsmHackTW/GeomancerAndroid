@@ -13,6 +13,9 @@
     <string name="prompt_unluckyhouse">啟用凶宅資料庫</string>
     <string name="prompt_unluckylabor">啟用違反勞基法事業資料庫</string>
     <string name="prompt_validated">檔案確認完成，稍候進入鄉民風水師</string>
+    <string name="prompt_loc_permission_rejected">位置權限請求已被您拒絕，如果想使用定位功能，請依下列步驟啟用位置權限:\n\n1. 按 [馬上設定]\n2. 按 [權限]\n3. 啟用 [位置]</string>
+    <string name="prompt_loc_permission_enable">馬上設定</string>
+    <string name="prompt_loc_permission_cancel">不想定位</string>
 
     <!-- 組合句型 -->
     <string name="pattern_confirm_update">有 %s 風水資料可更新，想現在更新嗎？</string>

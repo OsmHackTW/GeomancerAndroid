@@ -1,6 +1,7 @@
 package tacoball.com.geomancer.map;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -14,7 +15,9 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.util.AttributeSet;
 import android.util.Log;
 
@@ -39,8 +42,7 @@ import java.io.InputStream;
 import java.util.Locale;
 
 import tacoball.com.geomancer.MainUtils;
-
-// import android.graphics.Canvas;
+import tacoball.com.geomancer.PermissionUtils;
 
 /**
  * 台灣地圖前端
@@ -119,18 +121,24 @@ public class TaiwanMapView extends MapView {
     /**
      * 移動到目前位置
      */
-    public boolean gotoMyPosition() {
+    public void gotoMyPosition() {
+        AppCompatActivity activity = (AppCompatActivity)getContext();
+        if (activity == null) {
+            return;
+        }
+
+        boolean hasPermission = activity.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+        if (!hasPermission) {
+            PermissionUtils.requestLocationPermission(activity, PermissionUtils.RC_GOTO_POSITION);
+            return;
+        }
+
         boolean gps = mLocationMgr.isProviderEnabled(LocationManager.GPS_PROVIDER);
         boolean net = mLocationMgr.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
         if (gps || net) {
             // 先採用最後一次定位的結果，限制 10 分鐘內的定位資訊
             // TODO: 這部份移到 MainUtils
-            if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-                    != PackageManager.PERMISSION_GRANTED) {
-                // Permission is not granted
-
-            }
             Location locGps = mLocationMgr.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             Location locNet = mLocationMgr.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
             if (locGps != null || locNet != null) {
@@ -155,9 +163,6 @@ public class TaiwanMapView extends MapView {
             Log.e(TAG, "GPS 取座標");
             mLocationMgr.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, mLocListener, null);
             Log.e(TAG, "網路取座標");
-            return true;
-        } else {
-            return false;
         }
     }
 
