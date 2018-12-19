@@ -41,12 +41,7 @@ public class MainUtils {
     // 更新伺服器
     public static final int       MIRROR_NUM = 0;
     private static final String[] MIRROR_SITES = {
-        "mirror.ossplanet.net",  // Mirror
-        "sto.tacosync.com",      // Web 1
-        "tacosync.com",          // Web 2
-        "192.168.1.81",          // WiFi LAN 1 (Debug)
-        "192.168.1.172",         // WiFi LAN 2 (Debug)
-        "192.168.42.29"          // USB LAN (Debug)
+        "tacosync.com"
     };
 
     /**
